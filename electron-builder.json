@@ -1,0 +1,15 @@
+{
+    "appId": "com.madhushalaksitha.labsync-desktop-client",
+    "files": ["dist-electron", "dist-react"],
+    "icon": "./appIcon.png",
+    "mac": {
+        "target": "dmg"
+    },
+    "linux": {
+        "target": "AppImage",
+        "category": "Utility"
+    },
+    "win": {
+        "target": ["portable", "msi"]
+    }
+}
