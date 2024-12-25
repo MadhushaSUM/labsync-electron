@@ -1,33 +1,64 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
 import './App.css'
 
+import { MemoryRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+
+import { Button, Layout, theme } from 'antd'
+import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
+import Logo from './components/Logo';
+import Sidebar from './components/Sidebar';
+import ToggleThemeButton from './components/ToggleThemeButton';
+import Home from './pages/Home';
+import NewTest from './pages/NewTest';
+
+const { Header, Sider, Content } = Layout;
+
 function App() {
-    const [count, setCount] = useState(0)
+    const [darkTheme, setDarkTheme] = useState(true);
+    const [collapsed, setCollapsed] = useState(true);
+    const toggleTheme = () => {
+        setDarkTheme(!darkTheme);
+    }
+    const toggleCollapse = () => {
+        setCollapsed(!collapsed);
+    }
+
+    const {
+        token: { colorBgContainer },
+    } = theme.useToken();
 
     return (
-        <>
-            <div className='flex justify-center'>
-                <a href="https://react.dev" target="_blank">
-                    <img src={reactLogo} className="logo react" alt="React logo" />
-                </a>
-            </div>
-            <div>
-                <h1>LabSync desktop client</h1>
-                <h1>Vite + React</h1>
-            </div>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
-                    count is {count}
-                </button>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to test HMR
-                </p>
-            </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
-        </>
+        <Router>
+            <Layout>
+                <Sider
+                    theme={darkTheme ? 'dark' : 'light'}
+                    className='sidebar'
+                    collapsible
+                    collapsed={collapsed}
+                    trigger={null}
+                >
+                    <Logo />
+                    <Sidebar darkTheme={darkTheme} />
+                    <ToggleThemeButton darkTheme={darkTheme} toggleTheme={toggleTheme} />
+                </Sider>
+                <Layout>
+                    <Header style={{ padding: 0, background: colorBgContainer }}>
+                        <Button
+                            className='toggle'
+                            type='text'
+                            onClick={toggleCollapse}
+                            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                        />
+                    </Header>
+                    <Content className='m-5'>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/new-test" element={<NewTest />} />
+                        </Routes>
+                    </Content>
+                </Layout>
+            </Layout>
+        </Router>
     )
 }
 
