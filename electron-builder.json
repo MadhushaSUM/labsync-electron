@@ -1,6 +1,12 @@
 {
     "appId": "com.madhushalaksitha.labsync-desktop-client",
-    "files": ["dist-electron", "dist-react"],
+    "files": [
+        "dist-electron",
+        "dist-react"
+    ],
+    "extraResources": [
+        "dist-electron/preload.cjs"
+    ],
     "icon": "./appIcon.png",
     "mac": {
         "target": "dmg"
@@ -10,6 +16,9 @@
         "category": "Utility"
     },
     "win": {
-        "target": ["portable", "msi"]
+        "target": [
+            "portable",
+            "msi"
+        ]
     }
 }
