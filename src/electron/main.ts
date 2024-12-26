@@ -3,6 +3,9 @@ import path from 'path';
 import { isDev } from './utils.js';
 import { getPreloadPath, getUIPath } from './pathResolver.js';
 
+// Importing patient ipc handlers
+import './ipc_handlers/patientIpcHandlers.js';
+
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({
         webPreferences: {

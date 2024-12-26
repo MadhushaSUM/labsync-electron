@@ -1,14 +1,20 @@
 const electron = require('electron');
 
 electron.contextBridge.exposeInMainWorld("electron", {
-
+    patients: {
+        get: () => ipcInvoke('patients:get'),
+        insert: (patient: Omit<Patient, 'id'>) => ipcInvoke('patients:insert', patient),
+        update: (patient: Patient) => ipcInvoke('patients:update', patient),
+        delete: (id: number) => ipcInvoke('patients:delete', id),
+    },
 } satisfies Window['electron']);
 
 // Wrappers to ensure type safety
 function ipcInvoke<Key extends keyof EventPayloadMapping>(
-    key: Key
-): Promise<EventPayloadMapping[Key]> {
-    return electron.ipcRenderer.invoke(key);
+    key: Key,
+    ...args: EventPayloadMapping[Key]['args']
+): Promise<EventPayloadMapping[Key]['return']> {
+    return electron.ipcRenderer.invoke(key, ...args);
 }
 
 function ipcOn<Key extends keyof EventPayloadMapping>(

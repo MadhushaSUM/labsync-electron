@@ -8,11 +8,11 @@ export function isDev(): boolean {
 
 export function ipcMainHandle<Key extends keyof EventPayloadMapping>(
     key: Key,
-    handler: () => EventPayloadMapping[Key]
+    handler: (...args: EventPayloadMapping[Key]['args']) => Promise<EventPayloadMapping[Key]['return']>
 ) {
-    ipcMain.handle(key, (event) => {
+    ipcMain.handle(key, async (event, ...args) => {
         validateEventFrame(event.senderFrame!);
-        return handler();
+        return handler(...(args as EventPayloadMapping[Key]['args']));
     });
 }
 
