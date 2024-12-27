@@ -40,9 +40,7 @@ const AddPatient = () => {
         });
 
         try {
-            console.log(newPatient);
             const res = await window.electron.patients.insert(newPatient);
-            console.log(res);
 
             if (res.success) {
                 messageApi.open({

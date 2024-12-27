@@ -17,9 +17,9 @@ ipcMainHandle('patients:insert', async (Patient) => {
     }
 });
 
-ipcMainHandle('patients:update', async (Patient) => {
+ipcMainHandle('patients:update', async (id, Patient) => {
     try {
-        await updatePatient(Patient);
+        await updatePatient(id, Patient);
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };

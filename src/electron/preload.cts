@@ -4,7 +4,7 @@ electron.contextBridge.exposeInMainWorld("electron", {
     patients: {
         get: (page, pageSize, search) => ipcInvoke('patients:get', page, pageSize, search),
         insert: (patient) => ipcInvoke('patients:insert', patient),
-        update: (patient) => ipcInvoke('patients:update', patient),
+        update: (id, patient) => ipcInvoke('patients:update', id, patient),
         delete: (id) => ipcInvoke('patients:delete', id),
     },
 } satisfies Window['electron']);

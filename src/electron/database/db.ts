@@ -51,9 +51,11 @@ export async function insertPatient(patient: Omit<Patient, 'id'>) {
     await pool.query('INSERT INTO patients (\"name\", \"date_of_birth\", \"gender\", \"contact_number\") VALUES ($1, $2, $3, $4)', [name, dob, gender, contact_number]);
 }
 
-export async function updatePatient(patient: Patient) {
-    const { id, name, date_of_birth, gender, contact_number } = patient;
-    await pool.query('UPDATE patients SET name = $1, date_of_birth = $2, gender = $3, contact_number = $4 WHERE id = $5', [name, date_of_birth, gender, contact_number, id]);
+export async function updatePatient(id: number, patient: Patient) {
+    const { name, date_of_birth, gender, contact_number } = patient;
+    await pool.query('UPDATE patients SET \"name\" = $1, \"date_of_birth\" = $2, \"gender\" = $3, \"contact_number\" = $4 WHERE \"id\" = $5', 
+        [name, date_of_birth, gender, contact_number, id]
+    );
 }
 
 export async function deletePatient(id: number) {
