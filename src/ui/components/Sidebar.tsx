@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Menu } from "antd";
 import {
@@ -42,11 +41,13 @@ const Sidebar = ({ darkTheme }: SidebarProps) => {
                 <Menu.Item key="/analysis/test-analysis">Test analysis</Menu.Item>
                 <Menu.Item key="/analysis/finantial-analysis">Finantial analysis</Menu.Item>
             </Menu.SubMenu>
-            <Menu.Item key="/patients-n-doctors" icon={<UsergroupAddOutlined />}>
-                Patients and doctors
-            </Menu.Item>
+            <Menu.SubMenu key="patients-n-doctors" title="P n D" icon={<UsergroupAddOutlined />}>
+                <Menu.Item key="/patients">Patients</Menu.Item>
+                <Menu.Item key="/doctors">Doctors</Menu.Item>
+            </Menu.SubMenu>
             <Menu.SubMenu key="/settings" title="Settings" icon={<SettingOutlined />}>
                 <Menu.Item key="/settings/general">General</Menu.Item>
+                <Menu.Item key="/settings/normal-ranges">Normal ranges</Menu.Item>
                 <Menu.Item key="/settings/page">Page</Menu.Item>
                 <Menu.Item key="/settings/user">User</Menu.Item>
             </Menu.SubMenu>

@@ -24,5 +24,5 @@ interface Patient {
     name: string;
     gender: string;
     date_of_birth: Date;
-    contact_number: string;
+    contact_number?: string;
 }

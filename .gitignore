@@ -15,6 +15,7 @@ dist-electron
 
 # ENV file
 .env
+electron-builder.env
 
 # Editor directories and files
 .vscode/*

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 
-import { MemoryRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { Button, Layout, theme } from 'antd'
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
@@ -10,6 +10,8 @@ import Sidebar from './components/Sidebar';
 import ToggleThemeButton from './components/ToggleThemeButton';
 import Home from './pages/Home';
 import NewTest from './pages/NewTest';
+import Patients from './pages/patients/Patients';
+import AddPatient from './pages/patients/AddPatient';
 
 const { Header, Sider, Content } = Layout;
 
@@ -54,6 +56,8 @@ function App() {
                         <Routes>
                             <Route path="/" element={<Home />} />
                             <Route path="/new-test" element={<NewTest />} />
+                            <Route path="/patients" element={<Patients />} />
+                            <Route path="/add-patient" element={<AddPatient />} />
                         </Routes>
                     </Content>
                 </Layout>

@@ -1,8 +1,9 @@
 import pkg from 'pg';
 import dotenv from 'dotenv';
-
+import { formatISO } from 'date-fns';
 
 dotenv.config();
+
 const { Pool } = pkg;
 
 const pool = new Pool({
@@ -13,6 +14,7 @@ const pool = new Pool({
     port: Number(process.env.DB_PORT),
 });
 
+
 // Patient database operations
 export async function getPatients() {
     const result = await pool.query('SELECT * FROM patients');
@@ -21,7 +23,9 @@ export async function getPatients() {
 
 export async function insertPatient(patient: Omit<Patient, 'id'>) {
     const { name, date_of_birth, gender, contact_number } = patient;
-    await pool.query('INSERT INTO patients (name, date_of_birth, gender, contact_number) VALUES ($1, $2, $3, $4)', [name, date_of_birth, gender, contact_number]);
+    const dob = formatISO(date_of_birth, { representation: "date" });
+
+    await pool.query('INSERT INTO patients (\"name\", \"date_of_birth\", \"gender\", \"contact_number\") VALUES ($1, $2, $3, $4)', [name, dob, gender, contact_number]);
 }
 
 export async function updatePatient(patient: Patient) {

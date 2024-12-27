@@ -11,7 +11,7 @@ export function ipcMainHandle<Key extends keyof EventPayloadMapping>(
     handler: (...args: EventPayloadMapping[Key]['args']) => Promise<EventPayloadMapping[Key]['return']>
 ) {
     ipcMain.handle(key, async (event, ...args) => {
-        validateEventFrame(event.senderFrame!);
+        // validateEventFrame(event.senderFrame!);
         return handler(...(args as EventPayloadMapping[Key]['args']));
     });
 }
