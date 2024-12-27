@@ -1,9 +1,11 @@
 import { getPatients, insertPatient, updatePatient, deletePatient } from '../database/db.js';
 import { ipcMainHandle } from '../utils.js';
 
-ipcMainHandle('patients:get', async () => {
-    const patients = await getPatients();
-    return { patients };
+ipcMainHandle('patients:get', async (page, pageSize, search) => {
+    const limit = pageSize;
+    const offset = (page - 1) * pageSize;
+    const { patients, total } = await getPatients(offset, limit, search);
+    return { patients, total };
 });
 
 ipcMainHandle('patients:insert', async (Patient) => {

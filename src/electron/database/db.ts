@@ -16,10 +16,33 @@ const pool = new Pool({
 
 
 // Patient database operations
-export async function getPatients() {
-    const result = await pool.query('SELECT * FROM patients');
-    return result.rows as Patient[];
+export async function getPatients(offset: number, limit: number, search: string) {
+    const searchCondition = search ? `%${search.toLowerCase()}%` : '%';
+
+    try {
+        const result = await pool.query(
+            `SELECT * FROM patients 
+             WHERE LOWER(TRIM(name)) LIKE $1
+             ORDER BY id 
+             LIMIT $2 OFFSET $3`,
+            [searchCondition, limit, offset]
+        );
+
+        const totalResult = await pool.query(
+            `SELECT COUNT(*) FROM patients WHERE LOWER(TRIM(name)) LIKE $1`,
+            [searchCondition]
+        );
+
+        return {
+            patients: result.rows as Patient[],
+            total: parseInt(totalResult.rows[0].count, 10),
+        };
+    } catch (error) {
+        console.error("Error fetching patients:", error);
+        throw error;
+    }
 }
+
 
 export async function insertPatient(patient: Omit<Patient, 'id'>) {
     const { name, date_of_birth, gender, contact_number } = patient;

@@ -2,10 +2,10 @@ const electron = require('electron');
 
 electron.contextBridge.exposeInMainWorld("electron", {
     patients: {
-        get: () => ipcInvoke('patients:get'),
-        insert: (patient: Omit<Patient, 'id'>) => ipcInvoke('patients:insert', patient),
-        update: (patient: Patient) => ipcInvoke('patients:update', patient),
-        delete: (id: number) => ipcInvoke('patients:delete', id),
+        get: (page, pageSize, search) => ipcInvoke('patients:get', page, pageSize, search),
+        insert: (patient) => ipcInvoke('patients:insert', patient),
+        update: (patient) => ipcInvoke('patients:update', patient),
+        delete: (id) => ipcInvoke('patients:delete', id),
     },
 } satisfies Window['electron']);
 
