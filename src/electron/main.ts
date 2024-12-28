@@ -1,10 +1,11 @@
 import { app, BrowserWindow } from 'electron';
-import path from 'path';
 import { isDev } from './utils.js';
 import { getPreloadPath, getUIPath } from './pathResolver.js';
 
 // Importing patient ipc handlers
 import './ipc_handlers/patientIpcHandlers.js';
+// Importing test ipc handlers
+import './ipc_handlers/testIpcHandlers.js';
 
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({

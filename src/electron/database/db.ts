@@ -53,11 +53,44 @@ export async function insertPatient(patient: Omit<Patient, 'id'>) {
 
 export async function updatePatient(id: number, patient: Patient) {
     const { name, date_of_birth, gender, contact_number } = patient;
-    await pool.query('UPDATE patients SET \"name\" = $1, \"date_of_birth\" = $2, \"gender\" = $3, \"contact_number\" = $4 WHERE \"id\" = $5', 
+    await pool.query('UPDATE patients SET \"name\" = $1, \"date_of_birth\" = $2, \"gender\" = $3, \"contact_number\" = $4 WHERE \"id\" = $5',
         [name, date_of_birth, gender, contact_number, id]
     );
 }
 
 export async function deletePatient(id: number) {
     await pool.query('DELETE FROM patients WHERE id = $1', [id]);
+}
+
+
+// Patient database operations
+export async function getTests(offset: number, limit: number, search: string) {
+    const searchCondition = search ? `%${search.toLowerCase()}%` : '%';
+    try {
+        const result = await pool.query(
+            `SELECT * FROM tests
+             WHERE LOWER(TRIM(name)) LIKE $1
+             ORDER BY id 
+             LIMIT $2 OFFSET $3`,
+            [searchCondition, limit, offset]
+        );
+
+        const totalResult = await pool.query(
+            `SELECT COUNT(*) FROM tests WHERE LOWER(TRIM(name)) LIKE $1`,
+            [searchCondition]
+        );
+
+        return {
+            tests: result.rows as Test[],
+            total: parseInt(totalResult.rows[0].count, 10),
+        };
+    } catch (error) {
+        console.error("Error fetching tests:", error);
+        throw error;
+    }
+}
+export async function updateTestPrice(id: number, price: number) {
+    await pool.query('UPDATE tests SET \"price\" = $1 WHERE \"id\" = $2',
+        [price, id]
+    );
 }

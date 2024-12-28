@@ -83,12 +83,7 @@ const PatientsTable = () => {
                 date_of_birth: new Date(d.toString())
             }
 
-            console.log(updatingPatient);
-
-
             const res = await window.electron.patients.update(values.id, updatingPatient);
-            console.log(res);
-
 
             if (res.success) {
                 messageApi.open({

@@ -12,6 +12,7 @@ import Home from './pages/Home';
 import NewTest from './pages/NewTest';
 import Patients from './pages/patients/Patients';
 import AddPatient from './pages/patients/AddPatient';
+import Tests from './pages/settings/Tests';
 
 const { Header, Sider, Content } = Layout;
 
@@ -58,6 +59,7 @@ function App() {
                             <Route path="/new-test" element={<NewTest />} />
                             <Route path="/patients" element={<Patients />} />
                             <Route path="/add-patient" element={<AddPatient />} />
+                            <Route path="/settings/tests" element={<Tests />} />
                         </Routes>
                     </Content>
                 </Layout>

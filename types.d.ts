@@ -5,7 +5,11 @@ interface Window {
             insert: (patient: Omit<Patient, 'id'>) => Promise<{ success: boolean; error?: string }>;
             update: (id: number, patient: Patient) => Promise<{ success: boolean; error?: string }>;
             delete: (id: number) => Promise<{ success: boolean; error?: string }>;
-        };
+        },
+        tests: {
+            get: (page: number, pageSize: number, search: string) => Promise<{ total: number; tests: Test[] }>;
+            updatePrice: (id: number, price: number) => Promise<{ success: boolean; error?: string }>;
+        }
     };
 }
 
@@ -15,6 +19,8 @@ type EventPayloadMapping = {
     'patients:insert': { args: [Omit<Patient, 'id'>]; return: { success: boolean; error?: string } };
     'patients:update': { args: [number, Patient]; return: { success: boolean; error?: string } };
     'patients:delete': { args: [number]; return: { success: boolean; error?: string } };
+    'tests:get': { args: [number, number, string]; return: { tests: Test[]; total: number } };
+    'tests:updatePrice': { args: [number, number]; return: { success: boolean; error?: string } };
 };
 
 type UnsubscribeFunction = () => void;
@@ -25,4 +31,11 @@ interface Patient {
     gender: string;
     date_of_birth: Date;
     contact_number?: string;
+}
+
+interface Test {
+    id: number;
+    name: string;
+    code: string;
+    price: number;
 }
