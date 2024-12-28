@@ -84,7 +84,6 @@ const TestTable = () => {
 
             fetchTests(currentPage, pageSize, searchTerm);
         } catch (error) {
-            console.log(error);
             messageApi.open({
                 key: "updating_message",
                 type: "error",

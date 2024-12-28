@@ -6,6 +6,8 @@ import { getPreloadPath, getUIPath } from './pathResolver.js';
 import './ipc_handlers/patientIpcHandlers.js';
 // Importing test ipc handlers
 import './ipc_handlers/testIpcHandlers.js';
+// Importing test ipc handlers
+import './ipc_handlers/doctorIpcHandlers.js';
 
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({

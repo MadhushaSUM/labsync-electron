@@ -1,24 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
-import { Button, DatePicker, Flex, Form, Input, message, Modal, Select, Table } from 'antd';
+import { Button, Flex, Form, Input, message, Modal, Table } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import Search from 'antd/es/input/Search';
-import moment from 'moment';
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
 
-type PatientTableItems = Omit<Patient, "date_of_birth"> & {
+interface DoctorTableItems extends Doctor {
     key: number;
-    date_of_birth: string;
 }
 
-const PatientsTable = () => {
-    const navigate = useNavigate();
+const DoctorsTable = () => {
     const [messageApi, contextHolder] = message.useMessage();
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [loading, setLoading] = useState(false);
-    const [dataSource, setDataSource] = useState<PatientTableItems[]>([]);
+    const [dataSource, setDataSource] = useState<DoctorTableItems[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
@@ -26,28 +22,25 @@ const PatientsTable = () => {
 
 
     const [form] = Form.useForm();
-    const [editFormValues, setEditFormValues] = useState<Patient>();
+    const [addForm] = Form.useForm();
+    const [editFormValues, setEditFormValues] = useState<Doctor>();
     const [open, setOpen] = useState(false);
 
+    const [openAdd, setOpenAdd] = useState(false);
 
-    const onTableRowEditClick = (record: PatientTableItems) => {
-        const patient: Patient = {
+
+    const onTableRowEditClick = (record: DoctorTableItems) => {
+        const doctor: Doctor = {
             id: record.id,
-            name: record.name,
-            gender: record.gender,
-            contact_number: record.contact_number,
-            date_of_birth: new Date(record.date_of_birth)
+            name: record.name
         }
-        setEditFormValues(patient);
+        setEditFormValues(doctor);
         setOpen(true);
     }
 
-    const columns: TableColumnsType<PatientTableItems> = [
+    const columns: TableColumnsType<DoctorTableItems> = [
         { title: 'ID', dataIndex: 'id' },
         { title: 'Name', dataIndex: 'name' },
-        { title: 'Gender', dataIndex: 'gender' },
-        { title: 'Date of birth', dataIndex: 'date_of_birth' },
-        { title: 'Contact number', dataIndex: 'contact_number' },
         {
             title: 'Action',
             dataIndex: '',
@@ -65,50 +58,90 @@ const PatientsTable = () => {
         },
     ];
 
-    const onEditSubmit = async (values: Patient) => {
+    const onEditSubmit = async (values: Doctor) => {
         try {
             messageApi.open({
                 key: "updating_message",
                 type: "loading",
-                content: "Updating patient..."
+                content: "Updating doctor..."
             });
 
-            const d = values.date_of_birth as unknown as moment.Moment;
-
-            const updatingPatient: Patient = {
+            const updatingDoctor: Doctor = {
                 id: values.id,
-                name: values.name,
-                gender: values.gender,
-                contact_number: values.contact_number,
-                date_of_birth: new Date(d.toString())
+                name: values.name
             }
 
-            const res = await window.electron.patients.update(values.id, updatingPatient);
+            const res = await window.electron.doctors.update(values.id, updatingDoctor);
 
             if (res.success) {
                 messageApi.open({
                     key: "updating_message",
                     type: "success",
-                    content: "Patient updated!",
+                    content: "Doctor updated!",
                     duration: 2
                 });
             } else {
                 messageApi.open({
                     key: "updating_message",
                     type: "error",
-                    content: "Error occured while updating the patient!",
+                    content: "Error occured while updating the doctor!",
                     duration: 3
                 });
             }
 
             setOpen(false);
 
-            fetchPatients(currentPage, pageSize, searchTerm);
+            fetchDoctors(currentPage, pageSize, searchTerm);
         } catch (error) {
             messageApi.open({
                 key: "updating_message",
                 type: "error",
-                content: "Error occured while updating the patient!",
+                content: "Error occured while updating the doctor!",
+                duration: 3
+            });
+        }
+    };
+
+    const onAddSubmit = async (values: Doctor) => {
+        try {
+            messageApi.open({
+                key: "adding_message",
+                type: "loading",
+                content: "Adding doctor..."
+            });
+
+            const newDoctor: Omit<Doctor, "id"> = {
+                name: values.name
+            }
+
+            const res = await window.electron.doctors.insert(newDoctor);
+
+            if (res.success) {
+                messageApi.open({
+                    key: "adding_message",
+                    type: "success",
+                    content: "Doctor added!",
+                    duration: 2
+                });
+            } else {
+                messageApi.open({
+                    key: "adding_message",
+                    type: "error",
+                    content: "Error occured while adding the doctor!",
+                    duration: 3
+                });
+            }
+
+            addForm.resetFields();
+
+            setOpenAdd(false);
+
+            fetchDoctors(currentPage, pageSize, searchTerm);
+        } catch (error) {
+            messageApi.open({
+                key: "adding_message",
+                type: "error",
+                content: "Error occured while adding the doctor!",
                 duration: 3
             });
         }
@@ -118,30 +151,24 @@ const PatientsTable = () => {
         if (editFormValues) {
             form.setFieldsValue({
                 id: editFormValues.id,
-                name: editFormValues.name,
-                gender: editFormValues.gender,
-                contact_number: editFormValues.contact_number,
-                date_of_birth: moment(editFormValues.date_of_birth),
+                name: editFormValues.name
             });
         }
     }, [editFormValues, form]);
 
 
-    const fetchPatients = async (page: number, pageSize: number, search: string) => {
+    const fetchDoctors = async (page: number, pageSize: number, search: string) => {
         try {
-            const data = await window.electron.patients.get(page, pageSize, search);
-            const transformedData = data.patients.map<PatientTableItems>((patient: Patient) => ({
-                key: patient.id!,
-                id: patient.id,
-                name: patient.name,
-                gender: patient.gender,
-                contact_number: patient.contact_number,
-                date_of_birth: patient.date_of_birth.toLocaleDateString(),
+            const data = await window.electron.doctors.get(page, pageSize, search);
+            const transformedData = data.doctors.map<DoctorTableItems>((doctor: Doctor) => ({
+                key: doctor.id!,
+                id: doctor.id,
+                name: doctor.name
             }));
             setDataSource(transformedData);
             setTotal(data.total);
         } catch (error) {
-            console.error("Failed to fetch patient data:", error);
+            console.error("Failed to fetch doctor data:", error);
         }
     };
 
@@ -151,11 +178,11 @@ const PatientsTable = () => {
     };
 
     useEffect(() => {
-        fetchPatients(currentPage, pageSize, searchTerm);
+        fetchDoctors(currentPage, pageSize, searchTerm);
     }, [currentPage, pageSize, searchTerm]);
 
 
-    const deleteSelectedPatients = () => {
+    const deleteSelectedDoctors = () => {
         setLoading(true);
         // ajax request after empty completing
         setTimeout(() => {
@@ -163,16 +190,12 @@ const PatientsTable = () => {
             setLoading(false);
         }, 1000);
     };
-    const loadAddPatientPage = () => {
-        navigate('/add-patient');
-    }
-
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         setSelectedRowKeys(newSelectedRowKeys);
     };
 
-    const rowSelection: TableRowSelection<PatientTableItems> = {
+    const rowSelection: TableRowSelection<DoctorTableItems> = {
         selectedRowKeys,
         onChange: onSelectChange,
     };
@@ -185,7 +208,7 @@ const PatientsTable = () => {
             <Flex justify="space-between">
                 <div>
                     <Search
-                        placeholder="Search patients by name"
+                        placeholder="Search doctor by name"
                         onSearch={onSearch}
                         enterButton
                         style={{ width: 300 }}
@@ -195,7 +218,7 @@ const PatientsTable = () => {
                     {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
                 </div>
                 <Flex align="center" justify="end" gap="middle">
-                    <Button type="primary" size='middle' onClick={loadAddPatientPage}>
+                    <Button type="primary" size='middle' onClick={() => setOpenAdd(true)}>
                         Add
                     </Button>
                     <Button
@@ -203,7 +226,7 @@ const PatientsTable = () => {
                         type="default"
                         size='middle'
                         color='danger'
-                        onClick={deleteSelectedPatients}
+                        onClick={deleteSelectedDoctors}
                         disabled={!hasSelected}
                         loading={loading}
                     >
@@ -211,7 +234,7 @@ const PatientsTable = () => {
                     </Button>
                 </Flex>
             </Flex>
-            <Table<PatientTableItems>
+            <Table<DoctorTableItems>
                 rowSelection={rowSelection}
                 columns={columns}
                 dataSource={dataSource}
@@ -231,14 +254,14 @@ const PatientsTable = () => {
                 {editFormValues && (
                     <Modal
                         open={open}
-                        title="Edit Patient"
+                        title="Edit doctor"
                         okText="Update"
                         cancelText="Cancel"
                         onCancel={() => setOpen(false)}
                         onOk={() => form.submit()}
                         destroyOnClose
                     >
-                        <Form<Patient>
+                        <Form<Doctor>
                             layout="vertical"
                             form={form}
                             onFinish={onEditSubmit}
@@ -253,34 +276,37 @@ const PatientsTable = () => {
                             >
                                 <Input />
                             </Form.Item>
-                            <Form.Item name="gender" label="Gender">
-                                <Select>
-                                    <Select.Option value="male">Male</Select.Option>
-                                    <Select.Option value="female">Female</Select.Option>
-                                    <Select.Option value="other">Other</Select.Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name="date_of_birth"
-                                label="Date of Birth"
-                                rules={[{ required: true, message: 'Please select the date of birth' }]}
-                            >
-                                <DatePicker />
-                            </Form.Item>
-                            <Form.Item
-                                name="contact_number"
-                                label="Contact Number"
-                                rules={[{ required: true, message: 'Please enter the contact number' }]}
-                            >
-                                <Input />
-                            </Form.Item>
                         </Form>
                     </Modal>
                 )}
-
+            </div>
+            <div>
+                <Modal
+                    open={openAdd}
+                    title="Add doctor"
+                    okText="Add"
+                    cancelText="Cancel"
+                    onCancel={() => setOpenAdd(false)}
+                    onOk={() => addForm.submit()}
+                    destroyOnClose
+                >
+                    <Form<Doctor>
+                        layout="vertical"
+                        form={addForm}
+                        onFinish={onAddSubmit}
+                    >
+                        <Form.Item
+                            name="name"
+                            label="Name"
+                            rules={[{ required: true, message: 'Please enter the name' }]}
+                        >
+                            <Input />
+                        </Form.Item>
+                    </Form>
+                </Modal>
             </div>
         </Flex>
     );
 };
 
-export default PatientsTable;
+export default DoctorsTable;

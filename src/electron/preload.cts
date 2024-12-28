@@ -7,6 +7,12 @@ electron.contextBridge.exposeInMainWorld("electron", {
         update: (id, patient) => ipcInvoke('patients:update', id, patient),
         delete: (id) => ipcInvoke('patients:delete', id),
     },
+    doctors: {
+        get: (page, pageSize, search) => ipcInvoke('doctors:get', page, pageSize, search),
+        insert: (doctor) => ipcInvoke('doctors:insert', doctor),
+        update: (id, doctor) => ipcInvoke('doctors:update', id, doctor),
+        delete: (id) => ipcInvoke('doctors:delete', id),
+    },
     tests: {
         get: (page, pageSize, search) => ipcInvoke('tests:get', page, pageSize, search),
         updatePrice: (id, price) => ipcInvoke('tests:updatePrice', id, price),

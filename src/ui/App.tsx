@@ -13,6 +13,8 @@ import NewTest from './pages/NewTest';
 import Patients from './pages/patients/Patients';
 import AddPatient from './pages/patients/AddPatient';
 import Tests from './pages/settings/Tests';
+import Doctors from './pages/doctors/Doctors';
+import NormalRanges from './pages/settings/NormalRanges';
 
 const { Header, Sider, Content } = Layout;
 
@@ -58,8 +60,10 @@ function App() {
                             <Route path="/" element={<Home />} />
                             <Route path="/new-test" element={<NewTest />} />
                             <Route path="/patients" element={<Patients />} />
+                            <Route path="/doctors" element={<Doctors />} />
                             <Route path="/add-patient" element={<AddPatient />} />
                             <Route path="/settings/tests" element={<Tests />} />
+                            <Route path="/settings/normal-ranges" element={<NormalRanges />} />
                         </Routes>
                     </Content>
                 </Layout>
