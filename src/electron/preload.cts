@@ -16,7 +16,15 @@ electron.contextBridge.exposeInMainWorld("electron", {
     tests: {
         get: (page, pageSize, search) => ipcInvoke('tests:get', page, pageSize, search),
         updatePrice: (id, price) => ipcInvoke('tests:updatePrice', id, price),
-    }
+    },
+    testFields: {
+        getForTest: (testId) => ipcInvoke('testFields:getForTest', testId),
+    },
+    normalRanges: {
+        getForTestField: (testFieldId) => ipcInvoke('normalRanges:getForTestField', testFieldId),
+        getForTest: (testId) => ipcInvoke('normalRanges:getForTest', testId),
+        insertOrUpdate: (testId, testFieldId, rules) => ipcInvoke('normalRanges:insertOrUpdate', testId, testFieldId, rules),
+    },
 } satisfies Window['electron']);
 
 // Wrappers to ensure type safety

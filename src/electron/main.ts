@@ -8,6 +8,10 @@ import './ipc_handlers/patientIpcHandlers.js';
 import './ipc_handlers/testIpcHandlers.js';
 // Importing test ipc handlers
 import './ipc_handlers/doctorIpcHandlers.js';
+// Importing test fields ipc handlers
+import './ipc_handlers/testFieldsIpcHandlers.js';
+// Importing normal ranges ipc handlers
+import './ipc_handlers/normalRangesIpcHandler.js';
 
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({

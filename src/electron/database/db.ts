@@ -1,6 +1,7 @@
 import pkg from 'pg';
 import dotenv from 'dotenv';
 import { formatISO } from 'date-fns';
+import { log } from 'console';
 
 dotenv.config();
 
@@ -131,4 +132,72 @@ export async function updateDoctor(id: number, doctor: Doctor) {
 }
 export async function deleteDoctor(id: number) {
     await pool.query('DELETE FROM doctors WHERE id = $1', [id]);
+}
+
+// Test fields database operations
+export async function getFieldsOfTheTest(testId: number) {
+    try {
+        const result = await pool.query(
+            `SELECT * FROM test_fields 
+             WHERE test_id=$1`,
+            [testId]
+        );
+
+        return {
+            test_fields: result.rows as TestField[]
+        };
+    } catch (error) {
+        console.error("Error fetching patients:", error);
+        throw error;
+    }
+}
+
+// Normal ranges database operations
+export async function getNormalRangesForTestField(testFieldId: number) {
+    try {
+        const result = await pool.query(
+            `SELECT * FROM normal_ranges
+             WHERE test_field_id=$1`,
+            [testFieldId]
+        );
+
+        return {
+            normalRanges: result.rows as NormalRange[]
+        };
+    } catch (error) {
+        console.error("Error fetching normal ranges for a test field id:", error);
+        throw error;
+    }
+}
+export async function getNormalRangesForTest(testId: number) {
+    try {
+        const result = await pool.query(
+            `SELECT * FROM normal_ranges
+             WHERE test_id=$1`,
+            [testId]
+        );
+
+        return {
+            normalRanges: result.rows as NormalRange[]
+        };
+    } catch (error) {
+        console.error("Error fetching normal ranges for a test id:", error);
+        throw error;
+    }
+}
+export async function insertOrUpdateNormalRange(
+    testId: number,
+    testFieldId: number,
+    rules: object
+) {
+
+    await pool.query(
+        `
+        INSERT INTO normal_ranges ("test_id", "test_field_id", "rules")
+        VALUES ($1, $2, $3)
+        ON CONFLICT ("test_field_id", "test_id")
+        DO UPDATE SET "rules" = EXCLUDED."rules"
+        `,
+        [testId, testFieldId, JSON.stringify(rules)]
+    );
 }
