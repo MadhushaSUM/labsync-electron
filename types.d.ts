@@ -20,9 +20,12 @@ interface Window {
             getForTest: (testId: number) => Promise<{ test_fields: TestField[] }>
         },
         normalRanges: {
-            getForTestField: (testFieldId: number) => Promise<{normalRanges: NormalRange[]}>;
-            getForTest: (testId: number) => Promise<{normalRanges: NormalRange[]}>;
+            getForTestField: (testFieldId: number) => Promise<{ normalRanges: NormalRange[] }>;
+            getForTest: (testId: number) => Promise<{ normalRanges: NormalRange[] }>;
             insertOrUpdate: (testId: number, testFieldId: number, rules: object) => Promise<{ success: boolean; error?: string }>;
+        },
+        testRegister: {
+            insert: (patientId: number, doctorId: number | null, refNumber: number | null, date: Date, testIds: number[], totalCost: number, paidPrice: number) => Promise<{ success: boolean; error?: string }>;
         }
     };
 }
@@ -47,6 +50,11 @@ type EventPayloadMapping = {
     'normalRanges:getForTestField': { args: [nuumber], return: { normalRanges: NormalRange[] } };
     'normalRanges:getForTest': { args: [nuumber], return: { normalRanges: NormalRange[] } };
     'normalRanges:insertOrUpdate': { args: [number, number, object]; return: { success: boolean; error?: string } };
+
+    'testRegister:insert': {
+        args: [number, number | null, number | null, Date, number[], number, number],
+        return: { success: boolean; error?: string }
+    }
 };
 
 type UnsubscribeFunction = () => void;

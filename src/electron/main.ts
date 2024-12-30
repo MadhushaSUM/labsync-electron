@@ -12,6 +12,8 @@ import './ipc_handlers/doctorIpcHandlers.js';
 import './ipc_handlers/testFieldsIpcHandlers.js';
 // Importing normal ranges ipc handlers
 import './ipc_handlers/normalRangesIpcHandler.js';
+// Importing test register ipc handlers
+import './ipc_handlers/testRegisterIpcHandlers.js';
 
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({

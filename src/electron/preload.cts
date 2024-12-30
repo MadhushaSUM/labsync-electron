@@ -25,6 +25,9 @@ electron.contextBridge.exposeInMainWorld("electron", {
         getForTest: (testId) => ipcInvoke('normalRanges:getForTest', testId),
         insertOrUpdate: (testId, testFieldId, rules) => ipcInvoke('normalRanges:insertOrUpdate', testId, testFieldId, rules),
     },
+    testRegister: {
+        insert: (patientId, doctorId, refNumber, date, testIds, totalCost, paidPrice) => ipcInvoke('testRegister:insert', patientId, doctorId, refNumber, date, testIds, totalCost, paidPrice),
+    }
 } satisfies Window['electron']);
 
 // Wrappers to ensure type safety

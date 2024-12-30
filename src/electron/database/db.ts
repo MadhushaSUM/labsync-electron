@@ -201,3 +201,53 @@ export async function insertOrUpdateNormalRange(
         [testId, testFieldId, JSON.stringify(rules)]
     );
 }
+
+// Test register database operations
+export async function addTestRegisterWithTests(data: {
+    patientId: number;
+    doctorId?: number | null;
+    refNumber?: number | null;
+    date: Date;
+    testIds: number[];
+    totalCost: number;
+    paidPrice: number;
+}) {
+    const { patientId, doctorId, refNumber, date, testIds, totalCost, paidPrice } = data;
+    const dateOfTest = formatISO(date, { representation: "date" });
+
+    const client = await pool.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        const testRegisterResult = await client.query(
+            `
+            INSERT INTO test_register ("patient_id", "ref_number", "date", "total_cost", "paid_price")
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING id;
+            `,
+            [patientId, refNumber || null, dateOfTest, totalCost, paidPrice]
+        );
+        const testRegisterId = testRegisterResult.rows[0].id;
+
+        const testRegisterTestsValues = testIds.map(
+            (testId) => `(${testRegisterId}, ${testId}, ${doctorId || 'NULL'})`
+        ).join(',');
+
+        await client.query(
+            `
+            INSERT INTO test_register_tests ("test_register_id", "test_id", "doctor_id")
+            VALUES ${testRegisterTestsValues};
+            `
+        );
+
+        await client.query('COMMIT');
+
+        return { success: true };
+    } catch (error: any) {
+        await client.query('ROLLBACK');
+        throw new Error(`Transaction failed: ${error.message}`);
+    } finally {
+        client.release();
+    }
+}
