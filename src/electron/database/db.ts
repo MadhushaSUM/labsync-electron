@@ -1,7 +1,6 @@
 import pkg from 'pg';
 import dotenv from 'dotenv';
 import { formatISO } from 'date-fns';
-import { log } from 'console';
 
 dotenv.config();
 
@@ -240,6 +239,278 @@ export async function addTestRegisterWithTests(data: {
             VALUES ${testRegisterTestsValues};
             `
         );
+
+        await client.query('COMMIT');
+
+        return { success: true };
+    } catch (error: any) {
+        await client.query('ROLLBACK');
+        throw new Error(`Transaction failed: ${error.message}`);
+    } finally {
+        client.release();
+    }
+}
+export async function getTestRegistrations(
+    offset: number,
+    limit: number,
+    fromDate?: Date,
+    toDate?: Date,
+    patientId?: number,
+    refNumber?: number
+) {
+    let baseQuery = `
+        SELECT 
+            tr.id AS test_register_id,
+            tr.date,
+            tr.ref_number,
+            tr.total_cost,
+            tr.paid_price,
+            p.id AS patient_id,
+            p.name AS patient_name,
+            p.gender AS patient_gender,
+            p.date_of_birth AS patient_date_of_birth,
+            p.contact_number AS patient_contact_number,
+            t.id AS test_id,
+            t.name AS test_name,
+            t.code AS test_code,
+            t.price AS test_price,
+            d.id AS doctor_id,
+            d.name AS doctor_name,
+            trt.data,
+            trt.data_added,
+            trt.printed
+        FROM test_register AS tr
+        INNER JOIN patients AS p ON tr.patient_id = p.id
+        INNER JOIN test_register_tests AS trt ON tr.id = trt.test_register_id
+        INNER JOIN tests AS t ON trt.test_id = t.id
+        LEFT JOIN doctors AS d ON trt.doctor_id = d.id
+    `;
+
+    const conditions: string[] = [];
+    const params: any[] = [];
+
+    if (fromDate) {
+        conditions.push(`tr.date >= $${params.length + 1}`);
+        params.push(fromDate);
+    }
+    if (toDate) {
+        conditions.push(`tr.date <= $${params.length + 1}`);
+        params.push(toDate);
+    }
+    if (patientId) {
+        conditions.push(`tr.patient_id = $${params.length + 1}`);
+        params.push(patientId);
+    }
+    if (refNumber) {
+        conditions.push(`tr.ref_number = $${params.length + 1}`);
+        params.push(refNumber);
+    }
+
+    const filteredRegisterConditions = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    const query = `
+        WITH filtered_registers AS (
+            SELECT tr.id
+            FROM test_register AS tr
+            ${filteredRegisterConditions}
+            ORDER BY tr.id
+            LIMIT $${params.length + 1} OFFSET $${params.length + 2}
+        ),
+        filtered_data AS (
+            ${baseQuery}
+        )
+        SELECT 
+            (SELECT COUNT(*) FROM test_register AS tr ${filteredRegisterConditions}) AS total_count,
+            fd.*
+        FROM filtered_data AS fd
+        WHERE fd.test_register_id IN (SELECT id FROM filtered_registers)
+        ORDER BY fd.test_register_id;
+    `;
+
+    params.push(limit, offset);
+
+    const { rows } = await pool.query(query, params);
+
+    if (rows.length === 0) {
+        return { totalCount: 0, registrations: [] };
+    }
+
+    const totalCount = parseInt(rows[0].total_count, 10);
+
+    const registrations: Registration[] = [];
+    const registrationMap = new Map<number, Registration>();
+
+    rows.forEach(row => {
+        if (!registrationMap.has(row.test_register_id)) {
+            const registration: Registration = {
+                id: row.test_register_id,
+                date: row.date,
+                patient: {
+                    id: row.patient_id,
+                    name: row.patient_name,
+                    gender: row.patient_gender,
+                    date_of_birth: row.patient_date_of_birth,
+                    contact_number: row.patient_contact_number,
+                },
+                ref_number: row.ref_number,
+                total_cost: row.total_cost,
+                paid_price: row.paid_price,
+                registeredTests: [],
+            };
+            registrationMap.set(row.test_register_id, registration);
+            registrations.push(registration);
+        }
+
+        const registration: Registration = registrationMap.get(row.test_register_id)!;
+        registration.registeredTests.push({
+            test: {
+                id: row.test_id,
+                name: row.test_name,
+                code: row.test_code,
+                price: row.test_price,
+            },
+            doctor: row.doctor_id
+                ? {
+                    id: row.doctor_id,
+                    name: row.doctor_name,
+                }
+                : null,
+            data: row.data,
+            data_added: row.data_added,
+            printed: row.printed,
+        });
+    });
+
+    return { totalCount, registrations };
+}
+export async function getTestRegistrationById(testRegisterId: number) {
+    const query = `
+        SELECT 
+            tr.id AS test_register_id,
+            tr.date,
+            tr.ref_number,
+            tr.total_cost,
+            tr.paid_price,
+            p.id AS patient_id,
+            p.name AS patient_name,
+            p.gender AS patient_gender,
+            p.date_of_birth AS patient_date_of_birth,
+            p.contact_number AS patient_contact_number,
+            t.id AS test_id,
+            t.name AS test_name,
+            t.code AS test_code,
+            t.price AS test_price,
+            d.id AS doctor_id,
+            d.name AS doctor_name,
+            trt.data,
+            trt.data_added,
+            trt.printed
+        FROM test_register AS tr
+        INNER JOIN patients AS p ON tr.patient_id = p.id
+        INNER JOIN test_register_tests AS trt ON tr.id = trt.test_register_id
+        INNER JOIN tests AS t ON trt.test_id = t.id
+        LEFT JOIN doctors AS d ON trt.doctor_id = d.id
+        WHERE tr.id = $1;
+    `;
+
+    const { rows } = await pool.query(query, [testRegisterId]);
+
+    if (rows.length === 0) {
+        return null;
+    }
+
+    const registration: Registration = {
+        id: rows[0].test_register_id,
+        date: rows[0].date,
+        patient: {
+            id: rows[0].patient_id,
+            name: rows[0].patient_name,
+            gender: rows[0].patient_gender,
+            date_of_birth: rows[0].patient_date_of_birth,
+            contact_number: rows[0].patient_contact_number,
+        },
+        ref_number: rows[0].ref_number,
+        total_cost: rows[0].total_cost,
+        paid_price: rows[0].paid_price,
+        registeredTests: rows.map(row => ({
+            test: {
+                id: row.test_id,
+                name: row.test_name,
+                code: row.test_code,
+                price: row.test_price,
+            },
+            doctor: row.doctor_id
+                ? {
+                    id: row.doctor_id,
+                    name: row.doctor_name,
+                }
+                : null,
+            data: row.data,
+            data_added: row.data_added,
+            printed: row.printed,
+        })),
+    };
+
+    return registration;
+}
+export async function updateTestRegister(data: {
+    id: number;
+    patientId: number;
+    doctorId: number | null;
+    refNumber: number | null;
+    date: Date;
+    testIds: number[];
+    dataAddedTestIds: number[];
+    previousTestIds: number[];
+    totalCost: number;
+    paidPrice: number;
+}) {
+    const { id, patientId, doctorId, refNumber, date, testIds, dataAddedTestIds, previousTestIds, totalCost, paidPrice } = data;
+    const dateOfTest = formatISO(date, { representation: "date" });
+
+    const client = await pool.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        // Update test register details
+        await client.query(
+            `
+            UPDATE test_register
+            SET "patient_id" = $1, "ref_number" = $2, "date" = $3, "total_cost" = $4, "paid_price" = $5
+            WHERE "id" = $6;
+            `,
+            [patientId, refNumber || null, dateOfTest, totalCost, paidPrice, id]
+        );
+
+        const dataEmptyTestsToRemove = previousTestIds.filter(
+            testId => !dataAddedTestIds.includes(testId)
+        );
+
+        if (dataEmptyTestsToRemove.length > 0) {
+            await client.query(
+                `
+                DELETE FROM test_register_tests
+                WHERE "test_register_id" = $1 AND "test_id" = ANY($2::int[]);
+                `,
+                [id, dataEmptyTestsToRemove]
+            );
+        }
+
+        // Identify tests to add (new or edited tests)
+        const testsToAdd = testIds.filter(testId => !dataAddedTestIds.includes(testId));
+        const testRegisterTestsValues = testsToAdd
+            .map(testId => `(${id}, ${testId}, ${doctorId || 'NULL'})`)
+            .join(',');
+
+        if (testsToAdd.length > 0) {
+            await client.query(
+                `
+                INSERT INTO test_register_tests ("test_register_id", "test_id", "doctor_id")
+                VALUES ${testRegisterTestsValues};
+                `
+            );
+        }
 
         await client.query('COMMIT');
 

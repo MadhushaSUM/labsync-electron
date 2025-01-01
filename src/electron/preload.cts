@@ -27,6 +27,9 @@ electron.contextBridge.exposeInMainWorld("electron", {
     },
     testRegister: {
         insert: (patientId, doctorId, refNumber, date, testIds, totalCost, paidPrice) => ipcInvoke('testRegister:insert', patientId, doctorId, refNumber, date, testIds, totalCost, paidPrice),
+        update: (id, patientId, doctorId, refNumber, date, testIds, dataAddedTestIds, previousTestIds, totalCost, paidPrice) => ipcInvoke('testRegister:update', id, patientId, doctorId, refNumber, date, testIds, dataAddedTestIds, previousTestIds, totalCost, paidPrice),
+        get: (page, pageSize, fromDate, toDate, patientId, refNumber) => ipcInvoke('testRegister:get', page, pageSize, fromDate, toDate, patientId, refNumber),
+        getById: (testRegisterId) => ipcInvoke('testRegister:getById', testRegisterId),
     }
 } satisfies Window['electron']);
 

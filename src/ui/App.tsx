@@ -9,19 +9,24 @@ import Logo from './components/Logo';
 import Sidebar from './components/Sidebar';
 import ToggleThemeButton from './components/ToggleThemeButton';
 import Home from './pages/Home';
-import NewTest from './pages/new-test/NewTest';
 import Patients from './pages/patients/Patients';
 import AddPatient from './pages/patients/AddPatient';
 import Tests from './pages/settings/Tests';
 import Doctors from './pages/doctors/Doctors';
 import NormalRanges from './pages/settings/NormalRanges';
 import { ScrollArea } from './components/ScrollArea';
+import RegisteredTests from './pages/test-registraion/RegisteredTests';
+import NewTest from './pages/test-registraion/NewTest';
+import EditTestRegistration from './pages/test-registraion/EditTestRegistration';
 
 const { Header, Sider, Content } = Layout;
 
 function App() {
-    const [darkTheme, setDarkTheme] = useState(true);
-    const [collapsed, setCollapsed] = useState(true);
+    const [darkTheme, setDarkTheme] = useState(false);
+    const [collapsed, setCollapsed] = useState(false);
+
+    const [editTestRegistrationId, setEditTestRegistrationId] = useState<number>(-1);
+
     const toggleTheme = () => {
         setDarkTheme(!darkTheme);
     }
@@ -33,6 +38,10 @@ function App() {
         token: { colorBgContainer },
     } = theme.useToken();
 
+    const setIdToEditTestRegistration = (id: number) => {
+        setEditTestRegistrationId(id);
+    }
+
     return (
         <Router>
             <Layout>
@@ -42,7 +51,6 @@ function App() {
                     collapsible
                     collapsed={collapsed}
                     trigger={null}
-                    width={200} // Define sidebar width explicitly
                 >
                     <Logo />
                     <Sidebar darkTheme={darkTheme} />
@@ -61,6 +69,8 @@ function App() {
                         <Content className='m-5 h-full' style={{ height: "calc(98vh - 100px)" }} >
                             <Routes>
                                 <Route path="/" element={<Home />} />
+                                <Route path="/test-registration" element={<RegisteredTests editTestFunctionHandle={setIdToEditTestRegistration}/>} />
+                                <Route path="/edit-test-registration" element={<EditTestRegistration testRegistrationId={editTestRegistrationId} />} />
                                 <Route path="/new-test" element={<NewTest />} />
                                 <Route path="/patients" element={<Patients />} />
                                 <Route path="/doctors" element={<Doctors />} />

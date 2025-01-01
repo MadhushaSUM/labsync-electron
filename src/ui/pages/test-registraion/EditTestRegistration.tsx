@@ -1,19 +1,22 @@
-import { Button, Card, Checkbox, Col, DatePicker, Flex, Form, Input, InputNumber, message, Row, Select, Spin, Typography } from "antd";
+import { Button, Card, Checkbox, Col, DatePicker, Flex, Form, Input, InputNumber, message, Row, Select, Spin } from "antd";
+import dayjs from "dayjs";
+import { debounce } from "lodash";
 import { useEffect, useState } from "react";
-import { debounce } from 'lodash';
-import dayjs from 'dayjs';
+import { useNavigate } from "react-router-dom";
+import moment from 'moment';
+import { calculateAge } from "../../lib/utils";
+
 
 const { Option } = Select;
 
-const calculateAge = (dob: Date) => {
-    const diff = Date.now() - new Date(dob).getTime();
-    const ageDate = new Date(diff);
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
-};
 
-const NewTest = () => {
-    const [form] = Form.useForm();
+
+const EditTestRegistration = ({ testRegistrationId }: { testRegistrationId: number }) => {
+    const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
+    const [form] = Form.useForm();
+
+    const [testRegister, setTestRegister] = useState<Registration | null>();
 
     const [patients, setPatients] = useState<Patient[]>([]);
     const [selectedPatient, setSelectedPatient] = useState<string | null>(null);
@@ -27,6 +30,11 @@ const NewTest = () => {
 
     const [loading, setLoading] = useState(false);
 
+    const fetchTestRegistrationData = async () => {
+        const data = await window.electron.testRegister.getById(testRegistrationId);
+        setTestRegister(data.registration);
+    }
+
     const fetchPatients = debounce(async (search: string) => {
         try {
             setLoading(true);
@@ -38,11 +46,6 @@ const NewTest = () => {
             setLoading(false);
         }
     }, 500);
-
-    const handlePatientSelect = (value: string) => {
-        setSelectedPatient(value);
-        setSelectedPatientId(patients.find((patient) => `${patient.name} [${calculateAge(patient.date_of_birth)}]` === value)?.id);
-    };
 
     const fetchDoctors = debounce(async (search: string) => {
         try {
@@ -68,14 +71,20 @@ const NewTest = () => {
         }
     };
 
-    useEffect(() => {
-        fetchTests();
-    }, []);
+    const handlePatientSelect = (value: string) => {
+        setSelectedPatient(value);
+        setSelectedPatientId(patients.find((patient) => `${patient.name} [${calculateAge(patient.date_of_birth)}]` === value)?.id);
+    };
 
     const handleDoctorSelect = (value: string) => {
         setSelectedDoctor(value);
         setSelectedDoctorId(doctors.find((doctor) => doctor.name === value)?.id);
     };
+
+    const handleDoctorClear = () => {
+        setSelectedDoctor(null);
+        setSelectedDoctorId(undefined);
+    }
 
     const onSelectedInvestigationsChange = (checkedValues: string[]) => {
         let total_cost = 0;
@@ -87,38 +96,87 @@ const NewTest = () => {
         form.setFieldValue("total_cost", total_cost);
     }
 
+    useEffect(() => {
+        fetchTests();
+        fetchTestRegistrationData();
+    }, []);
+
+    useEffect(() => {
+        if (testRegister) {
+            setPatients([testRegister.patient]);
+            setDoctors(testRegister.registeredTests[0].doctor ? [testRegister.registeredTests[0].doctor] : []);
+
+            setSelectedPatient(`${testRegister.patient.name} [${calculateAge(testRegister.patient.date_of_birth)}]`);
+            setSelectedDoctor(
+                testRegister.registeredTests[0].doctor ?
+                    testRegister.registeredTests[0].doctor.name : null
+            );
+
+            setSelectedPatientId(testRegister.patient.id);
+            setSelectedDoctorId(
+                testRegister.registeredTests[0].doctor ?
+                    testRegister.registeredTests[0].doctor.id : undefined
+            );
+
+            form.setFieldsValue({
+                "patient": `${testRegister.patient.name} [${calculateAge(testRegister.patient.date_of_birth)}]`,
+                "ref_number": Number(testRegister.ref_number),
+                "date": moment(testRegister.date),
+                "investigations": testRegister.registeredTests.map((value) => (value.test.id)),
+                "total_cost": testRegister.total_cost,
+                "paid_price": testRegister.paid_price
+            });
+
+            if (testRegister.registeredTests[0].doctor) {
+                form.setFieldValue("doctor", testRegister.registeredTests[0].doctor.name);
+            }
+        }
+    }, [testRegister]);
+
     const onFormSubmit = async (values: any) => {
         try {
             messageApi.open({
                 key: "saving_message",
                 type: "loading",
-                content: "Adding registration..."
+                content: "Updating registration..."
             });
 
-            if (selectedPatientId) {
+            if (testRegister && selectedPatientId) {
                 const patientId = Number(selectedPatientId);
                 const doctorId = selectedDoctorId ? selectedDoctorId : null;
                 const refNumber = values.ref_number ? values.ref_number : null;
 
                 let investigations = [];
+                let dataAddedinvestigations = [];
+                let previousTestIds = testRegister.registeredTests.map((value) => Number(value.test.id));
+
                 for (const investigationStr of values.investigations) {
                     investigations.push(Number(investigationStr));
                 }
+                for (const investigationStr of testRegister.registeredTests) {
+                    if (investigationStr.data_added) {
+                        dataAddedinvestigations.push(Number(investigationStr.test.id));
+                    }
+                }
 
-                const res = await window.electron.testRegister.insert(
+                const res = await window.electron.testRegister.update(
+                    testRegister.id,
                     patientId,
                     doctorId,
                     refNumber,
                     new Date(values.date),
                     investigations,
+                    dataAddedinvestigations,
+                    previousTestIds,
                     Number(values.total_cost),
                     Number(values.paid_price)
-                )
+                );
+
                 if (res.success) {
                     messageApi.open({
                         key: "saving_message",
                         type: "success",
-                        content: "Registration added!"
+                        content: "Registration updated!"
                     });
 
                     form.resetFields();
@@ -126,7 +184,7 @@ const NewTest = () => {
                     messageApi.open({
                         key: "saving_message",
                         type: "error",
-                        content: "Failed to add registration!"
+                        content: "Failed to update registration!"
                     });
                     console.log(res.error);
                 }
@@ -134,14 +192,14 @@ const NewTest = () => {
                 messageApi.open({
                     key: "saving_message",
                     type: "error",
-                    content: "Failed to add registration!"
+                    content: "Failed to update registration!"
                 });
             }
         } catch (error) {
             messageApi.open({
                 key: "saving_message",
                 type: "error",
-                content: "Failed to add registration!"
+                content: "Failed to update registration!"
             });
         }
     }
@@ -150,9 +208,25 @@ const NewTest = () => {
         <div>
             {contextHolder}
             <Card
-                title="Register new test"
-                className="h-full"
-            >
+                title="Edit Test Registration"
+                actions={[
+                    <Flex justify="end" gap={5}>
+                        <Button
+                            variant="solid"
+                            color="primary"
+                        >
+                            Update
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            color="default"
+                            onClick={() => navigate("/test-registration")}
+                        >
+                            Cancel
+                        </Button>
+                    </Flex>
+                ]}
+            >                
                 <div>
                     <Form
                         labelCol={{ span: 6 }}
@@ -198,6 +272,7 @@ const NewTest = () => {
                                 placeholder="Search for a doctor"
                                 onSearch={fetchDoctors}
                                 onSelect={handleDoctorSelect}
+                                onClear={handleDoctorClear}
                                 notFoundContent={loading ? <Spin size="small" /> : "No doctors found"}
                                 filterOption={false}
                                 style={{ width: "100%" }}
@@ -235,11 +310,14 @@ const NewTest = () => {
                         >
                             <Checkbox.Group style={{ width: '100%' }} onChange={onSelectedInvestigationsChange}>
                                 <Row>
-                                    {tests.map((test, _) => (
-                                        <Col key={test.id} span={12}>
-                                            <Checkbox value={test.id}>{test.name}</Checkbox>
-                                        </Col>
-                                    ))}
+                                    {tests.map((test, _) => {
+                                        const dataAdded = testRegister?.registeredTests.find((value) => value.test.id == test.id)?.data_added;
+                                        return (
+                                            <Col key={test.id} span={12}>
+                                                <Checkbox disabled={dataAdded} value={test.id}>{test.name}</Checkbox>
+                                            </Col>
+                                        )
+                                    })}
                                 </Row>
                             </Checkbox.Group>
                         </Form.Item>
@@ -269,21 +347,11 @@ const NewTest = () => {
                                 </Button>
                             </div>
                         </Form.Item>
-
-                        <Form.Item noStyle shouldUpdate>
-                            {() => (
-                                <Typography>
-                                    <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
-                                </Typography>
-                            )}
-                        </Form.Item>
-
                     </Form>
                 </div>
-
             </Card>
         </div>
-    );
-};
+    )
+}
 
-export default NewTest;
+export default EditTestRegistration;

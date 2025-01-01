@@ -27,8 +27,8 @@ const Sidebar = ({ darkTheme }: SidebarProps) => {
             <Menu.Item key="/" icon={<HomeOutlined />}>
                 Home
             </Menu.Item>
-            <Menu.Item key="/new-test" icon={<PlusCircleOutlined />}>
-                New test
+            <Menu.Item key="/test-registration" icon={<PlusCircleOutlined />}>
+                Test Registration
             </Menu.Item>
             <Menu.Item key="/reports" icon={<PrinterOutlined />}>
                 Reports

@@ -26,6 +26,9 @@ interface Window {
         },
         testRegister: {
             insert: (patientId: number, doctorId: number | null, refNumber: number | null, date: Date, testIds: number[], totalCost: number, paidPrice: number) => Promise<{ success: boolean; error?: string }>;
+            get: (page: number, pageSize: number, fromDate?: Date, toDate?: Date, patientId?: number, refNumber?: number) => Promise<{ registrations: Registration[], total: number }>;
+            getById: (testRegisterId: number) => Promise<{ registration: Registration | null }>;
+            update: (id: number, patientId: number, doctorId: number | null, refNumber: number | null, date: Date, testIds: number[], dataAddedTestIds: number[], previousTestIds: number[], totalCost: number, paidPrice: number) => Promise<{ success: boolean; error?: string }>;
         }
     };
 }
@@ -54,7 +57,13 @@ type EventPayloadMapping = {
     'testRegister:insert': {
         args: [number, number | null, number | null, Date, number[], number, number],
         return: { success: boolean; error?: string }
-    }
+    };
+    'testRegister:get': { args: [number, number, Date?, Date?, number?, number?], return: { registrations: Registration[], total: number } };
+    'testRegister:getById': { args: [number], return: { registration: Registration | null } };
+    'testRegister:update': {
+        args: [number, number, number | null, number | null, Date, number[], number[], number[], number, number],
+        return: { success: boolean; error?: string }
+    };
 };
 
 type UnsubscribeFunction = () => void;
@@ -90,4 +99,22 @@ interface NormalRange {
     test_id: number,
     test_field_id: number,
     rules: object[]
+}
+
+interface RegisteredTest {
+    test: Test;
+    doctor: Doctor | null;
+    data: Record<string, any>; // JSON object
+    data_added: boolean;
+    printed: boolean;
+}
+
+interface Registration {
+    id: number;
+    date: Date;
+    patient: Patient;
+    ref_number?: number;
+    total_cost: number;
+    paid_price: number;
+    registeredTests: RegisteredTest[];
 }
