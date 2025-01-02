@@ -8,7 +8,7 @@ import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import Logo from './components/Logo';
 import Sidebar from './components/Sidebar';
 import ToggleThemeButton from './components/ToggleThemeButton';
-import Home from './pages/Home';
+import Home from './pages/home/Home';
 import Patients from './pages/patients/Patients';
 import AddPatient from './pages/patients/AddPatient';
 import Tests from './pages/settings/Tests';
@@ -66,7 +66,7 @@ function App() {
                         />
                     </Header>
                     <ScrollArea>
-                        <Content className='m-5 h-full' style={{ height: "calc(98vh - 100px)" }} >
+                        <Content className='m-5' style={{ height: "calc(98vh - 100px)" }} >
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/test-registration" element={<RegisteredTests editTestFunctionHandle={setIdToEditTestRegistration}/>} />

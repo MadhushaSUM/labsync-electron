@@ -1,4 +1,4 @@
-import { addTestRegisterWithTests, getTestRegistrationById, getTestRegistrations, updateTestRegister } from "../database/db.js";
+import { addTestRegisterWithTests, getDataEmptyTestsList, getTestRegistrationById, getTestRegistrations, saveTestData, updateTestRegister } from "../database/db.js";
 import { ipcMainHandle } from "../utils.js";
 
 ipcMainHandle('testRegister:insert', async (
@@ -52,6 +52,25 @@ ipcMainHandle('testRegister:update', async (
     try {
         const { success } = await updateTestRegister({ id, patientId, doctorId, refNumber, date, testIds, dataAddedTestIds, previousTestIds, totalCost, paidPrice });
         return { success: success };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMainHandle('testRegister:getDataEmptyTests', async () => {
+    const registrations = await getDataEmptyTestsList();
+    return { dataEmptyTests: registrations }
+});
+
+ipcMainHandle('testRegister:addData', async (
+    testRegisterId,
+    testId,
+    data,
+    doctorId
+) => {
+    try {
+        await saveTestData(testRegisterId, testId, data, doctorId);
+        return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
     }

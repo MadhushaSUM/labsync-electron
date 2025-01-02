@@ -29,6 +29,8 @@ interface Window {
             get: (page: number, pageSize: number, fromDate?: Date, toDate?: Date, patientId?: number, refNumber?: number) => Promise<{ registrations: Registration[], total: number }>;
             getById: (testRegisterId: number) => Promise<{ registration: Registration | null }>;
             update: (id: number, patientId: number, doctorId: number | null, refNumber: number | null, date: Date, testIds: number[], dataAddedTestIds: number[], previousTestIds: number[], totalCost: number, paidPrice: number) => Promise<{ success: boolean; error?: string }>;
+            getDataEmptyTests: () => Promise<{ dataEmptyTests: DataEmptyTests[] }>;
+            addData: (testRegisterId: number, testId: number, data: object, doctorId?: number) => Promise<{ success: boolean; error?: string }>;
         }
     };
 }
@@ -64,6 +66,8 @@ type EventPayloadMapping = {
         args: [number, number, number | null, number | null, Date, number[], number[], number[], number, number],
         return: { success: boolean; error?: string }
     };
+    'testRegister:getDataEmptyTests': { args: [], return: { dataEmptyTests: DataEmptyTests[] } };
+    'testRegister:addData': { args: [number, number, object, number?], return: { success: boolean; error?: string } };
 };
 
 type UnsubscribeFunction = () => void;
@@ -117,4 +121,19 @@ interface Registration {
     total_cost: number;
     paid_price: number;
     registeredTests: RegisteredTest[];
+}
+
+interface DataEmptyTests {
+    testRegisterId: number;
+    testId: number;
+    date: Date;
+    testName: string;
+    patientId: number;
+    patientName: string;
+    patientDOB: Date;
+    patientGender: string;
+    ref_number?: number;
+    doctorId?: number;
+    doctorName?: string;
+    data?: Record<string, any>;
 }
