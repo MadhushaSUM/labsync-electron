@@ -2,6 +2,7 @@ import { addFBSData } from "./fbsReport.js";
 import { addFBCData } from "./fbcReport.js";
 import { addLipidProfileData } from "./lipidProfileReport.js";
 import { addUFRData } from "./ufrReport.js";
+import { addCRPData } from "./crpReport.js";
 
 
 export function testMapper(testId: number, doc: PDFKit.PDFDocument, topMargin: number, data: object) {
@@ -14,6 +15,8 @@ export function testMapper(testId: number, doc: PDFKit.PDFDocument, topMargin: n
             return addLipidProfileData(data, doc, topMargin);
         case 4:
             return addUFRData(data, doc, topMargin);
+        case 5:
+            return addCRPData(data, doc, topMargin);
 
         default:
             return { document: doc, topMargin: topMargin };
