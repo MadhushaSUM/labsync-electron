@@ -1,5 +1,4 @@
 import { Button, Divider, Form, Input, message, Select, Spin } from "antd";
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { debounce } from "lodash";
 import { useEffect, useState } from "react";
 import { calculateAge } from "../../lib/utils";

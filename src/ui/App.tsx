@@ -18,6 +18,7 @@ import { ScrollArea } from './components/ScrollArea';
 import RegisteredTests from './pages/test-registraion/RegisteredTests';
 import NewTest from './pages/test-registraion/NewTest';
 import EditTestRegistration from './pages/test-registraion/EditTestRegistration';
+import PageSettings from './pages/settings/PageSettings';
 
 const { Header, Sider, Content } = Layout;
 
@@ -77,6 +78,7 @@ function App() {
                                 <Route path="/add-patient" element={<AddPatient />} />
                                 <Route path="/settings/tests" element={<Tests />} />
                                 <Route path="/settings/normal-ranges" element={<NormalRanges />} />
+                                <Route path="/settings/page" element={<PageSettings />} />
                             </Routes>
                         </Content>
                     </ScrollArea>

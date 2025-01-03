@@ -15,6 +15,9 @@ import './ipc_handlers/normalRangesIpcHandler.js';
 // Importing test register ipc handlers
 import './ipc_handlers/testRegisterIpcHandlers.js';
 
+// Importing pdf ipc handlers
+import './ipc_handlers/pdfIpcHandlers.js';
+
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({
         webPreferences: {

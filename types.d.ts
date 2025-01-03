@@ -31,6 +31,9 @@ interface Window {
             update: (id: number, patientId: number, doctorId: number | null, refNumber: number | null, date: Date, testIds: number[], dataAddedTestIds: number[], previousTestIds: number[], totalCost: number, paidPrice: number) => Promise<{ success: boolean; error?: string }>;
             getDataEmptyTests: () => Promise<{ dataEmptyTests: DataEmptyTests[] }>;
             addData: (testRegisterId: number, testId: number, data: object, doctorId?: number) => Promise<{ success: boolean; error?: string }>;
+        },
+        report: {
+            test: () => Promise<{ success: boolean }>;
         }
     };
 }
@@ -57,17 +60,17 @@ type EventPayloadMapping = {
     'normalRanges:insertOrUpdate': { args: [number, number, object]; return: { success: boolean; error?: string } };
 
     'testRegister:insert': {
-        args: [number, number | null, number | null, Date, number[], number, number],
-        return: { success: boolean; error?: string }
+        args: [number, number | null, number | null, Date, number[], number, number], return: { success: boolean; error?: string }
     };
     'testRegister:get': { args: [number, number, Date?, Date?, number?, number?], return: { registrations: Registration[], total: number } };
     'testRegister:getById': { args: [number], return: { registration: Registration | null } };
     'testRegister:update': {
-        args: [number, number, number | null, number | null, Date, number[], number[], number[], number, number],
-        return: { success: boolean; error?: string }
+        args: [number, number, number | null, number | null, Date, number[], number[], number[], number, number], return: { success: boolean; error?: string }
     };
     'testRegister:getDataEmptyTests': { args: [], return: { dataEmptyTests: DataEmptyTests[] } };
     'testRegister:addData': { args: [number, number, object, number?], return: { success: boolean; error?: string } };
+
+    'report:test': { args: [], return: { success: boolean } };
 };
 
 type UnsubscribeFunction = () => void;
