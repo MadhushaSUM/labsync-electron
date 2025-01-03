@@ -16,6 +16,15 @@ export function ipcMainHandle<Key extends keyof EventPayloadMapping>(
     });
 }
 
+export function ipcMainOn<Key extends keyof EventPayloadMapping>(
+    key: Key,
+    handler: (event: Electron.IpcMainEvent, ...args: EventPayloadMapping[Key]['args']) => void
+) {
+    ipcMain.on(key, (event, ...args) => {
+        handler(event, ...(args as EventPayloadMapping[Key]['args']));
+    });
+}
+
 export function ipcWebContentsSend<Key extends keyof EventPayloadMapping>(
     key: Key,
     webContents: WebContents,
@@ -32,3 +41,9 @@ export function validateEventFrame(frame: WebFrameMain) {
         throw new Error("Malicious event");
     }
 }
+
+export function calculateAge(dob: Date) {
+    const diff = Date.now() - new Date(dob).getTime();
+    const ageDate = new Date(diff);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+};

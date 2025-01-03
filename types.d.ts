@@ -35,6 +35,7 @@ interface Window {
         report: {
             test: () => Promise<{ success: boolean }>;
             getTests: (page: number, pageSize: number, allReports: boolean, fromDate?: Date, toDate?: Date, patientId?: number, refNumber?: number) => Promise<{ registrations: DataEmptyTests[], total: number }>;
+            printPreview: (report: DataEmptyTests) => void;
         }
     };
 }
@@ -73,6 +74,7 @@ type EventPayloadMapping = {
 
     'report:test': { args: [], return: { success: boolean } };
     'report:getTests': { args: [number, number, boolean, Date?, Date?, number?, number?], return: { registrations: DataEmptyTests[], total: number } };
+    'report:printPreview': { args: [report: DataEmptyTests], return: {} };
 };
 
 type UnsubscribeFunction = () => void;

@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { calculateAge } from "../../lib/utils";
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { TableRowSelection } from "antd/es/table/interface";
 
 interface TestRegistrationTableItems extends DataEmptyTests {
-
+    key: string;
 }
 
 const PrintReportTable = () => {
@@ -88,7 +89,6 @@ const PrintReportTable = () => {
             patientId,
             refNumber
         );
-        console.log(data);
 
         setTestRegistrations(data.registrations);
         setTotal(data.total);
@@ -154,6 +154,24 @@ const PrintReportTable = () => {
         }
     }
 
+    const handlePrintPreview = () => {
+        const selectedRow = dataSource.find((item) => selectedRowKeys[0] == item.key);
+        if (selectedRow) {
+            window.electron.report.printPreview(selectedRow);
+        }
+    }
+
+    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+        setSelectedRowKeys(newSelectedRowKeys);
+    };
+
+    const rowSelection: TableRowSelection<TestRegistrationTableItems> = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+    };
+
+    const hasSelected = selectedRowKeys.length > 0;
+
     useEffect(() => {
         fetchTestsToPrint(currentPage, pageSize, allReports);
     }, [currentPage, pageSize]);
@@ -165,6 +183,13 @@ const PrintReportTable = () => {
     return (
         <div className="p-5">
             {contextHolder}
+            <div className="my-5">
+                <Flex gap={5} justify="end">
+                    <Button style={{ width: 100 }} color="primary" variant="solid">Print</Button>
+                    <Button style={{ width: 100 }} color="primary" variant="outlined" onClick={handlePrintPreview}>Preview</Button>
+                    <Button style={{ width: 100 }} color="default" variant="outlined">Merge</Button>
+                </Flex>
+            </div>
             <div className="my-5">
                 <Flex gap={5}>
                     <Select
@@ -227,12 +252,11 @@ const PrintReportTable = () => {
                             value={filterApplied}
                         />
                     </div>
-
-
                 </Flex>
             </div>
             <div>
                 <Table
+                    rowSelection={rowSelection}
                     columns={columns}
                     dataSource={dataSource}
                     pagination={{
@@ -245,7 +269,13 @@ const PrintReportTable = () => {
                             setPageSize(pageSize || 10);
                         },
                     }}
+                    footer={() => (
+                        <span>
+                            {hasSelected ? `Selected ${selectedRowKeys.length} items` : "Empty selection"}
+                        </span>
+                    )}
                 />
+
             </div>
         </div>
     )

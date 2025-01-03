@@ -36,6 +36,7 @@ electron.contextBridge.exposeInMainWorld("electron", {
     report: {
         test: () => ipcInvoke('report:test'),
         getTests: (page, pageSize, allReports, fromDate, toDate, patientId, refNumber) => ipcInvoke('report:getTests', page, pageSize, allReports, fromDate, toDate, patientId, refNumber),
+        printPreview: (reports) => ipcSend('report:printPreview', reports),
     }
 } satisfies Window['electron']);
 
@@ -55,4 +56,11 @@ function ipcOn<Key extends keyof EventPayloadMapping>(
     electron.ipcRenderer.on(key, cb);
 
     return () => electron.ipcRenderer.off(key, cb);
+}
+
+function ipcSend<Key extends keyof EventPayloadMapping>(
+    key: Key,
+    ...args: EventPayloadMapping[Key]['args']
+): void {
+    electron.ipcRenderer.send(key, ...args);
 }

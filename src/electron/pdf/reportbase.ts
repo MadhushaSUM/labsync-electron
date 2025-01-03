@@ -2,29 +2,31 @@ import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
 import { app, BrowserWindow } from 'electron';
+import { calculateAge } from '../utils.js';
 
-const config = {
-    outputPath: path.join(app.getPath('desktop'), 'pdf-output'),
-    fonts: {
-        normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
-        bold: path.join(app.getAppPath(), 'fonts/Aptos-Bold.ttf')
-    },
-    linePositions: [
-        { x1: 0, y1: 150, x2: 595, y2: 150 },
-        { x1: 0, y1: 240, x2: 595, y2: 240 }
-    ],
-    textEntries: [
-        { label: "Name", value: "Mr. Chamara Disanayake", x: 40, y: 160, valueX: 145 },
-        { label: "Gender", value: "Male", x: 40, y: 190, valueX: 145 },
-        { label: "Requested doctor", value: "Mr. Chandana Disanayake (MBBS)", x: 40, y: 220, valueX: 145 },
-        { label: "Age", value: "37 years", x: 330, y: 160, valueX: 435 },
-        { label: "Date", value: "2025-01-03", x: 330, y: 190, valueX: 435 },
-        { label: "Reference number", value: "15462", x: 330, y: 220, valueX: 435 }
-    ],
-    fontSize: 11
-};
 
-export function generateReportBase() {
+export function generateReportBase(report: DataEmptyTests) {
+    const config = {
+        outputPath: path.join(app.getPath('desktop'), 'pdf-output'),
+        fonts: {
+            normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
+            bold: path.join(app.getAppPath(), 'fonts/Aptos-Bold.ttf')
+        },
+        linePositions: [
+            { x1: 0, y1: 150, x2: 595, y2: 150 },
+            { x1: 0, y1: 240, x2: 595, y2: 240 }
+        ],
+        textEntries: [
+            { label: "Name", value: report.patientName, x: 40, y: 160 },
+            { label: "Gender", value: report.patientGender, x: 40, y: 190 },
+            { label: "Requested doctor", value: report.doctorName, x: 40, y: 220 },
+            { label: "Age", value: calculateAge(report.patientDOB), x: 330, y: 160 },
+            { label: "Date", value: report.date.toLocaleDateString(), x: 330, y: 190 },
+            { label: "Reference number", value: report.ref_number, x: 330, y: 220 }
+        ],
+        fontSize: 11
+    };
+
     if (!fs.existsSync(config.outputPath)) {
         fs.mkdirSync(config.outputPath);
     }
@@ -34,21 +36,18 @@ export function generateReportBase() {
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);
 
-    // Draw lines
     config.linePositions.forEach(line => {
         doc.moveTo(line.x1, line.y1).lineTo(line.x2, line.y2).stroke();
     });
 
-    // Add text entries
     config.textEntries.forEach(entry => {
         doc.font(config.fonts.normal).fontSize(config.fontSize).text(entry.label, entry.x, entry.y);
         doc.font(config.fonts.normal).fontSize(config.fontSize).text(":", entry.x + 100, entry.y);
-        doc.font(config.fonts.bold).fontSize(config.fontSize).text(entry.value, entry.valueX, entry.y);
+        doc.font(config.fonts.bold).fontSize(config.fontSize).text(entry.value ? entry.value.toString() : "", entry.x + 105, entry.y);
     });
 
-    doc.end();
+    return { document: doc, topMargin: 250 };
 }
-
 
 export function previewPDF() {
     const previewWindow = new BrowserWindow({
