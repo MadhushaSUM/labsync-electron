@@ -75,7 +75,7 @@ const NormalRanges = () => {
                     messageApi.open({
                         key: "updating_message",
                         type: "error",
-                        content: "Error occured while saving Normal range rule!"
+                        content: "Error occurred while saving Normal range rule!"
                     });
                     console.log(res.error);
                 }
@@ -86,7 +86,7 @@ const NormalRanges = () => {
             messageApi.open({
                 key: "updating_message",
                 type: "error",
-                content: "Error occured while saving Normal range rule!"
+                content: "Error occurred while saving Normal range rule!"
             });
         }
     }

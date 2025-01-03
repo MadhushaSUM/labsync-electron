@@ -75,7 +75,7 @@ const TestTable = () => {
                 messageApi.open({
                     key: "updating_message",
                     type: "error",
-                    content: "Error occured while updating the test price!",
+                    content: "Error occurred while updating the test price!",
                     duration: 3
                 });
             }
@@ -87,7 +87,7 @@ const TestTable = () => {
             messageApi.open({
                 key: "updating_message",
                 type: "error",
-                content: "Error occured while updating the test price!",
+                content: "Error occurred while updating the test price!",
                 duration: 3
             });
         }

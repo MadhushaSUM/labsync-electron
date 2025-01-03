@@ -12,9 +12,9 @@ ipcMainOn('report:printPreview', async (
     report
 ) => {
     const out1 = generateReportBase(report);
-
-    if (report.data) {
-        const out2 = testMapper(report.testId, out1.document, out1.topMargin, report.data);
+    
+    if (report.data) {                 
+        const out2 = testMapper(Number(report.testId), out1.document, out1.topMargin, report.data);
         out2.document.end();
     }
     previewPDF();

@@ -84,7 +84,7 @@ const DoctorsTable = () => {
                 messageApi.open({
                     key: "updating_message",
                     type: "error",
-                    content: "Error occured while updating the doctor!",
+                    content: "Error occurred while updating the doctor!",
                     duration: 3
                 });
             }
@@ -96,7 +96,7 @@ const DoctorsTable = () => {
             messageApi.open({
                 key: "updating_message",
                 type: "error",
-                content: "Error occured while updating the doctor!",
+                content: "Error occurred while updating the doctor!",
                 duration: 3
             });
         }
@@ -127,7 +127,7 @@ const DoctorsTable = () => {
                 messageApi.open({
                     key: "adding_message",
                     type: "error",
-                    content: "Error occured while adding the doctor!",
+                    content: "Error occurred while adding the doctor!",
                     duration: 3
                 });
             }
@@ -141,7 +141,7 @@ const DoctorsTable = () => {
             messageApi.open({
                 key: "adding_message",
                 type: "error",
-                content: "Error occured while adding the doctor!",
+                content: "Error occurred while adding the doctor!",
                 duration: 3
             });
         }

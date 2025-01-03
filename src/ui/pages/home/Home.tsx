@@ -53,7 +53,7 @@ const Home = () => {
                                             <List.Item
                                                 onClick={() => handleListItemClick(item)}
                                             >
-                                                <p className="cursor-pointer">{`${item.patientName} ${item.date.toLocaleDateString()} ${item.ref_number}`}</p>
+                                                <p className="cursor-pointer">{`[${item.patientName}] [${item.date.toLocaleDateString()}] [${item.testName}] [${item.ref_number}]`}</p>
                                             </List.Item>
                                         )
                                     }}
@@ -66,7 +66,7 @@ const Home = () => {
                         <ScrollArea>
                             <div
                                 style={{ height: "calc(100vh - 220px)" }}
-                                className="bg-zinc-200/60 rounded-lg flex justify-center w-full p-5"
+                                className="bg-zinc-200/60 rounded-lg flex justify-center w-full p-5 overflow-y-auto"
                             >
                                 {selectedTest ? (
                                     formMapper[selectedTest.testId] ? (

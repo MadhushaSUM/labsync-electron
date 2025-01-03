@@ -53,7 +53,7 @@ const AddPatient = () => {
                 messageApi.open({
                     key: "saving_message",
                     type: "error",
-                    content: "Error occured while saving the new patient!",
+                    content: "Error occurred while saving the new patient!",
                     duration: 3
                 });
             }
@@ -61,7 +61,7 @@ const AddPatient = () => {
             messageApi.open({
                 key: "saving_message",
                 type: "error",
-                content: "Error occured while saving the new patient!",
+                content: "Error occurred while saving the new patient!",
                 duration: 3
             });
         }

@@ -96,7 +96,7 @@ const PatientsTable = () => {
                 messageApi.open({
                     key: "updating_message",
                     type: "error",
-                    content: "Error occured while updating the patient!",
+                    content: "Error occurred while updating the patient!",
                     duration: 3
                 });
             }
@@ -108,7 +108,7 @@ const PatientsTable = () => {
             messageApi.open({
                 key: "updating_message",
                 type: "error",
-                content: "Error occured while updating the patient!",
+                content: "Error occurred while updating the patient!",
                 duration: 3
             });
         }
