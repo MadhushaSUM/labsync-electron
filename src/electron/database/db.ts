@@ -563,7 +563,7 @@ export async function getDataEmptyTestsList(): Promise<DataEmptyTests[]> {
             doctorName: row.doctor_name,
             ref_number: row.ref_number,
             data: row.data
-        })
+        });
     });
 
     return registrations;
@@ -572,4 +572,106 @@ export async function saveTestData(testRegisterId: number, testId: number, data:
     await pool.query('UPDATE test_register_tests SET \"doctor_id\" = $1, \"data\" = $2, \"data_added\" = true WHERE \"test_register_id\" = $3 AND \"test_id\" = $4',
         [doctorId, JSON.stringify(data), testRegisterId, testId]
     );
+}
+export async function getPrintingTestList(
+    offset: number,
+    limit: number,
+    allReports: boolean,
+    fromDate?: Date,
+    toDate?: Date,
+    patientId?: number,
+    refNumber?: number
+) {
+    let baseQuery = `
+        SELECT 
+            tr.id AS test_register_id,
+            tr.date,
+            tr.ref_number,
+            p.id AS patient_id,
+            p.name AS patient_name,
+            p.gender AS patient_gender,
+            p.date_of_birth AS patient_date_of_birth,
+            t.id AS test_id,
+            t.name AS test_name,
+            d.id AS doctor_id,
+            d.name AS doctor_name,
+            trt.data
+        FROM test_register AS tr
+        INNER JOIN patients AS p ON tr.patient_id = p.id
+        INNER JOIN test_register_tests AS trt ON tr.id = trt.test_register_id
+        INNER JOIN tests AS t ON trt.test_id = t.id
+        LEFT JOIN doctors AS d ON trt.doctor_id = d.id
+        WHERE trt.data_added = true ${allReports? "" : "AND trt.printed = false"} 
+    `;
+
+    const conditions: string[] = [];
+    const params: any[] = [];
+
+    if (fromDate) {
+        conditions.push(`tr.date >= $${params.length + 1}`);
+        params.push(fromDate);
+    }
+    if (toDate) {
+        conditions.push(`tr.date <= $${params.length + 1}`);
+        params.push(toDate);
+    }
+    if (patientId) {
+        conditions.push(`tr.patient_id = $${params.length + 1}`);
+        params.push(patientId);
+    }
+    if (refNumber) {
+        conditions.push(`tr.ref_number = $${params.length + 1}`);
+        params.push(refNumber);
+    }
+
+    const filteredRegisterConditions = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    const query = `
+        WITH filtered_registers AS (
+            SELECT tr.id
+            FROM test_register AS tr
+            ${filteredRegisterConditions}
+        ),
+        filtered_data AS (
+            ${baseQuery}
+        )
+        SELECT 
+            (SELECT COUNT(*) FROM filtered_data) AS total_count,
+            fd.*
+        FROM filtered_data AS fd
+        WHERE fd.test_register_id IN (SELECT id FROM filtered_registers)
+        ORDER BY fd.test_register_id
+        LIMIT $${params.length + 1} OFFSET $${params.length + 2};
+    `;
+
+    params.push(limit, offset);
+
+    const { rows } = await pool.query(query, params);    
+
+    if (rows.length === 0) {
+        return { totalCount: 0, registrations: [] };
+    }
+
+    const totalCount = parseInt(rows[0].total_count, 10);
+
+    const registrations: DataEmptyTests[] = [];
+
+    rows.forEach(row => {
+        registrations.push({
+            testRegisterId: row.test_register_id,
+            testId: row.test_id,
+            testName: row.test_name,
+            patientId: row.patient_id,
+            patientName: row.patient_name,
+            patientDOB: new Date(row.patient_date_of_birth),
+            patientGender: row.patient_gender,
+            date: row.date,
+            doctorId: row.doctor_id,
+            doctorName: row.doctor_name,
+            ref_number: row.ref_number,
+            data: row.data
+        });
+    });
+
+    return { totalCount, registrations };
 }

@@ -1,4 +1,4 @@
-import { addTestRegisterWithTests, getDataEmptyTestsList, getTestRegistrationById, getTestRegistrations, saveTestData, updateTestRegister } from "../database/db.js";
+import { addTestRegisterWithTests, getDataEmptyTestsList, getPrintingTestList, getTestRegistrationById, getTestRegistrations, saveTestData, updateTestRegister } from "../database/db.js";
 import { ipcMainHandle } from "../utils.js";
 
 ipcMainHandle('testRegister:insert', async (
@@ -74,4 +74,19 @@ ipcMainHandle('testRegister:addData', async (
     } catch (error: any) {
         return { success: false, error: error.message };
     }
+});
+
+ipcMainHandle('report:getTests', async (
+    page,
+    pageSize,
+    allReports,
+    fromDate,
+    toDate,
+    patientId,
+    refNumber
+) => {
+    const limit = pageSize;
+    const offset = (page - 1) * pageSize;
+    const { registrations, totalCount } = await getPrintingTestList(offset, limit, allReports, fromDate, toDate, patientId, refNumber);
+    return { registrations: registrations, total: totalCount };
 });
