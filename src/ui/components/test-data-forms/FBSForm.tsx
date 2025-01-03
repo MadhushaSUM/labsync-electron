@@ -55,7 +55,7 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
 
         if (fieldId) {
             const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == fieldId)?.rules;
-            if (normalRangeRules) {
+            if (normalRangeRules) {                
                 for (const rule of normalRangeRules) {
                     if (rule.ageUpper > patientAge && rule.ageLower <= patientAge && rule.gender.includes(data.patientGender)) {
                         if (valueNum > rule.valueUpper) {
@@ -79,7 +79,7 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
         if (fieldId) {
             const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == fieldId)?.rules;
             if (normalRangeRules) {
-                for (const rule of normalRangeRules) {
+                for (const rule of normalRangeRules) {                    
                     if (rule.ageUpper > patientAge && rule.ageLower <= patientAge && rule.gender.includes(data.patientGender)) {
                         return `High: ${rule.valueUpper}  Low: ${rule.valueLower}`
                     }

@@ -255,9 +255,9 @@ const PatientsTable = () => {
                             </Form.Item>
                             <Form.Item name="gender" label="Gender">
                                 <Select>
-                                    <Select.Option value="male">Male</Select.Option>
-                                    <Select.Option value="female">Female</Select.Option>
-                                    <Select.Option value="other">Other</Select.Option>
+                                    <Select.Option value="Male">Male</Select.Option>
+                                    <Select.Option value="Female">Female</Select.Option>
+                                    <Select.Option value="Other">Other</Select.Option>
                                 </Select>
                             </Form.Item>
                             <Form.Item

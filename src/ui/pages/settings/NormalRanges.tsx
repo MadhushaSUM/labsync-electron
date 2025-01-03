@@ -129,13 +129,13 @@ const NormalRanges = () => {
         let otherPercent = 0;
         if (rules) {
             for (const rule of rules) {
-                if (rule.gender.includes("male")) {
+                if (rule.gender.includes("Male")) {
                     malePercent += (rule.ageUpper - rule.ageLower);
                 }
-                if (rule.gender.includes("female")) {
+                if (rule.gender.includes("Female")) {
                     femalePercent += (rule.ageUpper - rule.ageLower);
                 }
-                if (rule.gender.includes("other")) {
+                if (rule.gender.includes("Other")) {
                     otherPercent += (rule.ageUpper - rule.ageLower);
                 }
             }
@@ -275,9 +275,9 @@ const NormalRanges = () => {
                                                             mode="multiple"
                                                             allowClear
                                                         >
-                                                            <Select.Option value="male">Male</Select.Option>
-                                                            <Select.Option value="female">Female</Select.Option>
-                                                            <Select.Option value="other">Other</Select.Option>
+                                                            <Select.Option value="Male">Male</Select.Option>
+                                                            <Select.Option value="Female">Female</Select.Option>
+                                                            <Select.Option value="Other">Other</Select.Option>
                                                         </Select>
                                                     </Form.Item>
                                                     <Row>
