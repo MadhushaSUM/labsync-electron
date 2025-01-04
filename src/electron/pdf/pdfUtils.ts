@@ -1,4 +1,6 @@
+import path from "path";
 import { findTheCorrectNormalRangeRule } from "../utils.js";
+import { app } from "electron";
 
 
 export function addTextEntries(
@@ -37,6 +39,29 @@ export function writeOnDocument(doc: PDFKit.PDFDocument, config: PDFConfig) {
     });
 
     return doc;
+}
+
+export function generateTestPDFConfig(testName: string, topMargin: number) {
+    const config: PDFConfig = {
+        fonts: {
+            normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
+            bold: path.join(app.getAppPath(), 'fonts/Aptos-Bold.ttf')
+        },
+        linePositions: [
+            { x1: 20, y1: 30 + topMargin, x2: 575, y2: 30 + topMargin },
+            { x1: 20, y1: 50 + topMargin, x2: 575, y2: 50 + topMargin },
+        ],
+        textEntries: [
+            { label: testName, x: 0, y: topMargin, fontSize: 15, weight: "bold", options: { align: "center", width: 595 } },
+            { label: "Test", x: 50, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Result", x: 200, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Unit", x: 270, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Flag", x: 330, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Normal Range", x: 420, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+        ],
+    };
+
+    return config;
 }
 
 export interface TestEntry {
