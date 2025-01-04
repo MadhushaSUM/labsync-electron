@@ -8,6 +8,7 @@ import HCGForm from "./HCGForm";
 import LipidProfileForm from "./LipidProfileForm";
 import OTPTForm from "./OTPTForm";
 import RHFactorForm from "./RHFactorForm";
+import SCalciumForm from "./SCalcium";
 import UFRForm from "./UFRForm";
 import WBCDCForm from "./WBCDCForm";
 
@@ -25,6 +26,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     10: HBForm,
     11: WBCDCForm,
     12: RHFactorForm,
+    13: SCalciumForm,
 };
 
 export default formMapper;
