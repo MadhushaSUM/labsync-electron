@@ -2,7 +2,7 @@ import path from "path";
 import { app } from "electron";
 
 
-export function addESRData(data: any, doc: PDFKit.PDFDocument, topMargin: number) {
+export function addOTPTData(data: any, doc: PDFKit.PDFDocument, topMargin: number) {
     const config = {
         fonts: {
             normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
@@ -13,7 +13,7 @@ export function addESRData(data: any, doc: PDFKit.PDFDocument, topMargin: number
             { x1: 20, y1: 50 + topMargin, x2: 575, y2: 50 + topMargin },
         ],
         textEntries: [
-            { label: "ESR", x: 0, y: topMargin, fontSize: 15, weight: "bold", options: { align: "center", width: 595 } },
+            { label: "SGOT/SGPT (AST/ALT)", x: 0, y: topMargin, fontSize: 15, weight: "bold", options: { align: "center", width: 595 } },
             { label: "Test", x: 75, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
             { label: "Result", x: 225, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
             { label: "Unit", x: 325, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
@@ -22,7 +22,8 @@ export function addESRData(data: any, doc: PDFKit.PDFDocument, topMargin: number
     };
 
     const tests = [
-        { name: "ESR 1sr hour", value: data.esr1sthrValue, unit: "mm", flag: data.esr1sthrValueFlag },
+        { name: "SGOT (AST)", value: data.sgotValue, unit: "u/L", flag: data.sgotValueFlag },
+        { name: "SGPT (ALT)", value: data.sgptValue, unit: "u/L", flag: data.sgptValueFlag },
     ];
 
     let yPosition = 55 + topMargin;
