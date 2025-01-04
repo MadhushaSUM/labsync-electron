@@ -640,7 +640,7 @@ export async function getPrintingTestList(
             fd.*
         FROM filtered_data AS fd
         WHERE fd.test_register_id IN (SELECT id FROM filtered_registers)
-        ORDER BY fd.test_register_id
+        ORDER BY fd.test_register_id DESC
         LIMIT $${params.length + 1} OFFSET $${params.length + 2};
     `;
 

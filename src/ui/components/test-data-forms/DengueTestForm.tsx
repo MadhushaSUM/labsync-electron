@@ -78,7 +78,7 @@ const DengueTestForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScre
         <div className="w-full">
             {contextHolder}
             <p className="w-full text-lg text-center m-5 font-bold">
-                Lipid Profile
+                Dengue NS1 Antigen
             </p>
             <Form
                 name="complex-form"

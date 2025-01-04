@@ -135,7 +135,7 @@ const HBForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () =
         <div className="w-full">
             {contextHolder}
             <p className="w-full text-lg text-center m-5 font-bold">
-                ESR
+                HB
             </p>
             <Form
                 name="complex-form"

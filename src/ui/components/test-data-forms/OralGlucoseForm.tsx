@@ -5,7 +5,7 @@ import { calculateAge } from "../../lib/utils";
 
 const { Option } = Select;
 
-const SCalciumForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () => void }) => {
+const OralGlucoseForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () => void }) => {
     const [loading, setLoading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
     const [form] = Form.useForm();
@@ -104,10 +104,13 @@ const SCalciumForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen
                 content: "Saving test data..."
             });
             const savingData = {
-                totalCalciumValue: Number(values.totalCalciumValue),
-                totalCalciumValueFlag: values.totalCalciumValueFlag,
-                ionizedCalciumValue: Number(values.ionizedCalciumValue),
-                ionizedCalciumValueFlag: values.ionizedCalciumValueFlag,
+                glucoseWeight: values.glucoseWeight,
+                fbsValue: Number(values.fbsValue),
+                fbsValueFlag: values.fbsValueFlag,
+                firstHourValue: Number(values.firstHourValue),
+                firstHourValueFlag: values.firstHourValueFlag,
+                secondHourValue: Number(values.secondHourValue),
+                secondHourValueFlag: values.secondHourValueFlag,
                 comment: values.comment
             };
             const res = await window.electron.testRegister.addData(data.testRegisterId, data.testId, savingData, selectedDoctorId);
@@ -134,7 +137,7 @@ const SCalciumForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen
         <div className="w-full">
             {contextHolder}
             <p className="w-full text-lg text-center m-5 font-bold">
-                Serum Calcium
+                Oral Glucose Tolerance
             </p>
             <Form
                 name="complex-form"
@@ -146,10 +149,13 @@ const SCalciumForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen
                     {
                         "patient": data.patientName,
                         "doctor": data.doctorName,
-                        "totalCalciumValue": data.data?.totalCalciumValue,
-                        "totalCalciumValueFlag": data.data?.totalCalciumValueFlag,
-                        "ionizedCalciumValue": data.data?.ionizedCalciumValue,
-                        "ionizedCalciumValueFlag": data.data?.ionizedCalciumValueFlag,
+                        "glucoseWeight": data.data ? data.data?.glucoseWeight : "50g",
+                        "fbsValue": data.data?.fbsValue,
+                        "fbsValueFlag": data.data?.fbsValueFlag,
+                        "firstHourValue": data.data?.firstHourValue,
+                        "firstHourValueFlag": data.data?.firstHourValueFlag,
+                        "secondHourValue": data.data?.secondHourValue,
+                        "secondHourValueFlag": data.data?.secondHourValueFlag,
                         "comment": data.data?.comment,
                     }
                 }
@@ -187,17 +193,27 @@ const SCalciumForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen
 
                 <Divider />
 
-                <Form.Item label="Total Calcium" style={{ marginBottom: 0 }}>
+                <Form.Item
+                    name="glucoseWeight"
+                    label="Glucose weight"
+                    rules={[{ required: true }]}
+                >
+                    <Select style={{ width: 200 }}>
+                        <Option value="50g">50g</Option>
+                        <Option value="75g">75g</Option>
+                    </Select>
+                </Form.Item>
+
+                <Form.Item label="FBS" style={{ marginBottom: 0 }}>
                     <Form.Item
-                        name="totalCalciumValue"
-                        rules={[{ required: true }]}
+                        name="fbsValue"
                         style={{ display: 'inline-block', width: '200px' }}
                     >
-                        <Input addonAfter="mmol/L" placeholder="value" onChange={(e) => setFlag('totalCalciumValue', e.target.value)} />
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('fbsValue', e.target.value)} />
                     </Form.Item>
                     <div className="flex-row items-center inline-flex">
                         <Form.Item
-                            name="totalCalciumValueFlag"
+                            name="fbsValueFlag"
                             style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
                         >
                             <Select placeholder="flag" mode="tags" maxCount={1}>
@@ -206,21 +222,21 @@ const SCalciumForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen
                             </Select>
                         </Form.Item>
                         <span>
-                            {displayNormalRange('totalCalciumValue')}
+                            {displayNormalRange('fbsValue')}
                         </span>
                     </div>
                 </Form.Item>
-                <Form.Item label="Ionized Calcium" style={{ marginBottom: 0 }}>
+
+                <Form.Item label="1ˢᵗ hour" style={{ marginBottom: 0 }}>
                     <Form.Item
-                        name="ionizedCalciumValue"
-                        rules={[{ required: true }]}
+                        name="firstHourValue"
                         style={{ display: 'inline-block', width: '200px' }}
                     >
-                        <Input addonAfter="mmol/L" placeholder="value" onChange={(e) => setFlag('ionizedCalciumValue', e.target.value)} />
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('firstHourValue', e.target.value)} />
                     </Form.Item>
                     <div className="flex-row items-center inline-flex">
                         <Form.Item
-                            name="ionizedCalciumValueFlag"
+                            name="firstHourValueFlag"
                             style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
                         >
                             <Select placeholder="flag" mode="tags" maxCount={1}>
@@ -229,11 +245,34 @@ const SCalciumForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen
                             </Select>
                         </Form.Item>
                         <span>
-                            {displayNormalRange('ionizedCalciumValue')}
+                            {displayNormalRange('firstHourValue')}
                         </span>
                     </div>
                 </Form.Item>
-                
+
+                <Form.Item label="2ⁿᵈ hour" style={{ marginBottom: 0 }}>
+                    <Form.Item
+                        name="secondHourValue"
+                        style={{ display: 'inline-block', width: '200px' }}
+                    >
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('secondHourValue', e.target.value)} />
+                    </Form.Item>
+                    <div className="flex-row items-center inline-flex">
+                        <Form.Item
+                            name="secondHourValueFlag"
+                            style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
+                        >
+                            <Select placeholder="flag" mode="tags" maxCount={1}>
+                                <Option value="Low">Low</Option>
+                                <Option value="High">High</Option>
+                            </Select>
+                        </Form.Item>
+                        <span>
+                            {displayNormalRange('secondHourValue')}
+                        </span>
+                    </div>
+                </Form.Item>
+
                 <Form.Item
                     label="Comment"
                     name="comment"
@@ -252,4 +291,4 @@ const SCalciumForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen
     )
 }
 
-export default SCalciumForm;
+export default OralGlucoseForm;

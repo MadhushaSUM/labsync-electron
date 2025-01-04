@@ -134,7 +134,7 @@ const SElectrolyteForm = ({ data, clearScreen }: { data: DataEmptyTests, clearSc
         <div className="w-full">
             {contextHolder}
             <p className="w-full text-lg text-center m-5 font-bold">
-                Lipid Profile
+                Serum Electrolytes
             </p>
             <Form
                 name="complex-form"

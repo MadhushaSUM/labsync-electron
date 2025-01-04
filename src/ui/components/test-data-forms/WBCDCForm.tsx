@@ -140,7 +140,7 @@ const WBCDCForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: (
         <div className="w-full">
             {contextHolder}
             <p className="w-full text-lg text-center m-5 font-bold">
-                Full Blood Count
+                WBCDC
             </p>
             <Form
                 name="complex-form"
