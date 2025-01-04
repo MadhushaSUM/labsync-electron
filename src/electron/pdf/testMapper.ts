@@ -14,6 +14,7 @@ import { addSCalciumData } from "./sCalciumReport.js";
 import { addSElectrolyteData } from "./sElectrolyteReport.js";
 import { addOralGlucoseData } from "./oralGlucoseReport.js";
 import { addPPBSData } from "./ppbsReport.js";
+import { addSFRData } from "./sfrReport.js";
 
 
 export function testMapper(
@@ -58,6 +59,8 @@ export function testMapper(
             return addOralGlucoseData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 16:
             return addPPBSData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+        case 17:
+            return addSFRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
 
         default:
             return { document: doc, topMargin: topMargin };
