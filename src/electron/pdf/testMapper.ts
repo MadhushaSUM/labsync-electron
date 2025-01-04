@@ -16,6 +16,7 @@ import { addOralGlucoseData } from "./oralGlucoseReport.js";
 import { addPPBSData } from "./ppbsReport.js";
 import { addSFRData } from "./sfrReport.js";
 import { addLFTData } from "./lftReport.js";
+import { addSCreatinineData } from "./sCreatinineReport.js";
 
 
 export function testMapper(
@@ -64,6 +65,8 @@ export function testMapper(
             return addSFRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 18:
             return addLFTData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+        case 19:
+            return addSCreatinineData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
 
         default:
             return { document: doc, topMargin: topMargin };
