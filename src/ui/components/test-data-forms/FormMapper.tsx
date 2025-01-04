@@ -15,6 +15,7 @@ import SElectrolyteForm from "./SElectrolytes.tsx";
 import OralGlucoseForm from "./OralGlucoseForm.tsx";
 import PPBSForm from "./PPBSForm.tsx";
 import SFRForm from "./SFRForm.tsx";
+import LFTForm from "./LFTForm.tsx";
 
 
 const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, clearScreen: () => void }> } = {
@@ -35,6 +36,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     15: OralGlucoseForm,
     16: PPBSForm,
     17: SFRForm,
+    18: LFTForm,
 };
 
 export default formMapper;
