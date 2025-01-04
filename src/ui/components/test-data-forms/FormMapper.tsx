@@ -8,6 +8,7 @@ import HCGForm from "./HCGForm";
 import LipidProfileForm from "./LipidProfileForm";
 import OTPTForm from "./OTPTForm";
 import UFRForm from "./UFRForm";
+import WBCDCForm from "./WBCDCForm";
 
 
 const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, clearScreen: () => void }> } = {
@@ -21,6 +22,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     8: HCGForm,
     9: DengueTestForm,
     10: HBForm,
+    11: WBCDCForm,
 };
 
 export default formMapper;

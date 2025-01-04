@@ -8,6 +8,7 @@ import { addOTPTData } from "./otptReport.js";
 import { addHCGData } from "./hcgReport.js";
 import { addDengueTestData } from "./dengueReport.js";
 import { addHBData } from "./hbReport.js";
+import { addWBCDCData } from "./wbcdcReport.js";
 
 
 export function testMapper(
@@ -40,7 +41,8 @@ export function testMapper(
             return addDengueTestData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 10:
             return addHBData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
-
+        case 11:
+            return addWBCDCData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         default:
             return { document: doc, topMargin: topMargin };
     }
