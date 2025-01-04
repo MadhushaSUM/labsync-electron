@@ -47,3 +47,27 @@ export function calculateAge(dob: Date) {
     const ageDate = new Date(diff);
     return Math.abs(ageDate.getUTCFullYear() - 1970);
 };
+
+export function findTheCorrectNormalRangeRule(
+    normalRanges: NormalRange[],
+    testFieldId: number,
+    patientDateOfBirth: Date,
+    patientGender: string,
+    unit: string
+) {
+    if (testFieldId == -1) {
+        return ""
+    }
+
+    const patientAge = calculateAge(patientDateOfBirth);
+
+    const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == testFieldId)?.rules;
+
+    for (const rule of normalRangeRules) {
+        if (rule.ageUpper > patientAge && rule.ageLower <= patientAge && rule.gender.includes(patientGender)) {
+            return `${rule.valueLower} - ${rule.valueUpper}`
+        }
+    }
+
+    return "";
+}

@@ -1,8 +1,9 @@
 import path from "path";
 import { app } from "electron";
+import { addTextEntries, PDFConfig, TestEntry, writeOnDocument } from "./pdfUtils.js";
 
-export function addCRPData(data: any, doc: PDFKit.PDFDocument, topMargin: number) {
-    const config = {
+export function addCRPData(data: any, doc: PDFKit.PDFDocument, topMargin: number, normalRanges: NormalRange[], patientDateOfBirth: Date, patientGender: string) {
+    const config: PDFConfig = {
         fonts: {
             normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
             bold: path.join(app.getAppPath(), 'fonts/Aptos-Bold.ttf')
@@ -13,42 +14,43 @@ export function addCRPData(data: any, doc: PDFKit.PDFDocument, topMargin: number
         ],
         textEntries: [
             { label: "C. Reactive Proteins", x: 0, y: topMargin, fontSize: 15, weight: "bold", options: { align: "center", width: 595 } },
-            { label: "Test", x: 75, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Result", x: 225, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Unit", x: 325, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Flag", x: 425, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "CRP", x: 75, y: 55 + topMargin, fontSize: 11, weight: "normal", options: undefined },
-            { label: data.crp, x: 225, y: 55 + topMargin, fontSize: 11, weight: "normal", options: undefined },
+            { label: "Test", x: 50, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Result", x: 200, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Unit", x: 270, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Flag", x: 330, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Normal Range", x: 420, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
         ],
     };
 
-    doc.lineWidth(0.5);
-    config.linePositions.forEach(line => {
-        doc.moveTo(line.x1, line.y1).lineTo(line.x2, line.y2).stroke();
-    });
-
-    config.textEntries.forEach(entry => {
-        doc
-            .font(entry.weight == "bold" ? config.fonts.bold : config.fonts.normal)
-            .fontSize(entry.fontSize)
-            .text(entry.label, entry.x, entry.y, entry.options as any);
-    });
-
-    const optionalEntries = [
-        { label: "Titre", x: 75, y: 76 + topMargin, fontSize: 11, weight: "normal", options: undefined },
-        { label: data.crpTitreValue, x: 225, y: 76 + topMargin, fontSize: 11, weight: "normal", options: undefined },
-        { label: "mg/L", x: 325, y: 76 + topMargin, fontSize: 11, weight: "normal", options: undefined },
-        { label: data.crpTitreValueFlag, x: 425, y: 76 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+    const tests: TestEntry[] = [
+        { name: "CRP", testFieldId: -1, value: data.crp, unit: "" },
     ];
 
+    const optionalEntries: TestEntry[] = [
+        { name: "Titre", testFieldId: 22, value: data.crpTitreValue, unit: "mg/L", flag: data.crpTitreValueFlag },
+    ];
+
+    let yPosition = 55 + topMargin;
+
+    yPosition = addTextEntries(tests, config, yPosition, normalRanges, patientDateOfBirth, patientGender);
+
     if (data.crp == "Positive") {
-        optionalEntries.forEach(entry => {
-            doc
-                .font(entry.weight == "bold" ? config.fonts.bold : config.fonts.normal)
-                .fontSize(entry.fontSize)
-                .text(entry.label, entry.x, entry.y, entry.options as any);
+        yPosition = addTextEntries(optionalEntries, config, yPosition, normalRanges, patientDateOfBirth, patientGender);
+    }
+
+    // Add the comment at the end
+    if (data.comment) {
+        config.textEntries.push({
+            label: `Comment: ${data.comment}`,
+            x: 75,
+            y: yPosition + 10,
+            fontSize: 11,
+            weight: "normal",
+            options: { align: "left", width: 450 }
         });
     }
 
-    return { document: doc, topMargin: (topMargin + 100) };
+    const writtenDoc = writeOnDocument(doc, config);
+
+    return { document: writtenDoc, topMargin: yPosition + 40 };
 }

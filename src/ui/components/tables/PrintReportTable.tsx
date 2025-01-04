@@ -1,7 +1,6 @@
-import { Button, DatePicker, Flex, InputNumber, message, Select, Spin, Switch, Table, TableColumnsType, Tag, Typography } from "antd";
+import { Button, DatePicker, Flex, InputNumber, message, Select, Spin, Switch, Table, TableColumnsType, Tag } from "antd";
 import { debounce } from "lodash";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { calculateAge } from "../../lib/utils";
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { TableRowSelection } from "antd/es/table/interface";
@@ -11,7 +10,6 @@ interface TestRegistrationTableItems extends DataEmptyTests {
 }
 
 const PrintReportTable = () => {
-    const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);

@@ -7,22 +7,30 @@ import { addESRData } from "./esrReport.js";
 import { addOTPTData } from "./otptReport.js";
 
 
-export function testMapper(testId: number, doc: PDFKit.PDFDocument, topMargin: number, data: object) {
+export function testMapper(
+    testId: number,
+    doc: PDFKit.PDFDocument,
+    topMargin: number,
+    data: object,
+    normalRanges: NormalRange[],
+    patientDateOfBirth: Date,
+    patientGender: string
+) {
     switch (testId) {
         case 1:
-            return addFBSData(data, doc, topMargin);
+            return addFBSData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 2:
-            return addFBCData(data, doc, topMargin);
+            return addFBCData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 3:
-            return addLipidProfileData(data, doc, topMargin);
+            return addLipidProfileData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 4:
-            return addUFRData(data, doc, topMargin);
+            return addUFRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 5:
-            return addCRPData(data, doc, topMargin);
+            return addCRPData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 6:
-            return addESRData(data, doc, topMargin);
+            return addESRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 7:
-            return addOTPTData(data, doc, topMargin);
+            return addOTPTData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
 
         default:
             return { document: doc, topMargin: topMargin };

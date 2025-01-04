@@ -1,9 +1,10 @@
 import path from "path";
 import { app } from "electron";
+import { addTextEntries, PDFConfig, TestEntry, writeOnDocument } from "./pdfUtils.js";
 
 
-export function addLipidProfileData(data: any, doc: PDFKit.PDFDocument, topMargin: number) {
-    const config = {
+export function addLipidProfileData(data: any, doc: PDFKit.PDFDocument, topMargin: number, normalRanges: NormalRange[], patientDateOfBirth: Date, patientGender: string) {
+    let config: PDFConfig = {
         fonts: {
             normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
             bold: path.join(app.getAppPath(), 'fonts/Aptos-Bold.ttf')
@@ -14,33 +15,26 @@ export function addLipidProfileData(data: any, doc: PDFKit.PDFDocument, topMargi
         ],
         textEntries: [
             { label: "Lipid Profile", x: 0, y: topMargin, fontSize: 15, weight: "bold", options: { align: "center", width: 595 } },
-            { label: "Test", x: 75, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Result", x: 225, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Unit", x: 325, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Flag", x: 425, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Test", x: 50, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Result", x: 200, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Unit", x: 270, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Flag", x: 330, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Normal Range", x: 420, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
         ],
     };
 
-    const tests = [
-        { name: "Total Cholesterol", value: data.totalCholesterolValue, unit: "mg/dl", flag: data.totalCholesterolValueFlag },
-        { name: "Triglycerids", value: data.triglyceridsValue, unit: "mg/dl", flag: data.triglyceridsValueFlag },
-        { name: "HDL Cholesterol", value: data.hdlCholesterolValue, unit: "mg/dl", flag: data.hdlCholesterolValueFlag },
-        { name: "LDL Cholesterol", value: data.ldlCholesterolValue, unit: "mg/dl", flag: data.ldlCholesterolValueFlag },
-        { name: "VLDL Cholesterol", value: data.vldlCholesterolValue, unit: "mg/dl", flag: data.vldlCholesterolValueFlag },
-        { name: "Total Chol. / HDL", value: data.tchoHdlRValue, unit: "", flag: data.tchoHdlRValueFlag },
+    const tests: TestEntry[] = [
+        { name: "Total Cholesterol", testFieldId: 16, value: data.totalCholesterolValue, unit: "mg/dl", flag: data.totalCholesterolValueFlag },
+        { name: "Triglycerids", testFieldId: 17, value: data.triglyceridsValue, unit: "mg/dl", flag: data.triglyceridsValueFlag },
+        { name: "HDL Cholesterol", testFieldId: 18, value: data.hdlCholesterolValue, unit: "mg/dl", flag: data.hdlCholesterolValueFlag },
+        { name: "LDL Cholesterol", testFieldId: 19, value: data.ldlCholesterolValue, unit: "mg/dl", flag: data.ldlCholesterolValueFlag },
+        { name: "VLDL Cholesterol", testFieldId: 20, value: data.vldlCholesterolValue, unit: "mg/dl", flag: data.vldlCholesterolValueFlag },
+        { name: "Total Chol. / HDL", testFieldId: 21, value: data.tchoHdlRValue, unit: "", flag: data.tchoHdlRValueFlag },
     ];
 
     let yPosition = 55 + topMargin;
 
-    tests.forEach(test => {
-        config.textEntries.push(
-            { label: test.name, x: 75, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
-            { label: test.value != null ? test.value.toString() : "-", x: 225, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
-            { label: test.unit, x: 325, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
-            { label: test.flag || "-", x: 425, y: yPosition, fontSize: 11, weight: "bold", options: undefined }
-        );
-        yPosition += 20;
-    });
+    yPosition = addTextEntries(tests, config, yPosition, normalRanges, patientDateOfBirth, patientGender);
 
     if (data.comment) {
         config.textEntries.push({
@@ -53,17 +47,7 @@ export function addLipidProfileData(data: any, doc: PDFKit.PDFDocument, topMargi
         });
     }
 
-    doc.lineWidth(0.5);
-    config.linePositions.forEach(line => {
-        doc.moveTo(line.x1, line.y1).lineTo(line.x2, line.y2).stroke();
-    });
+    const writtenDoc = writeOnDocument(doc, config);
 
-    config.textEntries.forEach(entry => {
-        doc
-            .font(entry.weight === "bold" ? config.fonts.bold : config.fonts.normal)
-            .fontSize(entry.fontSize)
-            .text(entry.label, entry.x, entry.y, entry.options as any);
-    });
-
-    return { document: doc, topMargin: yPosition + 40 };
+    return { document: writtenDoc, topMargin: yPosition + 40 };
 };
