@@ -324,7 +324,7 @@ export async function getTestRegistrations(
             fd.*
         FROM filtered_data AS fd
         WHERE fd.test_register_id IN (SELECT id FROM filtered_registers)
-        ORDER BY fd.test_register_id;
+        ORDER BY fd.test_register_id DESC;
     `;
 
     params.push(limit, offset);

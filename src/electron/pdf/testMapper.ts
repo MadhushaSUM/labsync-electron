@@ -13,6 +13,7 @@ import { addRHFactorData } from "./rhFactorReport.js";
 import { addSCalciumData } from "./sCalciumReport.js";
 import { addSElectrolyteData } from "./sElectrolyteReport.js";
 import { addOralGlucoseData } from "./oralGlucoseReport.js";
+import { addPPBSData } from "./ppbsReport.js";
 
 
 export function testMapper(
@@ -55,6 +56,8 @@ export function testMapper(
             return addSElectrolyteData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 15:
             return addOralGlucoseData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+        case 16:
+            return addPPBSData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
 
         default:
             return { document: doc, topMargin: topMargin };
