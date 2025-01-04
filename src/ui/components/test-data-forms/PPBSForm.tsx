@@ -104,9 +104,12 @@ const PPBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
                 content: "Saving test data..."
             });
             const savingData = {
-                time: values.time,
-                ppbsValue: Number(values.ppbsValue),
-                ppbsValueFlag: values.ppbsValueFlag,
+                ppbsBfValue: Number(values.ppbsBfValue),
+                ppbsBfValueFlag: values.ppbsBfValueFlag,
+                ppbsLnValue: Number(values.ppbsLnValue),
+                ppbsLnValueFlag: values.ppbsLnValueFlag,
+                ppbsDnValue: Number(values.ppbsDnValue),
+                ppbsDnValueFlag: values.ppbsDnValueFlag,
                 comment: values.comment
             };
             const res = await window.electron.testRegister.addData(data.testRegisterId, data.testId, savingData, selectedDoctorId);
@@ -145,9 +148,12 @@ const PPBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
                     {
                         "patient": data.patientName,
                         "doctor": data.doctorName,
-                        "time": data.data ? data.data?.time : "Breakfast",
-                        "ppbsValue": data.data?.ppbsValue,
-                        "ppbsValueFlag": data.data?.ppbsValueFlag,
+                        "ppbsBfValue": data.data?.ppbsBfValue,
+                        "ppbsBfValueFlag": data.data?.ppbsBfValueFlag,
+                        "ppbsLnValue": data.data?.ppbsLnValue,
+                        "ppbsLnValueFlag": data.data?.ppbsLnValueFlag,
+                        "ppbsDnValue": data.data?.ppbsDnValue,
+                        "ppbsDnValueFlag": data.data?.ppbsDnValueFlag,
                         "comment": data.data?.comment,
                     }
                 }
@@ -185,28 +191,16 @@ const PPBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
 
                 <Divider />
 
-                <Form.Item
-                    name="time"
-                    label="Time"
-                    rules={[{ required: true }]}
-                >
-                    <Select style={{ width: 200 }}>
-                        <Option value="Breakfast">Breakfast</Option>
-                        <Option value="Lunch">Lunch</Option>
-                        <Option value="Diner">Diner</Option>
-                    </Select>
-                </Form.Item>
-
-                <Form.Item label="PPBS" style={{ marginBottom: 0 }}>
+                <Form.Item label="PPBS (Breakfast)" style={{ marginBottom: 0 }}>
                     <Form.Item
-                        name="ppbsValue"
+                        name="ppbsBfValue"
                         style={{ display: 'inline-block', width: '200px' }}
                     >
-                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('ppbsValue', e.target.value)} />
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('ppbsBfValue', e.target.value)} />
                     </Form.Item>
                     <div className="flex-row items-center inline-flex">
                         <Form.Item
-                            name="ppbsValueFlag"
+                            name="ppbsBfValueFlag"
                             style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
                         >
                             <Select placeholder="flag" mode="tags" maxCount={1}>
@@ -215,7 +209,53 @@ const PPBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
                             </Select>
                         </Form.Item>
                         <span>
-                            {displayNormalRange('ppbsValue')}
+                            {displayNormalRange('ppbsBfValue')}
+                        </span>
+                    </div>
+                </Form.Item>
+
+                <Form.Item label="PPBS (Lunch)" style={{ marginBottom: 0 }}>
+                    <Form.Item
+                        name="ppbsLnValue"
+                        style={{ display: 'inline-block', width: '200px' }}
+                    >
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('ppbsLnValue', e.target.value)} />
+                    </Form.Item>
+                    <div className="flex-row items-center inline-flex">
+                        <Form.Item
+                            name="ppbsLnValueFlag"
+                            style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
+                        >
+                            <Select placeholder="flag" mode="tags" maxCount={1}>
+                                <Option value="Low">Low</Option>
+                                <Option value="High">High</Option>
+                            </Select>
+                        </Form.Item>
+                        <span>
+                            {displayNormalRange('ppbsLnValue')}
+                        </span>
+                    </div>
+                </Form.Item>
+
+                <Form.Item label="PPBS (Dinner)" style={{ marginBottom: 0 }}>
+                    <Form.Item
+                        name="ppbsDnValue"
+                        style={{ display: 'inline-block', width: '200px' }}
+                    >
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('ppbsDnValue', e.target.value)} />
+                    </Form.Item>
+                    <div className="flex-row items-center inline-flex">
+                        <Form.Item
+                            name="ppbsDnValueFlag"
+                            style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
+                        >
+                            <Select placeholder="flag" mode="tags" maxCount={1}>
+                                <Option value="Low">Low</Option>
+                                <Option value="High">High</Option>
+                            </Select>
+                        </Form.Item>
+                        <span>
+                            {displayNormalRange('ppbsDnValue')}
                         </span>
                     </div>
                 </Form.Item>
