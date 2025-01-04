@@ -11,6 +11,7 @@ import RHFactorForm from "./RHFactorForm";
 import SCalciumForm from "./SCalcium";
 import UFRForm from "./UFRForm";
 import WBCDCForm from "./WBCDCForm";
+import SElectrolyteForm from "./SElectrolytes.tsx";
 
 
 const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, clearScreen: () => void }> } = {
@@ -27,6 +28,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     11: WBCDCForm,
     12: RHFactorForm,
     13: SCalciumForm,
+    14: SElectrolyteForm,
 };
 
 export default formMapper;

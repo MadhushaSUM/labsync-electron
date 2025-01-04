@@ -11,6 +11,7 @@ import { addHBData } from "./hbReport.js";
 import { addWBCDCData } from "./wbcdcReport.js";
 import { addRHFactorData } from "./rhFactorReport.js";
 import { addSCalciumData } from "./sCalciumReport.js";
+import {addSElectrolyteData} from "./sElectrolyteReport.js";
 
 
 export function testMapper(
@@ -49,6 +50,8 @@ export function testMapper(
             return addRHFactorData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 13:
             return addSCalciumData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+        case 14:
+            return addSElectrolyteData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
 
         default:
             return { document: doc, topMargin: topMargin };
