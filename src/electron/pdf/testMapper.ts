@@ -6,6 +6,7 @@ import { addCRPData } from "./crpReport.js";
 import { addESRData } from "./esrReport.js";
 import { addOTPTData } from "./otptReport.js";
 import { addHCGData } from "./hcgReport.js";
+import { addDengueTestData } from "./dengueReport.js";
 
 
 export function testMapper(
@@ -34,6 +35,8 @@ export function testMapper(
             return addOTPTData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 8:
             return addHCGData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+        case 9:
+            return addDengueTestData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
 
         default:
             return { document: doc, topMargin: topMargin };

@@ -1,4 +1,5 @@
 import CRPForm from "./CRPForm";
+import DengueTestForm from "./DengueTestForm";
 import ESRForm from "./ESRForm";
 import FBCForm from "./FBCForm";
 import FBSForm from "./FBSForm";
@@ -17,6 +18,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     6: ESRForm,
     7: OTPTForm,
     8: HCGForm,
+    9: DengueTestForm,
 };
 
 export default formMapper;
