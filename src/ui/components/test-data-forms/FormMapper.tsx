@@ -2,6 +2,7 @@ import CRPForm from "./CRPForm";
 import ESRForm from "./ESRForm";
 import FBCForm from "./FBCForm";
 import FBSForm from "./FBSForm";
+import HCGForm from "./HCGForm";
 import LipidProfileForm from "./LipidProfileForm";
 import OTPTForm from "./OTPTForm";
 import UFRForm from "./UFRForm";
@@ -15,6 +16,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     5: CRPForm,    
     6: ESRForm,
     7: OTPTForm,
+    8: HCGForm,
 };
 
 export default formMapper;
