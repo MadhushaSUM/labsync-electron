@@ -1,5 +1,5 @@
 import path from "path";
-import { findTheCorrectNormalRangeRule } from "../utils.js";
+import { findTheCorrectNormalRangeRule } from "../../utils.js";
 import { app } from "electron";
 
 

@@ -1,5 +1,5 @@
 import { getNormalRangesForTest } from "../database/db.js";
-import { generateReportBase, previewPDF } from "../pdf/reportbase.js";
+import { generateReportBase, previewPDF } from "../pdf/reports/reportbase.js";
 import { testMapper } from "../pdf/testMapper.js";
 import { ipcMainHandle, ipcMainOn } from "../utils.js";
 

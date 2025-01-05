@@ -2,7 +2,7 @@ import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
 import { app, BrowserWindow } from 'electron';
-import { calculateAge } from '../utils.js';
+import { calculateAge } from '../../utils.js';
 
 
 export function generateReportBase(report: DataEmptyTests) {
