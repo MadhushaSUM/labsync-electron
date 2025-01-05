@@ -27,6 +27,7 @@ import { addRBSData } from "./rbsReport.js";
 import { addEGFRData } from "./egfrReport.js";
 import { addGlycoHBData } from "./glycoHBReport.js";
 import { addHIVData } from "./hivReport.js";
+import { addBloodGroupData } from "./bloodGroupReport.js";
 
 
 export function testMapper(
@@ -97,6 +98,8 @@ export function testMapper(
             return addGlycoHBData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 29:
             return addHIVData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+        case 30:
+            return addBloodGroupData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
 
         default:
             return { document: doc, topMargin: topMargin };
