@@ -20,6 +20,7 @@ import { addSCreatinineData } from "./sCreatinineReport.js";
 import { addBloodUreaData } from "./bloodUreaReport.js";
 import { addSProteinsData } from "./sProteinsReport.js";
 import { addBilirubinData } from "./bilirubinReport.js";
+import { addSAlkPhosphataseData } from "./sAlkPhosphataseReport.js";
 
 
 export function testMapper(
@@ -76,6 +77,8 @@ export function testMapper(
             return addSProteinsData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 22:
             return addBilirubinData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+        case 23:
+            return addSAlkPhosphataseData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
 
         default:
             return { document: doc, topMargin: topMargin };

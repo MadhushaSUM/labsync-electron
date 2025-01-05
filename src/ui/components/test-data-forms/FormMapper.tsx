@@ -20,6 +20,7 @@ import SCreatinineForm from "./SCreatinineForm.tsx";
 import BloodUreaForm from "./BloodUreaForm.tsx";
 import SProteinsForm from "./SProteinsForm.tsx";
 import BilirubinForm from "./BilirubinForm.tsx";
+import SAlkPhosphataseForm from "./SAlkPhosphataseForm.tsx";
 
 
 const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, clearScreen: () => void }> } = {
@@ -45,6 +46,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     20: BloodUreaForm,
     21: SProteinsForm,
     22: BilirubinForm,
+    23: SAlkPhosphataseForm,
 };
 
 export default formMapper;
