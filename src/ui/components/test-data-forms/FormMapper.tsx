@@ -18,6 +18,7 @@ import SFRForm from "./SFRForm.tsx";
 import LFTForm from "./LFTForm.tsx";
 import SCreatinineForm from "./SCreatinineForm.tsx";
 import BloodUreaForm from "./BloodUreaForm.tsx";
+import SProteinsForm from "./SProteinsForm.tsx";
 
 
 const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, clearScreen: () => void }> } = {
@@ -41,6 +42,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     18: LFTForm,
     19: SCreatinineForm,
     20: BloodUreaForm,
+    21: SProteinsForm,
 };
 
 export default formMapper;

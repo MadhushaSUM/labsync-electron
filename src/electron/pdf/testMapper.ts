@@ -18,6 +18,7 @@ import { addSFRData } from "./sfrReport.js";
 import { addLFTData } from "./lftReport.js";
 import { addSCreatinineData } from "./sCreatinineReport.js";
 import { addBloodUreaData } from "./bloodUreaReport.js";
+import { addSProteinsData } from "./sProteinsReport.js";
 
 
 export function testMapper(
@@ -70,6 +71,8 @@ export function testMapper(
             return addSCreatinineData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 20:
             return addBloodUreaData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+        case 21:
+            return addSProteinsData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
 
         default:
             return { document: doc, topMargin: topMargin };
