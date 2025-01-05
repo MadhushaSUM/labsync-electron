@@ -19,6 +19,7 @@ import LFTForm from "./LFTForm.tsx";
 import SCreatinineForm from "./SCreatinineForm.tsx";
 import BloodUreaForm from "./BloodUreaForm.tsx";
 import SProteinsForm from "./SProteinsForm.tsx";
+import BilirubinForm from "./BilirubinForm.tsx";
 
 
 const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, clearScreen: () => void }> } = {
@@ -43,6 +44,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     19: SCreatinineForm,
     20: BloodUreaForm,
     21: SProteinsForm,
+    22: BilirubinForm,
 };
 
 export default formMapper;
