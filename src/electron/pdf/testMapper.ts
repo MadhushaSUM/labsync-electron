@@ -23,6 +23,7 @@ import { addBilirubinData } from "./bilirubinReport.js";
 import { addSAlkPhosphataseData } from "./sAlkPhosphataseReport.js";
 import { addSCholesterolData } from "./sCholesterolReport.js";
 import { addGammaGTData } from "./gammaGTReport.js";
+import { addRBSData } from "./rbsReport.js";
 
 
 export function testMapper(
@@ -85,6 +86,8 @@ export function testMapper(
             return addSCholesterolData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 25:
             return addGammaGTData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+        case 26:
+            return addRBSData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
 
         default:
             return { document: doc, topMargin: topMargin };

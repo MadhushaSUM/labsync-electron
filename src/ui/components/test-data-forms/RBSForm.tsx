@@ -5,7 +5,7 @@ import { calculateAge } from "../../lib/utils";
 
 const { Option } = Select;
 
-const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () => void }) => {
+const RBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () => void }) => {
     const [loading, setLoading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
     const [form] = Form.useForm();
@@ -104,8 +104,9 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                 content: "Saving test data..."
             });
             const savingData = {
-                fbsValue: Number(values.fbsValue),
-                fbsValueFlag: values.fbsValueFlag,
+                rbsValue: Number(values.rbsValue),
+                rbsValueFlag: values.rbsValueFlag,
+                time: values.time,
                 comment: values.comment
             }
             const res = await window.electron.testRegister.addData(data.testRegisterId, data.testId, savingData, selectedDoctorId);
@@ -132,7 +133,7 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
         <div className="w-full">
             {contextHolder}
             <p className="w-full text-lg text-center m-5 font-bold">
-                Fasting Blood Sugar
+                Random Blood Sugar
             </p>
             <Form
                 name="complex-form"
@@ -144,8 +145,9 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                     {
                         "patient": data.patientName,
                         "doctor": data.doctorName,
-                        "fbsValue": data.data?.fbsValue,
-                        "fbsValueFlag": data.data?.fbsValueFlag,
+                        "rbsValue": data.data?.rbsValue,
+                        "rbsValueFlag": data.data?.rbsValueFlag,
+                        "time": data.data?.time,
                         "comment": data.data?.comment
                     }
                 }
@@ -183,17 +185,17 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
 
                 <Divider />
 
-                <Form.Item label="FBS value" style={{ marginBottom: 0 }}>
+                <Form.Item label="RBS value" style={{ marginBottom: 0 }}>
                     <Form.Item
-                        name="fbsValue"
+                        name="rbsValue"
                         rules={[{ required: true }]}
                         style={{ display: 'inline-block', width: '200px' }}
                     >
-                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('fbsValue', e.target.value)} />
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('rbsValue', e.target.value)} />
                     </Form.Item>
                     <div className="flex-row items-center inline-flex">
                         <Form.Item
-                            name="fbsValueFlag"
+                            name="rbsValueFlag"
                             style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
                         >
                             <Select placeholder="flag" mode="tags" maxCount={1}>
@@ -202,9 +204,16 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                             </Select>
                         </Form.Item>
                         <span>
-                            {displayNormalRange('fbsValue')}
+                            {displayNormalRange('rbsValue')}
                         </span>
                     </div>
+                </Form.Item>
+                <Form.Item
+                    name="time"
+                    label="Time"
+                    rules={[{ required: true }]}
+                >
+                    <Input style={{ width: 200 }} />
                 </Form.Item>
                 <Form.Item
                     label="Comment"
@@ -222,4 +231,4 @@ const FBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
     )
 }
 
-export default FBSForm;
+export default RBSForm;
