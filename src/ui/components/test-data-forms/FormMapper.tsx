@@ -29,6 +29,7 @@ import GlycosilatedHBForm from "./GlycosilatedHBForm.tsx";
 import HIVForm from "./HIVForm.tsx";
 import BloodGroupForm from "./BloodGroupForm.tsx";
 import BloodSugarProfileForm from "./BloodSugarProfile.tsx";
+import UrineSugarForm from "./UrineSugarForm.tsx";
 
 
 const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, clearScreen: () => void }> } = {
@@ -63,6 +64,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     29: HIVForm,
     30: BloodGroupForm,
     31: BloodSugarProfileForm,
+    32: UrineSugarForm,
 };
 
 export default formMapper;
