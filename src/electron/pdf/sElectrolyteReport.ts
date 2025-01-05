@@ -11,7 +11,13 @@ export function addSElectrolyteData(data: any, doc: PDFKit.PDFDocument, topMargi
 
     let yPosition = 55 + topMargin;
 
-    yPosition = addTextEntries(tests, config, yPosition, normalRanges, patientDateOfBirth, patientGender);
+    yPosition = addTextEntries(tests, config, yPosition, normalRanges, patientDateOfBirth, patientGender) + 10;
+
+    config.textEntries.push(
+        { label: "Test done by fully automated electrolyte machine (ISE method)", x: 40, y: yPosition, fontSize: 11, weight: "bold", options: undefined },
+    );
+
+    yPosition += 20;
 
     if (data.comment) {
         config.textEntries.push({

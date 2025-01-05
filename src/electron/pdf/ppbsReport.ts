@@ -32,6 +32,23 @@ export function addPPBSData(data: any, doc: PDFKit.PDFDocument, topMargin: numbe
         yPosition = addTextEntries(dinner, config, yPosition, normalRanges, patientDateOfBirth, patientGender);
     }
 
+    config.textEntries.push(
+        {
+            label:
+                `REFERENCE VALUES \n
+            < 140 mg/dl (7.7 mmol/L)                           Normal (Non-diabetic) \n
+             140 - 180 mg/dl (7.7 - 9.9 mmol/L)        Impaired glucose (Pre-diabetic) \n
+             > 180 mg/dl (9.9 mmol/L)                        Diabetic
+            `,
+            x: 40,
+            y: yPosition,
+            fontSize: 11,
+            weight: "normal",
+            options: undefined
+        },
+    );
+    yPosition += 100;
+
     // Add the comment at the end
     if (data.comment) {
         config.textEntries.push({

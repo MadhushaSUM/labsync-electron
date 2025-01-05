@@ -215,6 +215,7 @@ const PrintReportTable = () => {
                         style={{ width: 200 }}
                         onChange={(value) => handleRefNumberChange(value)}
                         onPressEnter={(e: any) => {
+                            setPageSize(100);
                             setFilterApplied(true);
                             setAllReports(true);
                             fetchTestsToPrint(1, 100, true, undefined, Number(e.target.value), undefined, undefined);

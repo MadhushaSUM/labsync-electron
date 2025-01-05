@@ -74,7 +74,13 @@ export function addFBCData(data: any, doc: PDFKit.PDFDocument, topMargin: number
 
     yPosition += 20;
 
-    yPosition = addTextEntries(tests4, config, yPosition, normalRanges, patientDateOfBirth, patientGender);
+    yPosition = addTextEntries(tests4, config, yPosition, normalRanges, patientDateOfBirth, patientGender) + 10;
+
+    config.textEntries.push(
+        { label: "Test done by fully automated haematology analyzer and manually confirmed.", x: 40, y: yPosition, fontSize: 11, weight: "bold", options: undefined },
+    );
+
+    yPosition += 20;
 
     // Add the comment at the end
     if (data.comment) {

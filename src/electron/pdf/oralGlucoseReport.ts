@@ -32,6 +32,39 @@ export function addOralGlucoseData(data: any, doc: PDFKit.PDFDocument, topMargin
         yPosition = addTextEntries(secondHour, config, yPosition, normalRanges, patientDateOfBirth, patientGender);
     }
 
+    config.textEntries.push(
+        {
+            label:
+                `REFERENCE VALUES\n
+            FBS          70 - 100 mg/dl                                        Normal\n
+            1 hour            < 180 mg/dl                                      Normal\n
+            2 hour           < 140 mg/dl (7.7 mmol/L)           Normal\n
+                            140 - 200 mg/dl (7.8 - 11 mmol/L)  Impaired glucose (Pre-diabetic)\n
+                                     > 200 mg/dl (11 mmol/L)            Diabetic
+            `,
+            x: 40,
+            y: yPosition,
+            fontSize: 11,
+            weight: "normal",
+            options: undefined
+        },
+    );
+
+    yPosition += 160;
+
+    config.textEntries.push(
+        {
+            label:"If Renal glycosuria is suspected urine samples may also be collected for testing along with the fasting and 2 hour blood tests.",
+            x: 40,
+            y: yPosition,
+            fontSize: 11,
+            weight: "normal",
+            options: undefined
+        },
+    );
+
+    yPosition += 30;
+
     // Add the comment at the end
     if (data.comment) {
         config.textEntries.push({

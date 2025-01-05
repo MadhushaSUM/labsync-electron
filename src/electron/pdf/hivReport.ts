@@ -15,7 +15,7 @@ export function addHIVData(data: any, doc: PDFKit.PDFDocument, topMargin: number
         ],
         textEntries: [
             { label: "H.I.V.", x: 0, y: topMargin, fontSize: 15, weight: "bold", options: { align: "center", width: 595 } },
-            { label: "Test", x: 75, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Test", x: 50, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
             { label: "Result", x: 200, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
         ],
     };
