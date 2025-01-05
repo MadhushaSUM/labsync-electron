@@ -21,6 +21,7 @@ import { addBloodUreaData } from "./bloodUreaReport.js";
 import { addSProteinsData } from "./sProteinsReport.js";
 import { addBilirubinData } from "./bilirubinReport.js";
 import { addSAlkPhosphataseData } from "./sAlkPhosphataseReport.js";
+import { addSCholesterolData } from "./sCholesterolReport.js";
 
 
 export function testMapper(
@@ -79,6 +80,8 @@ export function testMapper(
             return addBilirubinData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 23:
             return addSAlkPhosphataseData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+        case 24:
+            return addSCholesterolData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
 
         default:
             return { document: doc, topMargin: topMargin };
