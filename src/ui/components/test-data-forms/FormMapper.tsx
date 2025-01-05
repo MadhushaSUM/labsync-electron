@@ -25,6 +25,7 @@ import SCholesterolForm from "./SCholesterol.tsx";
 import GammaGTForm from "./GammaGTForm.tsx";
 import RBSForm from "./RBSForm.tsx";
 import EGFRForm from "./EGFRForm.tsx";
+import GlycosilatedHBForm from "./GlycosilatedHBForm.tsx";
 
 
 const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, clearScreen: () => void }> } = {
@@ -55,6 +56,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     25: GammaGTForm,
     26: RBSForm,
     27: EGFRForm,
+    28: GlycosilatedHBForm,
 };
 
 export default formMapper;

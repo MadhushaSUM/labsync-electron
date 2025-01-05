@@ -25,6 +25,7 @@ import { addSCholesterolData } from "./sCholesterolReport.js";
 import { addGammaGTData } from "./gammaGTReport.js";
 import { addRBSData } from "./rbsReport.js";
 import { addEGFRData } from "./egfrReport.js";
+import { addGlycoHBData } from "./glycoHBReport.js";
 
 
 export function testMapper(
@@ -91,6 +92,8 @@ export function testMapper(
             return addRBSData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
         case 27:
             return addEGFRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+        case 28:
+            return addGlycoHBData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
 
         default:
             return { document: doc, topMargin: topMargin };

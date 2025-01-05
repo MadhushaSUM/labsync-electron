@@ -1,9 +1,9 @@
 import path from "path";
 import { app } from "electron";
-import { PDFConfig, TestEntry, writeOnDocument } from './pdfUtils.js';
+import { PDFConfig, TestEntry, writeOnDocument } from "./pdfUtils.js";
 
-export function addEGFRData(data: any, doc: PDFKit.PDFDocument, topMargin: number, normalRanges: NormalRange[], patientDateOfBirth: Date, patientGender: string) {
 
+export function addGlycoHBData(data: any, doc: PDFKit.PDFDocument, topMargin: number, normalRanges: NormalRange[], patientDateOfBirth: Date, patientGender: string) {
     const config: PDFConfig = {
         fonts: {
             normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
@@ -16,25 +16,25 @@ export function addEGFRData(data: any, doc: PDFKit.PDFDocument, topMargin: numbe
         textEntries: [
             { label: "Estimation Glomerular Filtration Rate", x: 0, y: topMargin, fontSize: 15, weight: "bold", options: { align: "center", width: 595 } },
             { label: "Test", x: 50, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Result", x: 200, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Unit", x: 270, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Flag", x: 370, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Result", x: 220, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Unit", x: 290, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
+            { label: "Flag", x: 390, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
         ],
     };
 
-
     const tests: TestEntry[] = [
-        { name: "e - GFR", testFieldId: -1, value: data.egfrValue, unit: "ml/min/1.73m²", flag: data.egfrValueFlag },
-    ]
+        { name: "Glycosilated Heamoglobin A1c", testFieldId: -1, value: data.glycoHBValue, unit: "%", flag: data.glycoHBValueFlag },
+        { name: "Mean blood glucose", testFieldId: -1, value: data.meanBloodGlucoseValue, unit: "mg/dl", flag: data.meanBloodGlucoseValueFlag },
+    ];
 
     let yPosition = 55 + topMargin;
 
     tests.forEach(test => {
         config.textEntries.push(
             { label: test.name, x: 50, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
-            { label: test.value != null ? test.value.toString() : "", x: 200, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
-            { label: test.unit, x: 270, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
-            { label: test.flag || "", x: 370, y: yPosition, fontSize: 11, weight: "bold", options: undefined },
+            { label: test.value != null ? test.value.toString() : "", x: 220, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
+            { label: test.unit, x: 290, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
+            { label: test.flag || "", x: 390, y: yPosition, fontSize: 11, weight: "bold", options: undefined },
         );
         yPosition += 20;
     });
@@ -52,5 +52,5 @@ export function addEGFRData(data: any, doc: PDFKit.PDFDocument, topMargin: numbe
 
     const writtenDoc = writeOnDocument(doc, config);
 
-    return { document: writtenDoc, topMargin: (topMargin + 100) };
+    return { document: writtenDoc, topMargin: yPosition + 40 };
 };

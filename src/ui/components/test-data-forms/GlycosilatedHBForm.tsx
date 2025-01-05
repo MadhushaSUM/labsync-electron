@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const { Option } = Select;
 
-const EGFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () => void }) => {
+const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () => void }) => {
     const [loading, setLoading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
     const [form] = Form.useForm();
@@ -48,10 +48,12 @@ const EGFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
                 content: "Saving test data..."
             });
             const savingData = {
-                egfrValue: Number(values.egfrValue),
-                egfrValueFlag: values.egfrValueFlag,
+                glycoHBValue: Number(values.glycoHBValue),
+                glycoHBValueFlag: values.glycoHBValueFlag,
+                meanBloodGlucoseValue: Number(values.meanBloodGlucoseValue),
+                meanBloodGlucoseValueFlag: values.meanBloodGlucoseValueFlag,
                 comment: values.comment
-            }
+            };
             const res = await window.electron.testRegister.addData(data.testRegisterId, data.testId, savingData, selectedDoctorId);
             if (res.success) {
                 clearScreen();
@@ -76,21 +78,23 @@ const EGFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
         <div className="w-full">
             {contextHolder}
             <p className="w-full text-lg text-center m-5 font-bold">
-                EGFR
+                Glycosilated Heamoglobin
             </p>
             <Form
                 name="complex-form"
                 onFinish={onFinish}
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 16 }}
+                labelCol={{ span: 5 }}
+                wrapperCol={{ span: 15 }}
                 form={form}
                 initialValues={
                     {
                         "patient": data.patientName,
                         "doctor": data.doctorName,
-                        "egfrValue": data.data?.egfrValue,
-                        "egfrValueFlag": data.data?.egfrValueFlag,
-                        "comment": data.data?.comment
+                        "glycoHBValue": data.data?.glycoHBValue,
+                        "glycoHBValueFlag": data.data?.glycoHBValueFlag,
+                        "meanBloodGlucoseValue": data.data?.meanBloodGlucoseValue,
+                        "meanBloodGlucoseValueFlag": data.data?.meanBloodGlucoseValueFlag,
+                        "comment": data.data?.comment,
                     }
                 }
             >
@@ -127,17 +131,17 @@ const EGFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
 
                 <Divider />
 
-                <Form.Item label="e - GFR" style={{ marginBottom: 0 }}>
+                <Form.Item label="Glycosilated HB" style={{ marginBottom: 0 }}>
                     <Form.Item
-                        name="egfrValue"
+                        name="glycoHBValue"
                         rules={[{ required: true }]}
-                        style={{ display: 'inline-block', width: '300px' }}
+                        style={{ display: 'inline-block', width: '200px' }}
                     >
-                        <Input addonAfter="ml/min/1.73m²" placeholder="value" />
+                        <Input addonAfter="%" placeholder="value" />
                     </Form.Item>
                     <div className="flex-row items-center inline-flex">
                         <Form.Item
-                            name="egfrValueFlag"
+                            name="glycoHBValueFlag"
                             style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
                         >
                             <Select placeholder="flag" mode="tags" maxCount={1}>
@@ -147,6 +151,27 @@ const EGFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
                         </Form.Item>
                     </div>
                 </Form.Item>
+                <Form.Item label="Mean blood glucose" style={{ marginBottom: 0 }}>
+                    <Form.Item
+                        name="meanBloodGlucoseValue"
+                        rules={[{ required: true }]}
+                        style={{ display: 'inline-block', width: '200px' }}
+                    >
+                        <Input addonAfter="mg/dl" placeholder="value" />
+                    </Form.Item>
+                    <div className="flex-row items-center inline-flex">
+                        <Form.Item
+                            name="meanBloodGlucoseValueFlag"
+                            style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
+                        >
+                            <Select placeholder="flag" mode="tags" maxCount={1}>
+                                <Option value="Low">Low</Option>
+                                <Option value="High">High</Option>
+                            </Select>
+                        </Form.Item>
+                    </div>
+                </Form.Item>
+
                 <Form.Item
                     label="Comment"
                     name="comment"
@@ -154,13 +179,15 @@ const EGFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
                     <Input.TextArea style={{ width: 375 }} />
                 </Form.Item>
                 <Form.Item label={null}>
-                    <Button type="primary" htmlType="submit">
-                        Save
-                    </Button>
+                    <div className="flex justify-end mb-5">
+                        <Button type="primary" htmlType="submit">
+                            Save
+                        </Button>
+                    </div>
                 </Form.Item>
             </Form>
         </div>
     )
 }
 
-export default EGFRForm;
+export default GlycosilatedHBForm;
