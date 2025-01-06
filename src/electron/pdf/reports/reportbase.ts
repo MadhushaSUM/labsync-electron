@@ -32,7 +32,7 @@ export function generateReportBase(report: DataEmptyTests) {
     }
 
     const doc = new PDFDocument({ size: "A4" });
-    const filePath = path.join(config.outputPath, `${report.patientName}'s ${report.testName.split('/').join('_')} ${report.date.toLocaleDateString().split('/').join('-')}.pdf`);
+    const filePath = path.join(config.outputPath, `${report.patientName}_${report.testName.split('/').join('_')}_${report.date.toLocaleDateString().split('/').join('-')}_${(new Date()).toLocaleTimeString().split('/').join('-')}.pdf`);
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);
 
@@ -46,14 +46,13 @@ export function generateReportBase(report: DataEmptyTests) {
         doc.font(config.fonts.bold).fontSize(config.fontSize).text(entry.value ? entry.value.toString() : "", entry.x + 105, entry.y);
     });
 
-    return { document: doc, topMargin: 250 };
+    return { document: doc, topMargin: 250, filePath: filePath };
 }
 
-export function previewPDF() {
+export function previewPDF(filePath: string) {
     const previewWindow = new BrowserWindow({
         width: 800,
         height: 600,
     });
-    const filePath = path.join(app.getPath('desktop'), 'pdf-output/report.pdf');
     previewWindow.loadURL(`file://${filePath}`);
 }

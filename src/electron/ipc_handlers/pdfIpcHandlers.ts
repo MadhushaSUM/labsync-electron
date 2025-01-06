@@ -2,12 +2,7 @@ import { getNormalRangesForTest } from "../database/db.js";
 import { printReceipt } from "../pdf/receipts/receipt.js";
 import { generateReportBase, previewPDF } from "../pdf/reports/reportbase.js";
 import { testMapper } from "../pdf/testMapper.js";
-import { ipcMainHandle, ipcMainOn } from "../utils.js";
-
-ipcMainHandle('report:test', async () => {
-    previewPDF();
-    return { success: true };
-});
+import { ipcMainOn } from "../utils.js";
 
 ipcMainOn('report:printPreview', async (
     event,
@@ -28,6 +23,33 @@ ipcMainOn('report:printPreview', async (
         );
         out2.document.end();
     }
+});
+
+ipcMainOn('report:mergeReports', async (
+    event,
+    reports
+) => {
+    const base = generateReportBase(reports[0]);
+    let currentTopMargin = base.topMargin;
+    for (const report of reports) {
+        if (report.data) {
+            const { normalRanges } = await getNormalRangesForTest(report.testId);
+            const temp = testMapper(
+                Number(report.testId),
+                base.document,
+                currentTopMargin,
+                report.data,
+                normalRanges,
+                report.patientDOB,
+                report.patientGender
+            );
+            
+            currentTopMargin = temp.topMargin;            
+        }
+
+    }
+    base.document.end();
+    previewPDF(base.filePath);
 });
 
 ipcMainOn('report:printReceipt', async (

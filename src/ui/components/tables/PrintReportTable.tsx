@@ -29,6 +29,8 @@ const PrintReportTable = () => {
     const [allReports, setAllReports] = useState<boolean>(false);
     const [filterApplied, setFilterApplied] = useState<boolean>(false);
 
+    const [mergeDisabled, setMergeDisabled] = useState<boolean>(true);
+
     const columns: TableColumnsType<TestRegistrationTableItems> = [
         {
             title: 'Date', dataIndex: 'date', key: 'date',
@@ -155,6 +157,11 @@ const PrintReportTable = () => {
         }
     }
 
+    const handleMergeReports = () => {
+        const selectedReports = dataSource.filter((item) => selectedRowKeys.includes(item.key)) as DataEmptyTests[];
+        window.electron.report.mergeReports(selectedReports);
+    }
+
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         setSelectedRowKeys(newSelectedRowKeys);
     };
@@ -174,6 +181,22 @@ const PrintReportTable = () => {
         setDataSource(testRegistrations.map((value) => ({ ...value, key: `${value.testRegisterId},${value.testId}` })));
     }, [testRegistrations]);
 
+    useEffect(() => {
+        const selectedRecords = dataSource.filter((item) => selectedRowKeys.includes(item.key));
+        for (const element of selectedRecords) {
+            if (selectedRecords.length > 1 && selectedRecords.length < 4) {
+                if (selectedRecords[0].testRegisterId != element.testRegisterId) {
+                    setMergeDisabled(true);
+                    return;
+                }
+            } else {
+                setMergeDisabled(true);
+                return;
+            }
+        }
+        setMergeDisabled(false);
+    }, [selectedRowKeys]);
+
     return (
         <div className="p-5">
             {contextHolder}
@@ -181,7 +204,15 @@ const PrintReportTable = () => {
                 <Flex gap={5} justify="end">
                     <Button style={{ width: 100 }} color="primary" variant="solid">Print</Button>
                     <Button style={{ width: 100 }} color="primary" variant="outlined">Preview</Button>
-                    <Button style={{ width: 100 }} color="default" variant="outlined">Merge</Button>
+                    <Button
+                        style={{ width: 100 }}
+                        color="default"
+                        variant="outlined"
+                        disabled={mergeDisabled}
+                        onClick={handleMergeReports}
+                    >
+                        Merge
+                    </Button>
                 </Flex>
             </div>
             <div className="my-5">

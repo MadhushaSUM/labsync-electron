@@ -13,7 +13,7 @@ export function addSFRData(data: any, doc: PDFKit.PDFDocument, topMargin: number
             { x1: 20, y1: 50 + topMargin, x2: 575, y2: 50 + topMargin },
         ],
         textEntries: [
-            { label: "Urine Full Report", x: 0, y: topMargin, fontSize: 15, weight: "bold", options: { align: "center", width: 595 } },
+            { label: "Stool Full Report", x: 0, y: topMargin, fontSize: 15, weight: "bold", options: { align: "center", width: 595 } },
             { label: "Test", x: 75, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
             { label: "Result", x: 200, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
         ],
