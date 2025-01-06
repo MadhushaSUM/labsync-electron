@@ -25,7 +25,7 @@ interface Window {
             insertOrUpdate: (testId: number, testFieldId: number, rules: object) => Promise<{ success: boolean; error?: string }>;
         },
         testRegister: {
-            insert: (patientId: number, doctorId: number | null, refNumber: number | null, date: Date, testIds: number[], totalCost: number, paidPrice: number) => Promise<{ success: boolean; error?: string }>;
+            insert: (patientId: number, doctorId: number | null, refNumber: number | null, date: Date, testIds: number[], totalCost: number, paidPrice: number) => Promise<{ success: boolean; testRegisterId?: number, error?: string }>;
             get: (page: number, pageSize: number, fromDate?: Date, toDate?: Date, patientId?: number, refNumber?: number) => Promise<{ registrations: Registration[], total: number }>;
             getById: (testRegisterId: number) => Promise<{ registration: Registration | null }>;
             update: (id: number, patientId: number, doctorId: number | null, refNumber: number | null, date: Date, testIds: number[], dataAddedTestIds: number[], previousTestIds: number[], totalCost: number, paidPrice: number) => Promise<{ success: boolean; error?: string }>;
@@ -36,6 +36,7 @@ interface Window {
             test: () => Promise<{ success: boolean }>;
             getTests: (page: number, pageSize: number, allReports: boolean, fromDate?: Date, toDate?: Date, patientId?: number, refNumber?: number) => Promise<{ registrations: DataEmptyTests[], total: number }>;
             printPreview: (report: DataEmptyTests) => void;
+            printReceipt: (registration: Registration) => void;
         }
     };
 }
@@ -70,11 +71,12 @@ type EventPayloadMapping = {
         args: [number, number, number | null, number | null, Date, number[], number[], number[], number, number], return: { success: boolean; error?: string }
     };
     'testRegister:getDataEmptyTests': { args: [], return: { dataEmptyTests: DataEmptyTests[] } };
-    'testRegister:addData': { args: [number, number, object, number?], return: { success: boolean; error?: string } };
+    'testRegister:addData': { args: [number, number, object, number?], return: { success: boolean; testRegisterId?: number, error?: string } };
 
     'report:test': { args: [], return: { success: boolean } };
     'report:getTests': { args: [number, number, boolean, Date?, Date?, number?, number?], return: { registrations: DataEmptyTests[], total: number } };
     'report:printPreview': { args: [report: DataEmptyTests], return: {} };
+    'report:printReceipt': { args: [registration: Registration], return: {} };
 };
 
 type UnsubscribeFunction = () => void;

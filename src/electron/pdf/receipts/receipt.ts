@@ -1,56 +1,133 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
+import path from 'path';
+import { app } from 'electron';
 
-// Content array for demonstration purposes
-const content = [
-    "Store Name",
-    "Address Line 1",
-    "Address Line 2",
-    "Phone: 123-456-7890",
-    "----------------------------------",
-    "Item         Qty     Price    Total",
-    "----------------------------------",
-    "Apple        2       1.00     2.00",
-    "Banana       3       0.50     1.50",
-    "Orange       1       1.50     1.50",
-    "----------------------------------",
-    "Total:                          5.00",
-    "----------------------------------",
-    "Thank you for your purchase!",
-];
+interface ReceiptPDFConfig {
+    outputPath: string,
+    fonts: {
+        normal: string;
+        bold: string;
+    };
+    linePositions: { x1: number; y1: number; x2: number; y2: number }[];
+    textEntries: {
+        label: string;
+        x: number;
+        y: number;
+        fontSize: number;
+        weight: "normal" | "bold";
+        align: "right" | "center" | undefined;
+        width: number | undefined
+    }[];
+}
 
-// Constants
-const PAGE_WIDTH = 226.8; // 80mm = 3.15 inches * 72 points
-const LINE_HEIGHT = 14;  // Line height in points
-const MARGIN = 10;       // Margin on each side
-const FOOTER_HEIGHT = 30; // Space for footer
-const MAX_HEIGHT = 14400; // A reasonable upper limit for receipts
+export function printReceipt(registration: Registration) {
 
-// Calculate document height based on content
-const calculatedHeight = MARGIN * 2 + content.length * LINE_HEIGHT + FOOTER_HEIGHT;
-const docHeight = Math.min(calculatedHeight, MAX_HEIGHT); // Clamp to prevent overly large sizes
+    const topMargin = 10;
 
-// Create a PDF document with the calculated height
-const doc = new PDFDocument({
-    size: [PAGE_WIDTH, docHeight],
-    margin: MARGIN,
-});
+    const config: ReceiptPDFConfig = {
+        outputPath: path.join(app.getPath('desktop'), 'pdf-output', 'receipts'),
+        fonts: {
+            normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
+            bold: path.join(app.getAppPath(), 'fonts/Aptos-Bold.ttf')
+        },
+        linePositions: [
+            { x1: 5, y1: 136 + topMargin, x2: 221, y2: 136 + topMargin },
+            { x1: 5, y1: 156 + topMargin, x2: 221, y2: 156 + topMargin },
+        ],
+        textEntries: [
+            { label: "<Laboratory Name>", x: 10, y: topMargin, fontSize: 15, weight: "bold", align: "center", width: undefined },
+            { label: "<address line>", x: 10, y: 40 + topMargin, fontSize: 8, weight: "normal", align: "center", width: undefined },
+            { label: "<tele line>", x: 10, y: 50 + topMargin, fontSize: 8, weight: "normal", align: "center", width: undefined },
+            { label: "Patient name  :", x: 10, y: 80 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
+            { label: "Date                    :", x: 10, y: 100 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
+            { label: "Reference no. :", x: 10, y: 120 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
+            { label: "Test", x: 10, y: 140 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
+            { label: "Price (Rs.)", x: 140, y: 140 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
 
-// Pipe to a file (or to a printer)
-doc.pipe(fs.createWriteStream('receipt_dynamic.pdf'));
+            { label: registration.patient.name, x: 80, y: 80 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
+            { label: registration.date.toLocaleDateString(), x: 80, y: 100 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
+            { label: registration.ref_number ? registration.ref_number.toString() : "", x: 80, y: 120 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
+        ],
+    };
 
-// Write content to the PDF
-doc.fontSize(10).text("Receipt", { align: "center" }).moveDown(0.5);
+    let yPostition = 135;
 
-// Add each line of content
-content.forEach((line) => {
-    doc.text(line, { align: "left" });
-});
+    const tests: { name: string, price: string, weight: "normal" | "bold", x: number }[] = [];
+    for (const test of registration.registeredTests) {
+        tests.push({
+            name: test.test.name,
+            price: test.test.price.toString(),
+            weight: "normal",
+            x: 15
+        });
+    }
+    tests.push({
+        name: "TOTAL", price: registration.total_cost.toString(), weight: "bold", x: 10
+    });
+    tests.push({
+        name: "PAID", price: registration.paid_price.toString(), weight: "bold", x: 10
+    });
+    tests.push({
+        name: "BALANCE", price: (registration.total_cost - registration.paid_price).toString(), weight: "bold", x: 10
+    });
 
-// Optionally add a footer
-doc.moveDown().fontSize(8).text("Generated on " + new Date().toLocaleString(), { align: "center" });
+    yPostition += 35;
+    tests.forEach((test, index) => {
+        if (index == tests.length - 3) {
+            config.linePositions.push({
+                x1: 5, y1: yPostition, x2: 221, y2: yPostition
+            });
+        }
 
-// Finalize the document
-doc.end();
+        config.textEntries.push(
+            { label: test.name, x: test.x, y: yPostition, fontSize: 11, weight: test.weight, align: undefined, width: undefined },
+            { label: test.price.toString(), x: 130, y: yPostition, fontSize: 11, weight: test.weight, align: "right", width: 60 },
+        );
+        yPostition += 20;
 
-console.log('Receipt PDF generated: receipt_dynamic.pdf');
+        if (index == tests.length - 1) {
+            config.linePositions.push({
+                x1: 5, y1: yPostition - 5, x2: 221, y2: yPostition - 5
+            });
+        }
+    });
+
+    const PAGE_WIDTH = 226.8; // 80mm
+    const MARGIN = 10;
+    const FOOTER_HEIGHT = 20; // Space for footer
+
+    const calculatedHeight = yPostition + FOOTER_HEIGHT;
+
+    const doc = new PDFDocument({
+        size: [PAGE_WIDTH, calculatedHeight],
+        margin: MARGIN,
+    });
+
+    if (!fs.existsSync(config.outputPath)) {
+        fs.mkdirSync(config.outputPath);
+    }
+
+    const filePath = path.join(config.outputPath, 'receipt.pdf');
+    const stream = fs.createWriteStream(filePath);
+    doc.pipe(stream);
+
+    doc.lineWidth(0.5);
+    config.linePositions.forEach(line => {
+        doc.moveTo(line.x1, line.y1).lineTo(line.x2, line.y2).stroke();
+    });
+
+
+    config.textEntries.forEach(entry => {
+        doc
+            .font(entry.weight == "bold" ? config.fonts.bold : config.fonts.normal)
+            .fontSize(entry.fontSize)
+            .text(entry.label, entry.x, entry.y, { align: entry.align as any, width: entry.width });
+    });
+
+    doc.font(config.fonts.normal).fontSize(8).text("Generated on " + new Date().toLocaleString(), 0, yPostition, { align: "center" });
+
+    doc.end();
+
+    console.log('Receipt PDF generated: receipt_dynamic.pdf');
+}

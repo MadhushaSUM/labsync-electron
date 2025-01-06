@@ -37,6 +37,7 @@ electron.contextBridge.exposeInMainWorld("electron", {
         test: () => ipcInvoke('report:test'),
         getTests: (page, pageSize, allReports, fromDate, toDate, patientId, refNumber) => ipcInvoke('report:getTests', page, pageSize, allReports, fromDate, toDate, patientId, refNumber),
         printPreview: (reports) => ipcSend('report:printPreview', reports),
+        printReceipt: (registration) => ipcSend('report:printReceipt', registration),
     }
 } satisfies Window['electron']);
 

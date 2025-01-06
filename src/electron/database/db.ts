@@ -242,7 +242,7 @@ export async function addTestRegisterWithTests(data: {
 
         await client.query('COMMIT');
 
-        return { success: true };
+        return { success: true, testRegisterId: testRegisterId };
     } catch (error: any) {
         await client.query('ROLLBACK');
         throw new Error(`Transaction failed: ${error.message}`);

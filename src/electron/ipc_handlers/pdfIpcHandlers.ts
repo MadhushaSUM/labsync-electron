@@ -1,4 +1,5 @@
 import { getNormalRangesForTest } from "../database/db.js";
+import { printReceipt } from "../pdf/receipts/receipt.js";
 import { generateReportBase, previewPDF } from "../pdf/reports/reportbase.js";
 import { testMapper } from "../pdf/testMapper.js";
 import { ipcMainHandle, ipcMainOn } from "../utils.js";
@@ -28,4 +29,11 @@ ipcMainOn('report:printPreview', async (
         out2.document.end();
     }
     previewPDF();
+});
+
+ipcMainOn('report:printReceipt', async (
+    event,
+    registration
+) => {
+    printReceipt(registration);
 });

@@ -33,9 +33,6 @@ const Sidebar = ({ darkTheme }: SidebarProps) => {
             <Menu.Item key="/reports" icon={<PrinterOutlined />}>
                 Reports
             </Menu.Item>
-            <Menu.Item key="/receipts" icon={<FileTextOutlined />}>
-                Receipts
-            </Menu.Item>
             <Menu.SubMenu key="analysis" title="Analysis" icon={<PieChartOutlined />}>
                 <Menu.Item key="/analysis/patient-analysis">Patient analysis</Menu.Item>
                 <Menu.Item key="/analysis/test-analysis">Test analysis</Menu.Item>

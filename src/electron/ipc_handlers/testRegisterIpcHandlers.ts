@@ -11,8 +11,8 @@ ipcMainHandle('testRegister:insert', async (
     paidPrice
 ) => {
     try {
-        const { success } = await addTestRegisterWithTests({ patientId, doctorId, refNumber, date, testIds, totalCost, paidPrice });
-        return { success: success };
+        const { success, testRegisterId } = await addTestRegisterWithTests({ patientId, doctorId, refNumber, date, testIds, totalCost, paidPrice });
+        return { success: success, testRegisterId: testRegisterId };
     } catch (error: any) {
         return { success: false, error: error.message };
     }

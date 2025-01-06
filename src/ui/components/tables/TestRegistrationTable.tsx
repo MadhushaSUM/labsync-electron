@@ -6,7 +6,6 @@ import { calculateAge } from "../../lib/utils";
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
 interface TestRegistrationTableItems extends Registration {
-
 }
 
 const TestRegistrationTable = ({ editTestFunctionHandle }: { editTestFunctionHandle: (id: number) => void }) => {
@@ -63,14 +62,24 @@ const TestRegistrationTable = ({ editTestFunctionHandle }: { editTestFunctionHan
             dataIndex: '',
             key: 'a',
             render: (_, record) => (
-                <Button
-                    size='small'
-                    variant='outlined'
-                    color='default'
-                    onClick={() => onTableRowEditClick(record)}
-                >
-                    Edit
-                </Button>
+                <Flex gap={5}>
+                    <Button
+                        size='small'
+                        variant='outlined'
+                        color='primary'
+                        onClick={() => onPrintReceiptClick(record)}
+                    >
+                        Print receipt
+                    </Button>
+                    <Button
+                        size='small'
+                        variant='outlined'
+                        color='default'
+                        onClick={() => onTableRowEditClick(record)}
+                    >
+                        Edit
+                    </Button>
+                </Flex>
             ),
         },
     ];
@@ -125,6 +134,14 @@ const TestRegistrationTable = ({ editTestFunctionHandle }: { editTestFunctionHan
             width: 150,
         },
     ]
+
+    const onPrintReceiptClick = (record: TestRegistrationTableItems) => {
+        try {
+            window.electron.report.printReceipt(record as Registration);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const onTableRowEditClick = (record: TestRegistrationTableItems) => {
         editTestFunctionHandle(Number(record.id));

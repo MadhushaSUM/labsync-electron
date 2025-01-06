@@ -85,6 +85,22 @@ const NewTest = () => {
     }
 
     const onFormSubmit = async (values: any) => {
+        await saveRegistration(values);
+    }
+
+    const handleSaveAndPrintReceipt = async () => {
+        const values = form.getFieldsValue();
+        const testRegisterId = await saveRegistration(values);
+        if (testRegisterId) {
+            const { registration } = await window.electron.testRegister.getById(testRegisterId);
+            if (registration) {
+                window.electron.report.printReceipt(registration);
+            }
+        }
+    }
+
+
+    const saveRegistration = async (values: any) => {
         try {
             messageApi.open({
                 key: "saving_message",
@@ -119,6 +135,7 @@ const NewTest = () => {
                     });
 
                     form.resetFields();
+                    return res.testRegisterId;
                 } else {
                     messageApi.open({
                         key: "saving_message",
@@ -126,6 +143,7 @@ const NewTest = () => {
                         content: "Failed to add registration!"
                     });
                     console.log(res.error);
+                    return undefined;
                 }
             } else {
                 messageApi.open({
@@ -133,6 +151,7 @@ const NewTest = () => {
                     type: "error",
                     content: "Failed to add registration!"
                 });
+                return undefined;
             }
         } catch (error) {
             messageApi.open({
@@ -140,6 +159,7 @@ const NewTest = () => {
                 type: "error",
                 content: "Failed to add registration!"
             });
+            return undefined;
         }
     }
 
@@ -263,7 +283,7 @@ const NewTest = () => {
 
                         <Form.Item wrapperCol={{ offset: 6, span: 16 }} style={{ display: "flex", justifyContent: "end" }}>
                             <div className="flex flex-row gap-5">
-                                <Button type="primary" htmlType="submit">
+                                <Button type="primary" onClick={handleSaveAndPrintReceipt}>
                                     Save & Print receipt
                                 </Button>
                                 <Button type="default" htmlType="submit">
