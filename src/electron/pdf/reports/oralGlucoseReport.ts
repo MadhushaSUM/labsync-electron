@@ -32,29 +32,29 @@ export function addOralGlucoseData(data: any, doc: PDFKit.PDFDocument, topMargin
         yPosition = addTextEntries(secondHour, config, yPosition, normalRanges, patientDateOfBirth, patientGender);
     }
 
+    const aditionalNotes = [
+        { labelCol0: "", labelCol1: "REFERENCE VALUES", labelCol2: "", x0: 60, x1: 120, x2: 250, weight: "bold" },
+        { labelCol0: "FBS", labelCol1: "70 - 100 mg/dl", labelCol2: "Normal", x0: 60, x1: 120, x2: 280, weight: "normal" },
+        { labelCol0: "1 hour", labelCol1: "< 180 mg/dl", labelCol2: "Normal", x0: 60, x1: 120, x2: 280, weight: "normal" },
+        { labelCol0: "2 hour", labelCol1: "< 140 mg/dl (7.7 mmol/L)", labelCol2: "Normal", x0: 60, x1: 120, x2: 280, weight: "normal" },
+        { labelCol0: "", labelCol1: "140 - 200 mg/dl (7.8 - 11 mmol/L)", labelCol2: "Impaired glucose (Pre-diabetic)", x0: 60, x1: 120, x2: 280, weight: "normal" },
+        { labelCol0: "", labelCol1: "> 200 mg/dl (11 mmol/L)", labelCol2: "Diabetic", x0: 60, x1: 120, x2: 280, weight: "normal" },
+    ];
+
+    yPosition += 20;
+
+    aditionalNotes.forEach(test => {
+        config.textEntries.push(
+            { label: test.labelCol0, x: test.x0, y: yPosition, fontSize: 11, weight: test.weight as any, options: undefined },
+            { label: test.labelCol1, x: test.x1, y: yPosition, fontSize: 11, weight: test.weight as any, options: undefined },
+            { label: test.labelCol2, x: test.x2, y: yPosition, fontSize: 11, weight: test.weight as any, options: undefined },
+        );
+        yPosition += 20;
+    });
+
     config.textEntries.push(
         {
-            label:
-                `REFERENCE VALUES\n
-            FBS          70 - 100 mg/dl                                        Normal\n
-            1 hour            < 180 mg/dl                                      Normal\n
-            2 hour           < 140 mg/dl (7.7 mmol/L)           Normal\n
-                            140 - 200 mg/dl (7.8 - 11 mmol/L)  Impaired glucose (Pre-diabetic)\n
-                                     > 200 mg/dl (11 mmol/L)            Diabetic
-            `,
-            x: 40,
-            y: yPosition,
-            fontSize: 11,
-            weight: "normal",
-            options: undefined
-        },
-    );
-
-    yPosition += 160;
-
-    config.textEntries.push(
-        {
-            label:"If Renal glycosuria is suspected urine samples may also be collected for testing along with the fasting and 2 hour blood tests.",
+            label: "If Renal glycosuria is suspected urine samples may also be collected for testing along with the fasting and 2 hour blood tests.",
             x: 40,
             y: yPosition,
             fontSize: 11,

@@ -31,6 +31,7 @@ interface Window {
             update: (id: number, patientId: number, doctorId: number | null, refNumber: number | null, date: Date, testIds: number[], dataAddedTestIds: number[], previousTestIds: number[], totalCost: number, paidPrice: number) => Promise<{ success: boolean; error?: string }>;
             getDataEmptyTests: () => Promise<{ dataEmptyTests: DataEmptyTests[] }>;
             addData: (testRegisterId: number, testId: number, data: object, doctorId?: number) => Promise<{ success: boolean; error?: string }>;
+            delete: (testRegisterIds: number[]) => Promise<{ success: boolean; rowCount?: number; error?: string }>
         },
         report: {
             test: () => Promise<{ success: boolean }>;
@@ -72,6 +73,7 @@ type EventPayloadMapping = {
     };
     'testRegister:getDataEmptyTests': { args: [], return: { dataEmptyTests: DataEmptyTests[] } };
     'testRegister:addData': { args: [number, number, object, number?], return: { success: boolean; testRegisterId?: number, error?: string } };
+    'testRegister:delete': { args: [number[]], return: { success: boolean; rowCount?: numuber; error?: string } };
 
     'report:test': { args: [], return: { success: boolean } };
     'report:getTests': { args: [number, number, boolean, Date?, Date?, number?, number?], return: { registrations: DataEmptyTests[], total: number } };

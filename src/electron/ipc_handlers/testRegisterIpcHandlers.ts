@@ -1,4 +1,4 @@
-import { addTestRegisterWithTests, getDataEmptyTestsList, getPrintingTestList, getTestRegistrationById, getTestRegistrations, saveTestData, updateTestRegister } from "../database/db.js";
+import { addTestRegisterWithTests, deleteTestRegistersByIds, getDataEmptyTestsList, getPrintingTestList, getTestRegistrationById, getTestRegistrations, saveTestData, updateTestRegister } from "../database/db.js";
 import { ipcMainHandle } from "../utils.js";
 
 ipcMainHandle('testRegister:insert', async (
@@ -75,6 +75,15 @@ ipcMainHandle('testRegister:addData', async (
         return { success: false, error: error.message };
     }
 });
+
+ipcMainHandle('testRegister:delete', async (testRegisterIds) => {
+    try {
+        const rowCount = await deleteTestRegistersByIds(testRegisterIds);
+        return { success: true, rowCount: rowCount }
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+})
 
 ipcMainHandle('report:getTests', async (
     page,

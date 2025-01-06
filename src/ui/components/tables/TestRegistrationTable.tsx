@@ -1,16 +1,24 @@
-import { Button, DatePicker, Flex, InputNumber, message, Select, Spin, Switch, Table, TableColumnsType, Tag } from "antd";
+import { Button, DatePicker, Flex, InputNumber, Modal, Select, Spin, Switch, Table, TableColumnsType, Tag } from "antd";
 import { debounce } from "lodash";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { calculateAge } from "../../lib/utils";
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, ExclamationCircleFilled } from '@ant-design/icons';
+import { TableRowSelection } from "antd/es/table/interface";
+
+const { confirm } = Modal;
 
 interface TestRegistrationTableItems extends Registration {
 }
 
-const TestRegistrationTable = ({ editTestFunctionHandle }: { editTestFunctionHandle: (id: number) => void }) => {
+const TestRegistrationTable = (
+    {
+        editTestFunctionHandle,
+    }: {
+        editTestFunctionHandle: (id: number) => void,
+    }
+) => {
     const navigate = useNavigate();
-    const [messageApi, contextHolder] = message.useMessage();
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [loading, setLoading] = useState(false);
@@ -107,7 +115,7 @@ const TestRegistrationTable = ({ editTestFunctionHandle }: { editTestFunctionHan
             title: 'Data', dataIndex: 'data', key: 'data',
             render(value) {
                 return (
-                    <p>{value ? JSON.stringify(value, null, 2) : <Tag bordered={false} color="warning">Empty</Tag>}</p>
+                    <p>{value ? <Button size="small" color="primary" variant="outlined">View</Button> : <Tag bordered={false} color="warning">Empty</Tag>}</p>
                 )
             }
         },
@@ -221,6 +229,28 @@ const TestRegistrationTable = ({ editTestFunctionHandle }: { editTestFunctionHan
         />
     );
 
+    const deleteTestRegisters = () => {
+        const deletingIds = selectedRowKeys.map((item) => Number(item));
+
+        confirm({
+            title: 'Do you want to delete these records?',
+            icon: <ExclamationCircleFilled />,
+            content: 'This action is irreversible. Do you want to proceed?',
+            onOk() {
+                return window.electron.testRegister
+                    .delete(deletingIds)
+                    .then(() => {
+                        setSelectedRowKeys([]);
+                        fetchTestRegistrations(currentPage, pageSize, selectedPatientId, refNumber, dateRange.fromDate, dateRange.toDate);
+                    })
+                    .catch((error) => {
+                        console.error('Error deleting records:', error);
+                    });
+            },
+            onCancel() { },
+        });
+    };
+
 
     useEffect(() => {
         fetchTestRegistrations(currentPage, pageSize);
@@ -230,9 +260,23 @@ const TestRegistrationTable = ({ editTestFunctionHandle }: { editTestFunctionHan
         setDataSource(testRegistrations.map((value) => ({ ...value, key: value.id })));
     }, [testRegistrations]);
 
+    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+        setSelectedRowKeys(newSelectedRowKeys);
+    };
+
+    const rowSelection: TableRowSelection<TestRegistrationTableItems> = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+    };
+
     return (
         <div className="p-5">
-            {contextHolder}
+            <div>
+                <Flex justify="end" gap={5}>
+                    <Button variant="solid" color="primary" onClick={() => navigate("/new-test")}>New Test Registration</Button>
+                    <Button variant="outlined" color="danger" onClick={deleteTestRegisters}>Delete</Button>
+                </Flex>
+            </div>
             <div className="my-5">
                 <Flex gap={5}>
                     <Select
@@ -278,6 +322,7 @@ const TestRegistrationTable = ({ editTestFunctionHandle }: { editTestFunctionHan
                         <Switch
                             checkedChildren={<CheckOutlined />}
                             unCheckedChildren={<CloseOutlined />}
+
                             defaultValue={false}
                             onChange={(isChecked) => handleApplyFilter(isChecked)}
                             value={filterApplied}
@@ -289,6 +334,7 @@ const TestRegistrationTable = ({ editTestFunctionHandle }: { editTestFunctionHan
             </div>
             <div>
                 <Table
+                    rowSelection={rowSelection}
                     columns={columns}
                     expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
                     dataSource={dataSource}

@@ -60,22 +60,18 @@ const PrintReportTable = () => {
             title: 'Action',
             dataIndex: '',
             key: 'a',
-            render: (_, record) => (
+            render: (record, _) => (
                 <Button
                     size='small'
                     variant='outlined'
                     color='default'
-                    onClick={() => onTableRowEditClick(record)}
+                    onClick={() => handlePrintPreview(record.key)}
                 >
-                    Print
+                    Preview
                 </Button>
             ),
         },
     ];
-
-    const onTableRowEditClick = (record: TestRegistrationTableItems) => {
-        alert(JSON.stringify(record));
-    }
 
     const fetchTestsToPrint = async (page: number, pageSizeL: number, wantAll: boolean, patientId?: number, refNumber?: number, fromDate?: Date, toDate?: Date) => {
         const data = await window.electron.report.getTests(
@@ -152,8 +148,8 @@ const PrintReportTable = () => {
         }
     }
 
-    const handlePrintPreview = () => {
-        const selectedRow = dataSource.find((item) => selectedRowKeys[0] == item.key);
+    const handlePrintPreview = (key: string) => {
+        const selectedRow = dataSource.find((item) => item.key == key);
         if (selectedRow) {
             window.electron.report.printPreview(selectedRow);
         }
@@ -184,7 +180,7 @@ const PrintReportTable = () => {
             <div className="my-5">
                 <Flex gap={5} justify="end">
                     <Button style={{ width: 100 }} color="primary" variant="solid">Print</Button>
-                    <Button style={{ width: 100 }} color="primary" variant="outlined" onClick={handlePrintPreview}>Preview</Button>
+                    <Button style={{ width: 100 }} color="primary" variant="outlined">Preview</Button>
                     <Button style={{ width: 100 }} color="default" variant="outlined">Merge</Button>
                 </Flex>
             </div>

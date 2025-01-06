@@ -16,6 +16,7 @@ const Home = () => {
             type: "success",
             content: "Data saved!"
         });
+        fetchDataEmptyTests();
     }
 
     const fetchDataEmptyTests = async () => {

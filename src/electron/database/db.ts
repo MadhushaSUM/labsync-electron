@@ -522,6 +522,16 @@ export async function updateTestRegister(data: {
         client.release();
     }
 }
+export async function deleteTestRegistersByIds(testRegisterIds: number[]) {
+    if (testRegisterIds.length > 0) {
+        const placeholders = testRegisterIds.map((_, index) => `$${index + 1}`).join(', ');
+        const query = `DELETE FROM test_register WHERE id IN (${placeholders})`;
+        const result = await pool.query(query, testRegisterIds);
+
+        return result.rowCount;
+    }
+    return 0;
+}
 export async function getDataEmptyTestsList(): Promise<DataEmptyTests[]> {
     const query = `
         SELECT 
@@ -601,7 +611,7 @@ export async function getPrintingTestList(
         INNER JOIN test_register_tests AS trt ON tr.id = trt.test_register_id
         INNER JOIN tests AS t ON trt.test_id = t.id
         LEFT JOIN doctors AS d ON trt.doctor_id = d.id
-        WHERE trt.data_added = true ${allReports? "" : "AND trt.printed = false"} 
+        WHERE trt.data_added = true ${allReports ? "" : "AND trt.printed = false"} 
     `;
 
     const conditions: string[] = [];
@@ -646,7 +656,7 @@ export async function getPrintingTestList(
 
     params.push(limit, offset);
 
-    const { rows } = await pool.query(query, params);    
+    const { rows } = await pool.query(query, params);
 
     if (rows.length === 0) {
         return { totalCount: 0, registrations: [] };
@@ -674,4 +684,9 @@ export async function getPrintingTestList(
     });
 
     return { totalCount, registrations };
+}
+export async function markTestAsPrinted(testRegisterId: number, testId: number, printed: boolean) {
+    await pool.query('UPDATE test_register_tests SET \"printed\" = $1 WHERE \"test_register_id\" = $2 AND \"test_id\" = $3',
+        [printed, testRegisterId, testId]
+    );
 }

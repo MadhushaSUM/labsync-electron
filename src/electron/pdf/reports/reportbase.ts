@@ -7,7 +7,7 @@ import { calculateAge } from '../../utils.js';
 
 export function generateReportBase(report: DataEmptyTests) {
     const config = {
-        outputPath: path.join(app.getPath('desktop'), 'pdf-output'),
+        outputPath: path.join(app.getPath('desktop'), 'pdf-output', 'reports'),
         fonts: {
             normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
             bold: path.join(app.getAppPath(), 'fonts/Aptos-Bold.ttf')
@@ -32,7 +32,7 @@ export function generateReportBase(report: DataEmptyTests) {
     }
 
     const doc = new PDFDocument({ size: "A4" });
-    const filePath = path.join(config.outputPath, 'report.pdf');
+    const filePath = path.join(config.outputPath, `${report.patientName}'s ${report.testName.split('/').join('_')} ${report.date.toLocaleDateString().split('/').join('-')}.pdf`);
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);
 

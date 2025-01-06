@@ -28,7 +28,6 @@ ipcMainOn('report:printPreview', async (
         );
         out2.document.end();
     }
-    previewPDF();
 });
 
 ipcMainOn('report:printReceipt', async (
