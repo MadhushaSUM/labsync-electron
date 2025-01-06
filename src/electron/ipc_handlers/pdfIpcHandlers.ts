@@ -22,6 +22,7 @@ ipcMainOn('report:printPreview', async (
             report.patientGender
         );
         out2.document.end();
+        previewPDF(out1.filePath);
     }
 });
 
@@ -43,8 +44,8 @@ ipcMainOn('report:mergeReports', async (
                 report.patientDOB,
                 report.patientGender
             );
-            
-            currentTopMargin = temp.topMargin;            
+
+            currentTopMargin = temp.topMargin;
         }
 
     }

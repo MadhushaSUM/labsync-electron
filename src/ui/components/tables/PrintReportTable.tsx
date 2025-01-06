@@ -203,10 +203,9 @@ const PrintReportTable = () => {
             <div className="my-5">
                 <Flex gap={5} justify="end">
                     <Button style={{ width: 100 }} color="primary" variant="solid">Print</Button>
-                    <Button style={{ width: 100 }} color="primary" variant="outlined">Preview</Button>
                     <Button
                         style={{ width: 100 }}
-                        color="default"
+                        color="primary" 
                         variant="outlined"
                         disabled={mergeDisabled}
                         onClick={handleMergeReports}
