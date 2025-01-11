@@ -690,3 +690,8 @@ export async function markTestAsPrinted(testRegisterId: number, testId: number, 
         [printed, testRegisterId, testId]
     );
 }
+export async function markTestAsDataAdded(testRegisterId: number, testId: number, dataAdded: boolean) {    
+    await pool.query('UPDATE test_register_tests SET \"data_added\" = $1 WHERE \"test_register_id\" = $2 AND \"test_id\" = $3',
+        [dataAdded, testRegisterId, testId]
+    );
+}

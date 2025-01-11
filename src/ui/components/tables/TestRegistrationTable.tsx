@@ -141,6 +141,40 @@ const TestRegistrationTable = (
             },
             width: 150,
         },
+        {
+            title: 'Action',
+            dataIndex: '',
+            key: 'a',
+            render: (_, record) => (
+                <Button
+                    size='small'
+                    variant='outlined'
+                    color='primary'
+                    onClick={async () => {
+                        try {
+                            const res = await window.electron.testRegister.editDataOfATest(
+                                Number(record.testRegisterId),
+                                Number(record.test.id)
+                            );
+                            if (res.success) {
+                                setCurrentPage(1);
+                                if (filterApplied) {
+                                    fetchTestRegistrations(1, pageSize, selectedPatientId, refNumber, dateRange.fromDate, dateRange.toDate);
+                                } else {
+                                    fetchTestRegistrations(1, pageSize);
+                                }
+                            }
+
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }}
+                >
+                    Edit
+                </Button>
+
+            ),
+        },
     ]
 
     const onPrintReceiptClick = (record: TestRegistrationTableItems) => {
@@ -214,16 +248,20 @@ const TestRegistrationTable = (
         setCurrentPage(1);
         setFilterApplied(isChecked);
         if (isChecked) {
-            fetchTestRegistrations(currentPage, pageSize, selectedPatientId, refNumber, dateRange.fromDate, dateRange.toDate);
+            fetchTestRegistrations(1, pageSize, selectedPatientId, refNumber, dateRange.fromDate, dateRange.toDate);
         } else {
-            fetchTestRegistrations(currentPage, pageSize);
+            fetchTestRegistrations(1, pageSize);
         }
     }
 
     const expandedRowRender = (record: any) => (
         <Table
             columns={expandColumns}
-            dataSource={testRegistrations.find((value) => value.id == record.id)?.registeredTests}
+            dataSource={
+                testRegistrations
+                    .find((value) => value.id == record.id)?.registeredTests
+                    .map((item) => ({ ...item, testRegisterId: record.id }))
+            }
             pagination={false}
             size="small"
         />
