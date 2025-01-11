@@ -21,6 +21,7 @@ import EditTestRegistration from './pages/test-registraion/EditTestRegistration'
 import PageSettings from './pages/settings/PageSettings';
 import Reports from './pages/reports/Reports';
 import PatientAnalysis from './pages/analysis/PatientAnalysis';
+import TestAnalysis from './pages/analysis/TestAnalysis';
 
 const { Header, Sider, Content } = Layout;
 
@@ -83,6 +84,7 @@ function App() {
                                 <Route path="/settings/page" element={<PageSettings />} />                                
                                 <Route path="/reports" element={<Reports />} />                                
                                 <Route path="/analysis/patient-analysis" element={<PatientAnalysis />} />                                
+                                <Route path="/analysis/test-analysis" element={<TestAnalysis />} />                                
                             </Routes>
                         </Content>
                     </ScrollArea>

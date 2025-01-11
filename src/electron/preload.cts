@@ -44,6 +44,9 @@ electron.contextBridge.exposeInMainWorld("electron", {
     },
     patientAnalysis: {
         get: (patientId, startDate, endDate) => ipcInvoke('patientAnalysis:get', patientId, startDate, endDate),
+    },
+    testAnalysis: {
+        get: (startDate, endDate) => ipcInvoke('testAnalysis:get', startDate, endDate),
     }
 } satisfies Window['electron']);
 

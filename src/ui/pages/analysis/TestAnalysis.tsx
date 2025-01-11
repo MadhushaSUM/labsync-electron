@@ -1,26 +1,12 @@
-
-import { useRef } from 'react';
-import { Button, Card, DatePicker, Form, List, Select, Spin } from "antd"
-import { debounce } from "lodash";
-import { useEffect, useState } from "react";
-import { calculateAge } from "../../lib/utils";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, ChartData } from "chart.js";
+import { Button, Card, DatePicker, Form, List } from "antd";
+import { useEffect, useRef, useState } from "react";
 import { Doughnut, getElementAtEvent } from "react-chartjs-2";
-import { ScrollArea } from '../../components/ScrollArea';
+import { ScrollArea } from "../../components/ScrollArea";
+import { Chart as ChartJS, ChartData } from "chart.js";
 
-const { Option } = Select;
-
-ChartJS.register(ArcElement, Tooltip, Legend);
-
-
-const PatientAnalysis = () => {
-    const chartRef = useRef<ChartJS<'doughnut'>>(null);
+const TestAnalysis = () => {
     const [form] = Form.useForm();
-
-    const [loading, setLoading] = useState(false);
-
-    const [patients, setPatients] = useState<Patient[]>([]);
-    const [selectedPatientId, setSelectedPatientId] = useState<number | undefined>(undefined);
+    const chartRef = useRef<ChartJS<'doughnut'>>(null);
 
     const [data, setData] = useState<AnalysisData>();
     const [chartData, setChartData] = useState<ChartData<'doughnut'>>();
@@ -30,34 +16,13 @@ const PatientAnalysis = () => {
         testRegisterId: number
     }[]>([]);
 
-    const fetchPatients = debounce(async (search: string) => {
-        try {
-            setLoading(true);
-            const data = await window.electron.patients.get(1, 5, search);
-            setPatients(data.patients);
-        } catch (error) {
-            console.error("Failed to fetch patient data:", error);
-        } finally {
-            setLoading(false);
-        }
-    }, 500);
-
-    const handlePatientSelect = (value: string) => {
-        setSelectedPatientId(patients.find((patient) => `${patient.name} [${calculateAge(patient.date_of_birth)}]` === value)?.id);
-    };
-
     const handleFormSubmit = async (values: any) => {
-        setListData([]);
-        setData(undefined);
-        
-        if (selectedPatientId) {
-            if (values.dateRange) {
-                const res = await window.electron.patientAnalysis.get(selectedPatientId, new Date(values.dateRange[0]), new Date(values.dateRange[1]));
-                setData(res.data);
-            } else {
-                const res = await window.electron.patientAnalysis.get(selectedPatientId);
-                setData(res.data);
-            }
+        if (values.dateRange) {
+            const res = await window.electron.testAnalysis.get(new Date(values.dateRange[0]), new Date(values.dateRange[1]));
+            setData(res.data);
+        } else {
+            const res = await window.electron.testAnalysis.get();
+            setData(res.data);
         }
     }
 
@@ -67,7 +32,6 @@ const PatientAnalysis = () => {
             return randomColor;
         });
     };
-
 
     const onClick = (event: any) => {
         const { current: chart } = chartRef;
@@ -100,7 +64,7 @@ const PatientAnalysis = () => {
     return (
         <div className="flex flex-col gap-5">
             <Card
-                title="Patient Analysis"
+                title="Test Analysis"
             >
                 <div>
                     <div>
@@ -111,29 +75,6 @@ const PatientAnalysis = () => {
                             style={{ maxWidth: 'none' }}
                             onFinish={handleFormSubmit}
                         >
-                            <Form.Item
-                                label="Patient"
-                                name="patient"
-                                required
-                                rules={[{ required: true, message: 'Please select a patient!' }]}
-                            >
-                                <Select
-                                    showSearch
-                                    allowClear
-                                    placeholder="Search for a patient"
-                                    onSearch={fetchPatients}
-                                    onSelect={handlePatientSelect}
-                                    notFoundContent={loading ? <Spin size="small" /> : "No patients found"}
-                                    filterOption={false}
-                                    style={{ width: 250 }}
-                                >
-                                    {patients.map((patient) => (
-                                        <Option key={patient.id} value={`${patient.name} [${calculateAge(patient.date_of_birth)}]`}>
-                                            {patient.name} [{calculateAge(patient.date_of_birth)}]
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
                             <Form.Item label="Date range" name="dateRange">
                                 <DatePicker.RangePicker
                                     placeholder={['Start date', 'End date']}
@@ -190,4 +131,4 @@ const PatientAnalysis = () => {
     )
 }
 
-export default PatientAnalysis;
+export default TestAnalysis;

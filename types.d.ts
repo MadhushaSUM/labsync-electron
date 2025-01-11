@@ -42,7 +42,10 @@ interface Window {
             mergeReports: (reports: DataEmptyTests[]) => void;
         },
         patientAnalysis: {
-            get: (patientId: number, startDate?: Date, endDate?: Date) => Promise<{ data: PatientAnalysisData }>;
+            get: (patientId: number, startDate?: Date, endDate?: Date) => Promise<{ data: AnalysisData }>;
+        },
+        testAnalysis: {
+            get: (startDate?: Date, endDate?: Date) => Promise<{ data: AnalysisData }>;
         }
     };
 }
@@ -87,7 +90,8 @@ type EventPayloadMapping = {
     'report:printReceipt': { args: [registration: Registration], return: {} };
     'report:mergeReports': { args: [reports: DataEmptyTests[]], return: {} };
 
-    'patientAnalysis:get': { args: [number, Date?, Date?], return: { data: PatientAnalysisData } }
+    'patientAnalysis:get': { args: [number, Date?, Date?], return: { data: AnalysisData } };
+    'testAnalysis:get': { args: [Date?, Date?], return: { data: AnalysisData } };
 };
 
 type UnsubscribeFunction = () => void;
@@ -158,7 +162,7 @@ interface DataEmptyTests {
     data?: Record<string, any>;
 }
 
-interface PatientAnalysisData {
+interface AnalysisData {
     totalTestNumber: number,
     pieChartData: {
         testId: number,
