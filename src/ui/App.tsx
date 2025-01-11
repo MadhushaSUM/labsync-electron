@@ -20,6 +20,7 @@ import NewTest from './pages/test-registraion/NewTest';
 import EditTestRegistration from './pages/test-registraion/EditTestRegistration';
 import PageSettings from './pages/settings/PageSettings';
 import Reports from './pages/reports/Reports';
+import PatientAnalysis from './pages/analysis/PatientAnalysis';
 
 const { Header, Sider, Content } = Layout;
 
@@ -81,6 +82,7 @@ function App() {
                                 <Route path="/settings/normal-ranges" element={<NormalRanges />} />
                                 <Route path="/settings/page" element={<PageSettings />} />                                
                                 <Route path="/reports" element={<Reports />} />                                
+                                <Route path="/analysis/patient-analysis" element={<PatientAnalysis />} />                                
                             </Routes>
                         </Content>
                     </ScrollArea>

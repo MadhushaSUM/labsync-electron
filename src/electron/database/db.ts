@@ -690,8 +690,127 @@ export async function markTestAsPrinted(testRegisterId: number, testId: number, 
         [printed, testRegisterId, testId]
     );
 }
-export async function markTestAsDataAdded(testRegisterId: number, testId: number, dataAdded: boolean) {    
+export async function markTestAsDataAdded(testRegisterId: number, testId: number, dataAdded: boolean) {
     await pool.query('UPDATE test_register_tests SET \"data_added\" = $1 WHERE \"test_register_id\" = $2 AND \"test_id\" = $3',
         [dataAdded, testRegisterId, testId]
     );
+}
+
+// Analysis database operations
+export async function getTestRegistrationByPatient(patientId: number, startDate?: Date, endDate?: Date) {
+    let baseQuery = `
+        SELECT 
+            tr.id AS test_register_id,
+            tr.date,
+            tr.ref_number,
+            tr.total_cost,
+            tr.paid_price,
+            p.id AS patient_id,
+            p.name AS patient_name,
+            p.gender AS patient_gender,
+            p.date_of_birth AS patient_date_of_birth,
+            p.contact_number AS patient_contact_number,
+            t.id AS test_id,
+            t.name AS test_name,
+            t.code AS test_code,
+            t.price AS test_price,
+            d.id AS doctor_id,
+            d.name AS doctor_name,
+            trt.data,
+            trt.data_added,
+            trt.printed
+        FROM test_register AS tr
+        INNER JOIN patients AS p ON tr.patient_id = p.id
+        INNER JOIN test_register_tests AS trt ON tr.id = trt.test_register_id
+        INNER JOIN tests AS t ON trt.test_id = t.id
+        LEFT JOIN doctors AS d ON trt.doctor_id = d.id
+        WHERE tr.patient_id = ${patientId} 
+    `;
+
+    const conditions: string[] = [];
+    const params: any[] = [];
+
+    if (startDate) {
+        conditions.push(`tr.date >= $${params.length + 1}`);
+        params.push(startDate);
+    }
+
+    if (endDate) {
+        conditions.push(`tr.date <= $${params.length + 1}`);
+        params.push(endDate);
+    }
+
+    const filteredRegisterConditions = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    const query = `
+        WITH filtered_registers AS (
+            SELECT tr.id
+            FROM test_register AS tr
+            ${filteredRegisterConditions}
+            ORDER BY tr.id
+        ),
+        filtered_data AS (
+            ${baseQuery}
+        )
+        SELECT 
+            (SELECT COUNT(*) FROM test_register AS tr ${filteredRegisterConditions}) AS total_count,
+            fd.*
+        FROM filtered_data AS fd
+        WHERE fd.test_register_id IN (SELECT id FROM filtered_registers)
+        ORDER BY fd.test_register_id DESC;
+    `;
+
+    const { rows } = await pool.query(query, params);
+
+    if (rows.length === 0) {
+        return { totalCount: 0, registrations: [] };
+    }
+
+    const totalCount = parseInt(rows[0].total_count, 10);
+
+    const registrations: Registration[] = [];
+    const registrationMap = new Map<number, Registration>();
+
+    rows.forEach(row => {
+        if (!registrationMap.has(row.test_register_id)) {
+            const registration: Registration = {
+                id: row.test_register_id,
+                date: row.date,
+                patient: {
+                    id: row.patient_id,
+                    name: row.patient_name,
+                    gender: row.patient_gender,
+                    date_of_birth: row.patient_date_of_birth,
+                    contact_number: row.patient_contact_number,
+                },
+                ref_number: row.ref_number,
+                total_cost: row.total_cost,
+                paid_price: row.paid_price,
+                registeredTests: [],
+            };
+            registrationMap.set(row.test_register_id, registration);
+            registrations.push(registration);
+        }
+
+        const registration: Registration = registrationMap.get(row.test_register_id)!;
+        registration.registeredTests.push({
+            test: {
+                id: row.test_id,
+                name: row.test_name,
+                code: row.test_code,
+                price: row.test_price,
+            },
+            doctor: row.doctor_id
+                ? {
+                    id: row.doctor_id,
+                    name: row.doctor_name,
+                }
+                : null,
+            data: row.data,
+            data_added: row.data_added,
+            printed: row.printed,
+        });
+    });
+
+    return { totalCount, registrations };
 }

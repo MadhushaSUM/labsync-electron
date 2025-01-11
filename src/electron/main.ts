@@ -18,6 +18,10 @@ import './ipc_handlers/testRegisterIpcHandlers.js';
 // Importing pdf ipc handlers
 import './ipc_handlers/pdfIpcHandlers.js';
 
+// Importing analysis ipc handlers
+import './ipc_handlers/analysisIpcHandlers.js';
+
+
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({
         webPreferences: {
