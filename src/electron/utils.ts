@@ -97,6 +97,26 @@ export async function calculateAge(
     return result.join(" ");
 }
 
+export function calculateAgeArray(dob: Date): number[] {
+    const now = new Date();
+
+    const totalYears = differenceInYears(now, dob);
+
+    let years = 0, months = 0, days = 0;
+
+    years = totalYears;
+    dob = new Date(dob);
+    dob.setFullYear(dob.getFullYear() + years);
+
+    months = differenceInMonths(now, dob);
+    dob = new Date(dob);
+    dob.setMonth(dob.getMonth() + months);
+
+    days = differenceInDays(now, dob);
+
+    return [years, months, days];
+}
+
 export function findTheCorrectNormalRangeRule(
     normalRanges: NormalRange[],
     testFieldId: number,
@@ -108,13 +128,17 @@ export function findTheCorrectNormalRangeRule(
         return ""
     }
 
-    const patientAge = calculateAge(patientDateOfBirth);
-
     const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == testFieldId)?.rules;
 
     for (const rule of normalRangeRules) {
-        if (rule.ageUpper > patientAge && rule.ageLower <= patientAge && rule.gender.includes(patientGender)) {
-            return `${rule.valueLower} - ${rule.valueUpper}`
+        if (isWithinNormalRange(patientDateOfBirth, patientGender, rule)) {
+            if (rule.type == "range") {
+                return `${rule.valueLower} - ${rule.valueUpper} ${unit}`;
+            } else if (rule.type == "≥") {
+                return `≥ ${rule.valueLower} ${unit}`;
+            } else {
+                return `≤ ${rule.valueUpper} ${unit}`;
+            }
         }
     }
 
@@ -123,4 +147,30 @@ export function findTheCorrectNormalRangeRule(
 
 export function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export function isWithinNormalRange(patientDOB: Date, patientGender: string, normalRange: any) {
+    const now = new Date();
+
+    const ageYears = differenceInYears(now, patientDOB);
+    const ageMonths = differenceInMonths(now, patientDOB) % 12;
+    const ageDays = differenceInDays(now, patientDOB) % 30;
+
+    const ageLowerInDays =
+        normalRange.ageLower.y * 365 +
+        normalRange.ageLower.m * 30 +
+        normalRange.ageLower.d;
+    const ageUpperInDays =
+        normalRange.ageUpper.y * 365 +
+        normalRange.ageUpper.m * 30 +
+        normalRange.ageUpper.d;
+
+    const patientAgeInDays = ageYears * 365 + ageMonths * 30 + ageDays;
+
+    const isAgeWithinRange =
+        patientAgeInDays >= ageLowerInDays && patientAgeInDays <= ageUpperInDays;
+
+    const isGenderValid = normalRange.gender.includes(patientGender);
+
+    return isAgeWithinRange && isGenderValid;
 }

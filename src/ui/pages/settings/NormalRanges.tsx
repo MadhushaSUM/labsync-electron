@@ -1,4 +1,4 @@
-import { Alert, Card, Flex, Form, Progress, Select, Tooltip, Button, Divider, InputNumber, Row, Col, message } from "antd";
+import { Alert, Card, Flex, Form, Progress, Select, Tooltip, Button, Divider, InputNumber, Row, Col, message, Radio, Space } from "antd";
 import { DefaultOptionType } from "antd/es/select";
 import { useEffect, useState } from "react";
 import { CloseOutlined } from '@ant-design/icons';
@@ -248,7 +248,7 @@ const NormalRanges = () => {
                             labelCol={{ span: 6 }}
                             wrapperCol={{ span: 18 }}
                             form={form}
-                            style={{ maxWidth: 600 }}
+                            style={{ maxWidth: 800 }}
                             autoComplete="off"
                             onValuesChange={calculateProgressPercent}
                             onFinish={saveNormalRangeRules}
@@ -280,19 +280,54 @@ const NormalRanges = () => {
                                                             <Select.Option value="Other">Other</Select.Option>
                                                         </Select>
                                                     </Form.Item>
+
+                                                    <Form.Item label="Type" name={[field.name, 'type']}>
+                                                        <Radio.Group
+                                                            block
+                                                            options={[
+                                                                { label: 'Range', value: 'range' },
+                                                                { label: '≥', value: '≥' },
+                                                                { label: '≤', value: '≤' },
+                                                            ]}
+                                                            defaultValue="range"
+                                                            optionType="button"
+                                                            buttonStyle="solid"
+                                                        />
+                                                    </Form.Item>
+
                                                     <Row>
                                                         <Col
                                                             span={12}
                                                         >
-                                                            <Form.Item label="Age lower bound" labelCol={{ span: 12 }} name={[field.name, 'ageLower']}>
-                                                                <InputNumber />
+                                                            <Form.Item label="Age lower bound" labelCol={{ span: 12 }}>
+                                                                <Space.Compact>
+                                                                    <Form.Item name={[field.name, 'ageLower', 'y']}>
+                                                                        <InputNumber placeholder="YY" style={{ width: 60 }} />
+                                                                    </Form.Item>
+                                                                    <Form.Item name={[field.name, 'ageLower', 'm']}>
+                                                                        <InputNumber placeholder="MM" style={{ width: 60 }} />
+                                                                    </Form.Item>
+                                                                    <Form.Item name={[field.name, 'ageLower', 'd']}>
+                                                                        <InputNumber placeholder="DD" style={{ width: 60 }} />
+                                                                    </Form.Item>
+                                                                </Space.Compact>
                                                             </Form.Item>
                                                         </Col>
                                                         <Col
                                                             span={12}
                                                         >
-                                                            <Form.Item label="Age upper bound" labelCol={{ span: 12 }} name={[field.name, 'ageUpper']}>
-                                                                <InputNumber />
+                                                            <Form.Item label="Age upper bound" labelCol={{ span: 12 }}>
+                                                                <Space.Compact>
+                                                                    <Form.Item name={[field.name, 'ageUpper', 'y']}>
+                                                                        <InputNumber placeholder="YY" style={{ width: 60 }} />
+                                                                    </Form.Item>
+                                                                    <Form.Item name={[field.name, 'ageUpper', 'm']}>
+                                                                        <InputNumber placeholder="MM" style={{ width: 60 }} />
+                                                                    </Form.Item>
+                                                                    <Form.Item name={[field.name, 'ageUpper', 'd']}>
+                                                                        <InputNumber placeholder="DD" style={{ width: 60 }} />
+                                                                    </Form.Item>
+                                                                </Space.Compact>
                                                             </Form.Item>
                                                         </Col>
 
@@ -300,14 +335,14 @@ const NormalRanges = () => {
                                                             span={12}
                                                         >
                                                             <Form.Item label="Value lower bound" labelCol={{ span: 12 }} name={[field.name, 'valueLower']}>
-                                                                <InputNumber />
+                                                                <InputNumber style={{ width: 180 }} />
                                                             </Form.Item>
                                                         </Col>
                                                         <Col
                                                             span={12}
                                                         >
                                                             <Form.Item label="Value upper bound" labelCol={{ span: 12 }} name={[field.name, 'valueUpper']}>
-                                                                <InputNumber />
+                                                                <InputNumber style={{ width: 180 }} />
                                                             </Form.Item>
                                                         </Col>
                                                     </Row>

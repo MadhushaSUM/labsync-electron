@@ -1,7 +1,7 @@
 import { Button, Divider, Form, Input, message, Select, Spin } from "antd";
 import { debounce } from "lodash";
 import { useEffect, useState } from "react";
-import { calculateAge } from "../../lib/utils";
+import { isWithinNormalRange } from "../../lib/utils";
 
 const { Option } = Select;
 
@@ -51,22 +51,34 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
     const setFlag = (label: string, value: string) => {
         const valueNum = Number(value);
         const fieldId = testFields.find((item) => item.name == label)?.id;
-        const patientAge = calculateAge(data.patientDOB);
 
         if (fieldId) {
             const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == fieldId)?.rules;
             if (normalRangeRules) {
                 for (const rule of normalRangeRules) {
-                    if (rule.ageUpper > patientAge && rule.ageLower <= patientAge && rule.gender.includes(data.patientGender)) {
-                        if (valueNum > rule.valueUpper) {
-                            form.setFieldValue(`${label}Flag`, 'High');
-                        } else if (valueNum < rule.valueLower) {
-                            form.setFieldValue(`${label}Flag`, 'Low');
+                    if (isWithinNormalRange(data.patientDOB, data.patientGender, rule))
+                        if (rule.type == "range") {
+                            if (valueNum > rule.valueUpper) {
+                                form.setFieldValue(`${label}Flag`, 'High');
+                            } else if (valueNum < rule.valueLower) {
+                                form.setFieldValue(`${label}Flag`, 'Low');
+                            } else {
+                                form.setFieldValue(`${label}Flag`, null);
+                            }
+                        } else if (rule.type == "≥") {
+                            if (valueNum < rule.valueLower) {
+                                form.setFieldValue(`${label}Flag`, 'Low');
+                            } else {
+                                form.setFieldValue(`${label}Flag`, null);
+                            }
                         } else {
-                            form.setFieldValue(`${label}Flag`, null);
+                            if (valueNum > rule.valueUpper) {
+                                form.setFieldValue(`${label}Flag`, 'High');
+                            } else {
+                                form.setFieldValue(`${label}Flag`, null);
+                            }
                         }
-                        break;
-                    }
+                    break;
                 }
             }
         }
@@ -74,14 +86,18 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
 
     const displayNormalRange = (label: string) => {
         const fieldId = testFields.find((item) => item.name == label)?.id;
-        const patientAge = calculateAge(data.patientDOB);
-
         if (fieldId) {
             const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == fieldId)?.rules;
             if (normalRangeRules) {
                 for (const rule of normalRangeRules) {
-                    if (rule.ageUpper > patientAge && rule.ageLower <= patientAge && rule.gender.includes(data.patientGender)) {
-                        return `High: ${rule.valueUpper}  Low: ${rule.valueLower}`
+                    if (isWithinNormalRange(data.patientDOB, data.patientGender, rule)) {
+                        if (rule.type == "range") {
+                            return `${rule.valueLower} - ${rule.valueUpper}`;
+                        } else if (rule.type == "≥") {
+                            return `≥ ${rule.valueLower}`;
+                        } else {
+                            return `≤ ${rule.valueUpper}`;
+                        }
                     }
                 }
             }
