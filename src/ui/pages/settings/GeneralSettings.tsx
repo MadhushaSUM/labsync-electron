@@ -1,6 +1,7 @@
 import { Card, Collapse, CollapseProps } from "antd"
-import { PrinterOutlined, SettingOutlined } from '@ant-design/icons';
+import { CalendarOutlined, PrinterOutlined, SettingOutlined } from '@ant-design/icons';
 import PrinterSettings from "./general-setting-children/printerSettings";
+import AgeFormatSettings from "./general-setting-children/ageFormatSettings";
 
 
 const text = `
@@ -18,9 +19,9 @@ const items: CollapseProps['items'] = [
     },
     {
         key: '2',
-        label: 'This is panel header 2',
-        children: <p>{text}</p>,
-        extra: <SettingOutlined />
+        label: 'Set preferred age format',
+        children: <AgeFormatSettings />,
+        extra: <CalendarOutlined />
     },
     {
         key: '3',

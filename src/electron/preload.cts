@@ -31,7 +31,7 @@ electron.contextBridge.exposeInMainWorld("electron", {
         get: (page, pageSize, fromDate, toDate, patientId, refNumber) => ipcInvoke('testRegister:get', page, pageSize, fromDate, toDate, patientId, refNumber),
         getById: (testRegisterId) => ipcInvoke('testRegister:getById', testRegisterId),
         getDataEmptyTests: () => ipcInvoke('testRegister:getDataEmptyTests'),
-        addData: (testRegisterId, testId, data, doctorId) => ipcInvoke('testRegister:addData', testRegisterId, testId, data, doctorId),
+        addData: (testRegisterId, testId, data, options, doctorId) => ipcInvoke('testRegister:addData', testRegisterId, testId, data, options, doctorId),
         delete: (testRegisterIds) => ipcInvoke('testRegister:delete', testRegisterIds),
         editDataOfATest: (testRegisterId, testId) => ipcInvoke('testRegister:editDataOfATest', testRegisterId, testId),
     },
@@ -55,6 +55,10 @@ electron.contextBridge.exposeInMainWorld("electron", {
     },
     financialAnalysis: {
         get: (step, startDate, endDate) => ipcInvoke('financialAnalysis:get', step, startDate, endDate),
+    },
+    agePreference: {
+        save: (data) => ipcInvoke('config:saveAgePreference', data),
+        get: () => ipcInvoke('config:getAgePreference'),
     }
 } satisfies Window['electron']);
 

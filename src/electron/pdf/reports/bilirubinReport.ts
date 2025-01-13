@@ -2,7 +2,7 @@ import { addTextEntries, generateTestPDFConfig, TestEntry, writeOnDocument } fro
 
 
 export function addBilirubinData(data: any, doc: PDFKit.PDFDocument, topMargin: number, normalRanges: NormalRange[], patientDateOfBirth: Date, patientGender: string) {
-    let config = generateTestPDFConfig("Bilirubin", topMargin);
+    let config = generateTestPDFConfig("Serum Bilirubin", topMargin);
 
     const tests: TestEntry[] = [
         { name: "Total Bilirubin", testFieldId: 58, value: data.totalBilirubinValue, unit: "mg/dl", flag: data.totalBilirubinValueFlag },

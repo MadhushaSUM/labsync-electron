@@ -31,7 +31,7 @@ interface Window {
             getById: (testRegisterId: number) => Promise<{ registration: Registration | null }>;
             update: (id: number, patientId: number, doctorId: number | null, refNumber: number | null, date: Date, testIds: number[], dataAddedTestIds: number[], previousTestIds: number[], totalCost: number, paidPrice: number) => Promise<{ success: boolean; error?: string }>;
             getDataEmptyTests: () => Promise<{ dataEmptyTests: DataEmptyTests[] }>;
-            addData: (testRegisterId: number, testId: number, data: object, doctorId?: number) => Promise<{ success: boolean; error?: string }>;
+            addData: (testRegisterId: number, testId: number, data: object, options: object, doctorId?: number) => Promise<{ success: boolean; error?: string }>;
             delete: (testRegisterIds: number[]) => Promise<{ success: boolean; rowCount?: number | null; error?: string }>;
             editDataOfATest: (testRegisterId: number, testId: number) => Promise<{ success: boolean; error?: string }>;
         },
@@ -55,6 +55,10 @@ interface Window {
         },
         financialAnalysis: {
             get: (step: string, startDate?: Date, endDate?: Date) => Promise<{ data: any }>;
+        },
+        agePreference: {
+            save: (data: { age_format: string[] }) => Promise<{ success: boolean; error?: string }>;
+            get: () => Promise<{ age_format: string[] }>;
         }
     };
 }
@@ -89,7 +93,7 @@ type EventPayloadMapping = {
         args: [number, number, number | null, number | null, Date, number[], number[], number[], number, number], return: { success: boolean; error?: string }
     };
     'testRegister:getDataEmptyTests': { args: [], return: { dataEmptyTests: DataEmptyTests[] } };
-    'testRegister:addData': { args: [number, number, object, number?], return: { success: boolean; testRegisterId?: number, error?: string } };
+    'testRegister:addData': { args: [number, number, object, object, number?], return: { success: boolean; testRegisterId?: number, error?: string } };
     'testRegister:delete': { args: [number[]], return: { success: boolean; rowCount?: number | null; error?: string } };
     'testRegister:editDataOfATest': { args: [number, number], return: { success: boolean; error?: string } };
 
@@ -106,6 +110,9 @@ type EventPayloadMapping = {
     'patientAnalysis:get': { args: [number, Date?, Date?], return: { data: AnalysisData } };
     'testAnalysis:get': { args: [Date?, Date?], return: { data: AnalysisData } };
     'financialAnalysis:get': { args: [string, Date?, Date?], return: { data: any } };
+
+    'config:saveAgePreference': { args: [{ age_format: string[] }], return: { success: boolean; error?: string } };
+    'config:getAgePreference': { args: [], return: { age_format: string[] } };
 };
 
 type UnsubscribeFunction = () => void;
@@ -146,7 +153,8 @@ interface NormalRange {
 interface RegisteredTest {
     test: Test;
     doctor: Doctor | null;
-    data: Record<string, any>; // JSON object
+    data: Record<string, any>;
+    options: Record<string, any>;
     data_added: boolean;
     printed: boolean;
 }
@@ -170,6 +178,7 @@ interface DataEmptyTests {
     patientName: string;
     patientDOB: Date;
     patientGender: string;
+    options: Record<string, any>;
     ref_number?: number;
     doctorId?: number;
     doctorName?: string;

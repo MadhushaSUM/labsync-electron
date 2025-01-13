@@ -109,7 +109,10 @@ const RBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                 time: values.time,
                 comment: values.comment
             }
-            const res = await window.electron.testRegister.addData(data.testRegisterId, data.testId, savingData, selectedDoctorId);
+            const options = {
+                preferred_age_format: JSON.parse(values.ageFormat)
+            }
+            const res = await window.electron.testRegister.addData(data.testRegisterId, data.testId, savingData, options, selectedDoctorId);
             if (res.success) {
                 clearScreen();
             } else {
@@ -148,7 +151,8 @@ const RBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         "rbsValue": data.data?.rbsValue,
                         "rbsValueFlag": data.data?.rbsValueFlag,
                         "time": data.data?.time,
-                        "comment": data.data?.comment
+                        "comment": data.data?.comment,
+                        "ageFormat": data.options.preferred_age_format ? JSON.stringify(data.options.preferred_age_format) : '["years"]'
                     }
                 }
             >
@@ -180,6 +184,22 @@ const RBSForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                                 {doctor.name}
                             </Option>
                         ))}
+                    </Select>
+                </Form.Item>
+
+                <Form.Item
+                    label="Preferred age format"
+                    name="ageFormat"
+                >
+                    <Select
+                        allowClear
+                        style={{ width: 300 }}
+                    >
+                        <Option value='["years"]'>years</Option>
+                        <Option value='["months"]'>months</Option>
+                        <Option value='["days"]'>days</Option>
+                        <Option value='["months","days"]'>months and days</Option>
+                        <Option value='["years","months","days"]'>years, months,and days</Option>
                     </Select>
                 </Form.Item>
 

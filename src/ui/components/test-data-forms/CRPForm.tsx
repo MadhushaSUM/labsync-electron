@@ -109,16 +109,18 @@ const CRPForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                 type: "loading",
                 content: "Saving test data..."
             });
-            
+
             const savingData = {
                 crp: values.crp,
                 crpTitreValue: crp == "Positive" ? Number(values.crpTitreValue) : undefined,
                 crpTitreValueFlag: crp == "Positive" ? values.crpTitreValueFlag : undefined,
                 comment: values.comment
             };
-            
-            const res = await window.electron.testRegister.addData(data.testRegisterId, data.testId, savingData, selectedDoctorId);
-            
+            const options = {
+                preferred_age_format: JSON.parse(values.ageFormat)
+            }
+            const res = await window.electron.testRegister.addData(data.testRegisterId, data.testId, savingData, options, selectedDoctorId);
+
             if (res.success) {
                 clearScreen();
             } else {
@@ -158,6 +160,7 @@ const CRPForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         "crpTitreValueFlag": data.data?.crpTitreValueFlag,
                         "crp": data.data ? data.data?.crp : "Negative",
                         "comment": data.data?.comment,
+                        "ageFormat": data.options.preferred_age_format ? JSON.stringify(data.options.preferred_age_format) : '["years"]'
                     }
                 }
             >
@@ -189,6 +192,22 @@ const CRPForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                                 {doctor.name}
                             </Option>
                         ))}
+                    </Select>
+                </Form.Item>
+
+                <Form.Item
+                    label="Preferred age format"
+                    name="ageFormat"
+                >
+                    <Select
+                        allowClear
+                        style={{ width: 300 }}
+                    >
+                        <Option value='["years"]'>years</Option>
+                        <Option value='["months"]'>months</Option>
+                        <Option value='["days"]'>days</Option>
+                        <Option value='["months","days"]'>months and days</Option>
+                        <Option value='["years","months","days"]'>years, months,and days</Option>
                     </Select>
                 </Form.Item>
 

@@ -5,7 +5,7 @@ import { app, BrowserWindow } from 'electron';
 import { calculateAge } from '../../utils.js';
 
 
-export function generateReportBase(report: DataEmptyTests) {
+export async function generateReportBase(report: DataEmptyTests) {
     const config = {
         outputPath: path.join(app.getPath('desktop'), 'pdf-output', 'reports'),
         fonts: {
@@ -20,12 +20,13 @@ export function generateReportBase(report: DataEmptyTests) {
             { label: "Name", value: report.patientName, x: 40, y: 160 },
             { label: "Gender", value: report.patientGender, x: 40, y: 190 },
             { label: "Requested doctor", value: report.doctorName, x: 40, y: 220 },
-            { label: "Age", value: calculateAge(report.patientDOB), x: 330, y: 160 },
+            { label: "Age", value: (await calculateAge(report.patientDOB, report.options.preferred_age_format)), x: 330, y: 160 },
             { label: "Date", value: report.date.toLocaleDateString(), x: 330, y: 190 },
             { label: "Reference number", value: report.ref_number, x: 330, y: 220 }
         ],
         fontSize: 11
     };
+    // TODO: replace toLocalDateString() s
 
     if (!fs.existsSync(config.outputPath)) {
         fs.mkdirSync(config.outputPath);

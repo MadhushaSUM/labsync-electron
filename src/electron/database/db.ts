@@ -277,6 +277,7 @@ export async function getTestRegistrations(
             d.id AS doctor_id,
             d.name AS doctor_name,
             trt.data,
+            trt.options,
             trt.data_added,
             trt.printed
         FROM test_register AS tr
@@ -376,6 +377,7 @@ export async function getTestRegistrations(
                 }
                 : null,
             data: row.data,
+            options: row.options,
             data_added: row.data_added,
             printed: row.printed,
         });
@@ -403,6 +405,7 @@ export async function getTestRegistrationById(testRegisterId: number) {
             d.id AS doctor_id,
             d.name AS doctor_name,
             trt.data,
+            trt.options,
             trt.data_added,
             trt.printed
         FROM test_register AS tr
@@ -446,6 +449,7 @@ export async function getTestRegistrationById(testRegisterId: number) {
                 }
                 : null,
             data: row.data,
+            options: row.options,
             data_added: row.data_added,
             printed: row.printed,
         })),
@@ -546,7 +550,8 @@ export async function getDataEmptyTestsList(): Promise<DataEmptyTests[]> {
             t.name AS test_name,
             d.id AS doctor_id,
             d.name AS doctor_name,
-            trt.data
+            trt.data,
+            trt.options
         FROM test_register AS tr
         INNER JOIN patients AS p ON tr.patient_id = p.id
         INNER JOIN test_register_tests AS trt ON tr.id = trt.test_register_id
@@ -572,15 +577,16 @@ export async function getDataEmptyTestsList(): Promise<DataEmptyTests[]> {
             doctorId: row.doctor_id,
             doctorName: row.doctor_name,
             ref_number: row.ref_number,
-            data: row.data
+            data: row.data,
+            options: row.options
         });
     });
 
     return registrations;
 }
-export async function saveTestData(testRegisterId: number, testId: number, data: object, doctorId?: number) {
-    await pool.query('UPDATE test_register_tests SET \"doctor_id\" = $1, \"data\" = $2, \"data_added\" = true WHERE \"test_register_id\" = $3 AND \"test_id\" = $4',
-        [doctorId, JSON.stringify(data), testRegisterId, testId]
+export async function saveTestData(testRegisterId: number, testId: number, data: object, options: object, doctorId?: number) {
+    await pool.query('UPDATE test_register_tests SET \"doctor_id\" = $1, \"data\" = $2, \"options\" = $3, \"data_added\" = true WHERE \"test_register_id\" = $4 AND \"test_id\" = $5',
+        [doctorId, JSON.stringify(data), JSON.stringify(options), testRegisterId, testId]
     );
 }
 export async function getPrintingTestList(
@@ -605,7 +611,8 @@ export async function getPrintingTestList(
             t.name AS test_name,
             d.id AS doctor_id,
             d.name AS doctor_name,
-            trt.data
+            trt.data,
+            trt.options
         FROM test_register AS tr
         INNER JOIN patients AS p ON tr.patient_id = p.id
         INNER JOIN test_register_tests AS trt ON tr.id = trt.test_register_id
@@ -679,7 +686,8 @@ export async function getPrintingTestList(
             doctorId: row.doctor_id,
             doctorName: row.doctor_name,
             ref_number: row.ref_number,
-            data: row.data
+            data: row.data,
+            options: row.options
         });
     });
 
@@ -717,6 +725,7 @@ export async function getTestRegistrationByPatient(patientId: number, startDate?
             d.id AS doctor_id,
             d.name AS doctor_name,
             trt.data,
+            trt.options,
             trt.data_added,
             trt.printed
         FROM test_register AS tr
@@ -807,6 +816,7 @@ export async function getTestRegistrationByPatient(patientId: number, startDate?
                 }
                 : null,
             data: row.data,
+            options: row.options,
             data_added: row.data_added,
             printed: row.printed,
         });
@@ -837,6 +847,7 @@ export async function getTestRegistrationsForDateRange(
             d.id AS doctor_id,
             d.name AS doctor_name,
             trt.data,
+            trt.options,
             trt.data_added,
             trt.printed
         FROM test_register AS tr
@@ -925,6 +936,7 @@ export async function getTestRegistrationsForDateRange(
                 }
                 : null,
             data: row.data,
+            options: row.options,
             data_added: row.data_added,
             printed: row.printed,
         });
@@ -1006,6 +1018,7 @@ export async function getConfigs(id: number) {
     const result = await pool.query('SELECT description, configuration FROM configs WHERE id=$1', [id]);
     return result.rows[0];
 }
+
 export async function updateConfigs(id: number, configuration: object) {
     await pool.query('UPDATE configs SET configuration=$1 WHERE id=$2', [configuration, id]);
 }

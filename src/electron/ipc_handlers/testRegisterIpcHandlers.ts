@@ -66,10 +66,11 @@ ipcMainHandle('testRegister:addData', async (
     testRegisterId,
     testId,
     data,
+    options,
     doctorId
 ) => {
     try {
-        await saveTestData(testRegisterId, testId, data, doctorId);
+        await saveTestData(testRegisterId, testId, data, options, doctorId);
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };

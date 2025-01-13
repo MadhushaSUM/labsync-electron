@@ -1,22 +1,22 @@
 import { Button, Form, message, Select } from "antd";
-import { useEffect, useState } from "react";
-import pkg from 'pdf-to-printer';
+import { useEffect } from "react";
 
 const { Option } = Select;
 
-const PrinterSettings = () => {
+const AgeFormatSettings = () => {
+    const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
-    const [allPrinters, setAllPrinters] = useState<pkg.Printer[]>([]);
 
-    const fetchPrinters = async () => {
-        const { printers } = await window.electron.printers.get();
-        setAllPrinters(printers);
+    const fetchAgeFormat = async () => {
+        const res = await window.electron.agePreference.get();
+        console.log(res);        
+
+        form.setFieldValue('age_format', JSON.stringify(res.age_format));
     }
 
     const onFinish = async (values: any) => {
         const data = {
-            report_printer: values.report_printer,
-            receipt_printer: values.receipt_printer
+            age_format: JSON.parse(values.age_format)
         }
 
         try {
@@ -26,7 +26,7 @@ const PrinterSettings = () => {
                 content: "Updating preferred printers..."
             });
 
-            const res = await window.electron.printers.save(data);
+            const res = await window.electron.agePreference.save(data);
 
             if (!res.success) {
                 messageApi.open({
@@ -51,41 +51,36 @@ const PrinterSettings = () => {
     }
 
     useEffect(() => {
-        fetchPrinters();
+        fetchAgeFormat();
     }, []);
 
     return (
         <div>
             {contextHolder}
             <Form
+                form={form}
                 name="basic"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 style={{ maxWidth: 500 }}
+                initialValues={{ age_format: '["years"]' }}
                 onFinish={onFinish}
                 autoComplete="off"
             >
                 <Form.Item
-                    label="Report printer"
-                    name="report_printer"
-                    rules={[{ required: true, message: 'Please select a preferred printer!' }]}
+                    label="Age format"
+                    name="age_format"
+                    rules={[{ required: true, message: 'Please select a preferred age format!' }]}
                 >
-                    <Select>
-                        {allPrinters.map(printer => (
-                            <Option key={printer.name}>{`${printer.name} ${printer.deviceId}`}</Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-
-                <Form.Item
-                    label="Receipt printer"
-                    name="receipt_printer"
-                    rules={[{ required: true, message: 'Please select a preferred printer!' }]}
-                >
-                    <Select>
-                        {allPrinters.map(printer => (
-                            <Option key={printer.name}>{`${printer.name} ${printer.deviceId}`}</Option>
-                        ))}
+                    <Select
+                        allowClear
+                        style={{ width: 300 }}
+                    >
+                        <Option value='["years"]'>years</Option>
+                        <Option value='["months"]'>months</Option>
+                        <Option value='["days"]'>days</Option>
+                        <Option value='["months","days"]'>months and days</Option>
+                        <Option value='["years","months","days"]'>years, months,and days</Option>
                     </Select>
                 </Form.Item>
 
@@ -99,4 +94,4 @@ const PrinterSettings = () => {
     )
 }
 
-export default PrinterSettings;
+export default AgeFormatSettings;

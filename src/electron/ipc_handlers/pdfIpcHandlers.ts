@@ -12,7 +12,7 @@ ipcMainOn('report:printPreview', async (
     event,
     report
 ) => {
-    const out1 = generateReportBase(report);
+    const out1 = await generateReportBase(report);
     const { normalRanges } = await getNormalRangesForTest(report.testId);
 
     if (report.data) {
@@ -39,7 +39,7 @@ ipcMainOn('report:print', async (
         const REPORT_PRINTING_PRINTER = printer.configuration.report_printer;
 
         for (const report of reports) {
-            const out1 = generateReportBase(report);
+            const out1 = await generateReportBase(report);
             const { normalRanges } = await getNormalRangesForTest(report.testId);
 
             if (report.data) {
@@ -66,7 +66,7 @@ ipcMainOn('report:mergeReports', async (
     event,
     reports
 ) => {
-    const base = generateReportBase(reports[0]);
+    const base = await generateReportBase(reports[0]);
     let currentTopMargin = base.topMargin;
     for (const report of reports) {
         if (report.data) {
@@ -112,5 +112,23 @@ ipcMainHandle('printers:save', async (data) => {
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
+    }
+});
+
+ipcMainHandle('config:saveAgePreference', async (data) => {
+    try {
+        await updateConfigs(2, data);
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+});
+ipcMainHandle('config:getAgePreference', async () => {
+    try {
+        const res = await getConfigs(2);
+        return { age_format: res.configuration.age_format };
+    } catch (error: any) {
+        console.log(error);
+        return { age_format: ["years"] };
     }
 });

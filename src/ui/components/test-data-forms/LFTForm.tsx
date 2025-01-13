@@ -127,7 +127,10 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                 gammaGtValueFlag: values.gammaGtValueFlag,
                 comment: values.comment
             };
-            const res = await window.electron.testRegister.addData(data.testRegisterId, data.testId, savingData, selectedDoctorId);
+            const options = {
+                preferred_age_format: JSON.parse(values.ageFormat)
+            }
+            const res = await window.electron.testRegister.addData(data.testRegisterId, data.testId, savingData, options, selectedDoctorId);
             if (res.success) {
                 clearScreen();
             } else {
@@ -185,6 +188,7 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         "gammaGtValue": data.data?.gammaGtValue,
                         "gammaGtValueFlag": data.data?.gammaGtValueFlag,
                         "comment": data.data?.comment,
+                        "ageFormat": data.options.preferred_age_format ? JSON.stringify(data.options.preferred_age_format) : '["years"]'
                     }
                 }
             >
@@ -216,6 +220,22 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                                 {doctor.name}
                             </Option>
                         ))}
+                    </Select>
+                </Form.Item>
+
+                <Form.Item
+                    label="Preferred age format"
+                    name="ageFormat"
+                >
+                    <Select
+                        allowClear
+                        style={{ width: 300 }}
+                    >
+                        <Option value='["years"]'>years</Option>
+                        <Option value='["months"]'>months</Option>
+                        <Option value='["days"]'>days</Option>
+                        <Option value='["months","days"]'>months and days</Option>
+                        <Option value='["years","months","days"]'>years, months,and days</Option>
                     </Select>
                 </Form.Item>
 
@@ -433,7 +453,7 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                     name="agRatioValue"
                     rules={[{ required: true }]}
                 >
-                    <Input placeholder="value" style={{width: 370}}/>
+                    <Input placeholder="value" style={{ width: 370 }} />
                 </Form.Item>
                 <Form.Item label="GAMMA GT" style={{ marginBottom: 0 }}>
                     <Form.Item
