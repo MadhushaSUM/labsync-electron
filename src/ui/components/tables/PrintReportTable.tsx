@@ -157,8 +157,13 @@ const PrintReportTable = () => {
         }
     }
 
+    const handlePrintReport = () => {
+        const selectedReports = dataSource.filter(item => selectedRowKeys.includes(item.key)) as DataEmptyTests[];
+        window.electron.report.print(selectedReports);
+    }
+
     const handleMergeReports = () => {
-        const selectedReports = dataSource.filter((item) => selectedRowKeys.includes(item.key)) as DataEmptyTests[];
+        const selectedReports = dataSource.filter(item => selectedRowKeys.includes(item.key)) as DataEmptyTests[];
         window.electron.report.mergeReports(selectedReports);
     }
 
@@ -202,10 +207,17 @@ const PrintReportTable = () => {
             {contextHolder}
             <div className="my-5">
                 <Flex gap={5} justify="end">
-                    <Button style={{ width: 100 }} color="primary" variant="solid">Print</Button>
                     <Button
                         style={{ width: 100 }}
-                        color="primary" 
+                        color="primary"
+                        variant="solid"
+                        onClick={handlePrintReport}
+                    >
+                        Print
+                    </Button>
+                    <Button
+                        style={{ width: 100 }}
+                        color="primary"
                         variant="outlined"
                         disabled={mergeDisabled}
                         onClick={handleMergeReports}

@@ -2,6 +2,10 @@ import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
 import { app } from 'electron';
+import pkg from 'pdf-to-printer';
+import { getConfigs } from '../../database/db.js';
+
+const { print } = pkg;
 
 interface ReceiptPDFConfig {
     outputPath: string,
@@ -21,7 +25,9 @@ interface ReceiptPDFConfig {
     }[];
 }
 
-export function printReceipt(registration: Registration) {
+export async function printReceipt(registration: Registration) {
+    const printer = await getConfigs(1);
+    const RECEIPT_PRINTING_PRINTER = printer.configuration.receipt_printer;
 
     const topMargin = 10;
 
@@ -129,5 +135,9 @@ export function printReceipt(registration: Registration) {
 
     doc.end();
 
-    console.log('Receipt PDF generated: receipt_dynamic.pdf');
+    try {
+        print(filePath, { printer: RECEIPT_PRINTING_PRINTER });
+    } catch (error) {
+        console.error(error);
+    }
 }

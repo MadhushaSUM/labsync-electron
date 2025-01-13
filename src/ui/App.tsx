@@ -23,6 +23,7 @@ import Reports from './pages/reports/Reports';
 import PatientAnalysis from './pages/analysis/PatientAnalysis';
 import TestAnalysis from './pages/analysis/TestAnalysis';
 import FinancialAnalysis from './pages/analysis/FinancialAnalysis';
+import GeneralSettings from './pages/settings/GeneralSettings';
 
 const { Header, Sider, Content } = Layout;
 
@@ -81,6 +82,7 @@ function App() {
                                 <Route path="/doctors" element={<Doctors />} />
                                 <Route path="/add-patient" element={<AddPatient />} />
                                 <Route path="/settings/tests" element={<Tests />} />
+                                <Route path="/settings/general" element={<GeneralSettings />} />
                                 <Route path="/settings/normal-ranges" element={<NormalRanges />} />
                                 <Route path="/settings/page" element={<PageSettings />} />                                
                                 <Route path="/reports" element={<Reports />} />                                

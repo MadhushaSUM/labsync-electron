@@ -1,3 +1,4 @@
+
 interface Window {
     electron: {
         patients: {
@@ -31,15 +32,20 @@ interface Window {
             update: (id: number, patientId: number, doctorId: number | null, refNumber: number | null, date: Date, testIds: number[], dataAddedTestIds: number[], previousTestIds: number[], totalCost: number, paidPrice: number) => Promise<{ success: boolean; error?: string }>;
             getDataEmptyTests: () => Promise<{ dataEmptyTests: DataEmptyTests[] }>;
             addData: (testRegisterId: number, testId: number, data: object, doctorId?: number) => Promise<{ success: boolean; error?: string }>;
-            delete: (testRegisterIds: number[]) => Promise<{ success: boolean; rowCount?: number; error?: string }>;
+            delete: (testRegisterIds: number[]) => Promise<{ success: boolean; rowCount?: number | null; error?: string }>;
             editDataOfATest: (testRegisterId: number, testId: number) => Promise<{ success: boolean; error?: string }>;
         },
         report: {
             test: () => Promise<{ success: boolean }>;
             getTests: (page: number, pageSize: number, allReports: boolean, fromDate?: Date, toDate?: Date, patientId?: number, refNumber?: number) => Promise<{ registrations: DataEmptyTests[], total: number }>;
             printPreview: (report: DataEmptyTests) => void;
+            print: (reports: DataEmptyTests[]) => void;
             printReceipt: (registration: Registration) => void;
             mergeReports: (reports: DataEmptyTests[]) => void;
+        },
+        printers: {
+            get: () => Promise<{ printers: Printer[] }>;
+            save: (data: { report_printer: string, receipt_printer: string }) => Promise<{ success: boolean; error?: string }>;
         },
         patientAnalysis: {
             get: (patientId: number, startDate?: Date, endDate?: Date) => Promise<{ data: AnalysisData }>;
@@ -70,8 +76,8 @@ type EventPayloadMapping = {
 
     'testFields:getForTest': { args: [number]; return: { test_fields: TestField[] } };
 
-    'normalRanges:getForTestField': { args: [nuumber], return: { normalRanges: NormalRange[] } };
-    'normalRanges:getForTest': { args: [nuumber], return: { normalRanges: NormalRange[] } };
+    'normalRanges:getForTestField': { args: [number], return: { normalRanges: NormalRange[] } };
+    'normalRanges:getForTest': { args: [number], return: { normalRanges: NormalRange[] } };
     'normalRanges:insertOrUpdate': { args: [number, number, object]; return: { success: boolean; error?: string } };
 
     'testRegister:insert': {
@@ -84,14 +90,18 @@ type EventPayloadMapping = {
     };
     'testRegister:getDataEmptyTests': { args: [], return: { dataEmptyTests: DataEmptyTests[] } };
     'testRegister:addData': { args: [number, number, object, number?], return: { success: boolean; testRegisterId?: number, error?: string } };
-    'testRegister:delete': { args: [number[]], return: { success: boolean; rowCount?: numuber; error?: string } };
+    'testRegister:delete': { args: [number[]], return: { success: boolean; rowCount?: number | null; error?: string } };
     'testRegister:editDataOfATest': { args: [number, number], return: { success: boolean; error?: string } };
 
     'report:test': { args: [], return: { success: boolean } };
     'report:getTests': { args: [number, number, boolean, Date?, Date?, number?, number?], return: { registrations: DataEmptyTests[], total: number } };
     'report:printPreview': { args: [report: DataEmptyTests], return: {} };
+    'report:print': { args: [reports: DataEmptyTests[]], return: {} };
     'report:printReceipt': { args: [registration: Registration], return: {} };
     'report:mergeReports': { args: [reports: DataEmptyTests[]], return: {} };
+
+    'printers:get': { args: [], return: { printers: Printer[] } };
+    'printers:save': { args: [{ report_printer: string, receipt_printer: string }], return: { success: boolean; error?: string } };
 
     'patientAnalysis:get': { args: [number, Date?, Date?], return: { data: AnalysisData } };
     'testAnalysis:get': { args: [Date?, Date?], return: { data: AnalysisData } };
