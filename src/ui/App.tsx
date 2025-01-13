@@ -22,6 +22,7 @@ import PageSettings from './pages/settings/PageSettings';
 import Reports from './pages/reports/Reports';
 import PatientAnalysis from './pages/analysis/PatientAnalysis';
 import TestAnalysis from './pages/analysis/TestAnalysis';
+import FinancialAnalysis from './pages/analysis/FinancialAnalysis';
 
 const { Header, Sider, Content } = Layout;
 
@@ -85,6 +86,7 @@ function App() {
                                 <Route path="/reports" element={<Reports />} />                                
                                 <Route path="/analysis/patient-analysis" element={<PatientAnalysis />} />                                
                                 <Route path="/analysis/test-analysis" element={<TestAnalysis />} />                                
+                                <Route path="/analysis/finantial-analysis" element={<FinancialAnalysis />} />                                
                             </Routes>
                         </Content>
                     </ScrollArea>

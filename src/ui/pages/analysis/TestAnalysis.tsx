@@ -83,7 +83,7 @@ const TestAnalysis = () => {
                             </Form.Item>
                             <Form.Item>
                                 <Button type="primary" htmlType="submit">
-                                    Submit
+                                    Search
                                 </Button>
                             </Form.Item>
                         </Form>

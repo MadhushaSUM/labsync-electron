@@ -46,6 +46,9 @@ interface Window {
         },
         testAnalysis: {
             get: (startDate?: Date, endDate?: Date) => Promise<{ data: AnalysisData }>;
+        },
+        financialAnalysis: {
+            get: (step: string, startDate?: Date, endDate?: Date) => Promise<{ data: any }>;
         }
     };
 }
@@ -92,6 +95,7 @@ type EventPayloadMapping = {
 
     'patientAnalysis:get': { args: [number, Date?, Date?], return: { data: AnalysisData } };
     'testAnalysis:get': { args: [Date?, Date?], return: { data: AnalysisData } };
+    'financialAnalysis:get': { args: [string, Date?, Date?], return: { data: any } };
 };
 
 type UnsubscribeFunction = () => void;
@@ -174,4 +178,20 @@ interface AnalysisData {
             testRegisterId: number
         }[]
     }[],
+}
+
+interface FinancialAnalysisOutput {
+    totalCost: number;
+    totalPaid: number;
+    periods: {
+        startDate: Date;
+        endDate: Date;
+        periodCost: number;
+        periodPaid: number;
+        tests: {
+            testId: number;
+            testName: string;
+            testTotalCost: number;
+        }[]
+    }[]
 }

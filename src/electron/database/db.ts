@@ -817,7 +817,7 @@ export async function getTestRegistrationByPatient(patientId: number, startDate?
 export async function getTestRegistrationsForDateRange(
     fromDate?: Date,
     toDate?: Date
-) {    
+) {
     let baseQuery = `
         SELECT 
             tr.id AS test_register_id,
@@ -931,4 +931,72 @@ export async function getTestRegistrationsForDateRange(
     });
 
     return { totalCount, registrations };
+}
+
+export async function getPeriodsWithTestRegisterIds(granularity: string, startDate?: Date, endDate?: Date) {
+    const query = `
+        WITH time_series AS (
+            SELECT
+                generate_series(
+                    date_trunc(
+                        CASE 
+                            WHEN $1 = 'daily' THEN 'day'
+                            WHEN $1 = 'weekly' THEN 'week'
+                            WHEN $1 = 'monthly' THEN 'month'
+                            WHEN $1 = 'annually' THEN 'year'
+                        END, $2::timestamp
+                    ),
+                    date_trunc(
+                        CASE 
+                            WHEN $1 = 'daily' THEN 'day'
+                            WHEN $1 = 'weekly' THEN 'week'
+                            WHEN $1 = 'monthly' THEN 'month'
+                            WHEN $1 = 'annually' THEN 'year'
+                        END, $3::timestamp
+                    ),
+                    CASE 
+                        WHEN $1 = 'daily' THEN '1 day'::interval
+                        WHEN $1 = 'weekly' THEN '1 week'::interval
+                        WHEN $1 = 'monthly' THEN '1 month'::interval
+                        WHEN $1 = 'annually' THEN '1 year'::interval
+                    END
+                ) AS start_date
+        ),
+        period_boundaries AS (
+            SELECT
+                start_date,
+                start_date + 
+                CASE 
+                    WHEN $1 = 'daily' THEN '1 day'::interval
+                    WHEN $1 = 'weekly' THEN '1 week'::interval
+                    WHEN $1 = 'monthly' THEN '1 month'::interval
+                    WHEN $1 = 'annually' THEN '1 year'::interval
+                END - '1 second'::interval AS end_date
+            FROM time_series
+        )
+        SELECT
+            pb.start_date AS start_date_of_period,
+            pb.end_date AS end_date_of_period,
+            COALESCE(json_agg(tr.id), '[]'::json) AS test_register_ids
+        FROM period_boundaries pb
+        LEFT JOIN test_register tr 
+            ON tr.date >= pb.start_date 
+            AND tr.date <= pb.end_date
+        GROUP BY pb.start_date, pb.end_date
+        ORDER BY pb.start_date;
+    `;
+
+    const values = [granularity, startDate, endDate];
+
+    try {
+        const result = await pool.query(query, values);
+        return result.rows.map(row => ({
+            startDateOfPeriod: new Date(row.start_date_of_period),
+            endDateOfPeriod: new Date(row.end_date_of_period),
+            testRegisterIds: row.test_register_ids,
+        }));
+    } catch (err) {
+        console.error('Error executing query:', err);
+        throw err;
+    }
 }
