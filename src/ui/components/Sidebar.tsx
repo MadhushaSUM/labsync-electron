@@ -1,12 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { Menu } from "antd";
+import { Menu, message } from "antd";
 import {
     PieChartOutlined,
     HomeOutlined,
     SettingOutlined,
     PlusCircleOutlined,
     PrinterOutlined,
-    FileTextOutlined,
     UsergroupAddOutlined
 } from '@ant-design/icons';
 
@@ -14,16 +13,43 @@ type SidebarProps = {
     darkTheme: boolean;
 }
 
+const restrictedRoutes = new Set(["/analysis/finantial-analysis", "/settings", "/settings/general", "/settings/tests", "/settings/normal-ranges", "/settings/users"]);
+
 const Sidebar = ({ darkTheme }: SidebarProps) => {
     const navigate = useNavigate();
+    const [messageApi, contextHolder] = message.useMessage();
+
+
+    const onClick = async (key: string) => {
+        try {
+            const isAdmin = await window.electron.authenticate.isAdmin();
+            if (restrictedRoutes.has(key) && !isAdmin) {
+                messageApi.open({
+                    key: "login_message",
+                    type: "warning",
+                    content: "Admin user privileges required!"
+                });
+                return;
+            }
+
+            navigate(key);
+        } catch (error: any) {
+            messageApi.open({
+                key: "login_message",
+                type: "error",
+                content: error.message
+            });
+        }
+    }
 
     return (
         <Menu
             theme={darkTheme ? 'dark' : 'light'}
             mode="inline"
             className="menu-bar"
-            onClick={({ key }) => navigate(key)}
+            onClick={({ key }) => onClick(key)}
         >
+            {contextHolder}
             <Menu.Item key="/" icon={<HomeOutlined />}>
                 Home
             </Menu.Item>

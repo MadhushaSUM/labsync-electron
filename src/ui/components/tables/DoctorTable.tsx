@@ -182,7 +182,16 @@ const DoctorsTable = () => {
     }, [currentPage, pageSize, searchTerm]);
 
 
-    const deleteSelectedDoctors = () => {
+    const deleteSelectedDoctors = async () => {
+        const isAdmin = await window.electron.authenticate.isAdmin();
+        if (!isAdmin) {
+            messageApi.open({
+                key: "login_message",
+                type: "warning",
+                content: "Admin user privileges required!"
+            });
+            return;
+        }
         setLoading(true);
         // ajax request after empty completing
         setTimeout(() => {

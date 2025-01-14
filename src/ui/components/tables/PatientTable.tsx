@@ -155,8 +155,18 @@ const PatientsTable = () => {
     }, [currentPage, pageSize, searchTerm]);
 
 
-    const deleteSelectedPatients = () => {
+    const deleteSelectedPatients = async () => {
+        const isAdmin = await window.electron.authenticate.isAdmin();
+        if (!isAdmin) {
+            messageApi.open({
+                key: "login_message",
+                type: "warning",
+                content: "Admin user privileges required!"
+            });
+            return;
+        }
         setLoading(true);
+        
         // ajax request after empty completing
         setTimeout(() => {
             setSelectedRowKeys([]);

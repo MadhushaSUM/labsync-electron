@@ -1,4 +1,4 @@
-import { Button, DatePicker, Flex, InputNumber, Modal, Select, Spin, Switch, Table, TableColumnsType, Tag } from "antd";
+import { Button, DatePicker, Flex, InputNumber, message, Modal, Select, Spin, Switch, Table, TableColumnsType, Tag } from "antd";
 import { debounce } from "lodash";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +19,7 @@ const TestRegistrationTable = (
     }
 ) => {
     const navigate = useNavigate();
+    const [messageApi, contextHolder] = message.useMessage();
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [loading, setLoading] = useState(false);
@@ -267,9 +268,18 @@ const TestRegistrationTable = (
         />
     );
 
-    const deleteTestRegisters = () => {
+    const deleteTestRegisters = async () => {
         const deletingIds = selectedRowKeys.map((item) => Number(item));
 
+        const isAdmin = await window.electron.authenticate.isAdmin();
+        if (!isAdmin) {
+            messageApi.open({
+                key: "login_message",
+                type: "warning",
+                content: "Admin user privileges required!"
+            });
+            return;
+        }
         confirm({
             title: 'Do you want to delete these records?',
             icon: <ExclamationCircleFilled />,
@@ -309,6 +319,7 @@ const TestRegistrationTable = (
 
     return (
         <div className="p-5">
+            {contextHolder}
             <div>
                 <Flex justify="end" gap={5}>
                     <Button variant="solid" color="primary" onClick={() => navigate("/new-test")}>New Test Registration</Button>
