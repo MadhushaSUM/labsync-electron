@@ -1,5 +1,5 @@
-import { getPeriodsWithTestRegisterIds, getTestRegistrationById, getTestRegistrationByPatient, getTestRegistrations, getTestRegistrationsForDateRange, getTests } from "../database/db.js";
-import { delay, ipcMainHandle } from "../utils.js";
+import { getPeriodsWithTestRegisterIds, getTestRegistrationById, getTestRegistrationByPatient, getTestRegistrationsForDateRange, getTests } from "../database/db.js";
+import { ipcMainHandle } from "../utils.js";
 
 ipcMainHandle('patientAnalysis:get', async (patientId, startDate, endDate) => {
     const testRegisters = await getTestRegistrationByPatient(patientId, startDate, endDate);

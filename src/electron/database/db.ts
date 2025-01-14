@@ -1022,3 +1022,23 @@ export async function getConfigs(id: number) {
 export async function updateConfigs(id: number, configuration: object) {
     await pool.query('UPDATE configs SET configuration=$1 WHERE id=$2', [configuration, id]);
 }
+
+// user database operations
+export async function getUserByUsername(username: string) {
+    const result = await pool.query('SELECT * FROM users WHERE \"username\" = $1', [username]);
+    return result.rows;
+}
+export async function getUserById(id: number) {
+    const result = await pool.query('SELECT * FROM users WHERE \"id\" = $1', [id]);
+    return result.rows;
+}
+export async function getUsers() {
+    const result = await pool.query('SELECT * FROM users');
+    return result.rows.map(user => ({ id: user.id, username: user.username, role: user.role }));
+}
+export async function updateUser(id: number, username: string, role: string) {
+    await pool.query('UPDATE users SET \"username\" = $1, \"role\" = $2 WHERE \"id\" = $3', [username, role, id]);
+}
+export async function updateUserPassword(id: number, newPassword: string) {
+    await pool.query('UPDATE users SET \"password\" = $1 WHERE \"id\" = $2', [newPassword, id]);
+}

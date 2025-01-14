@@ -59,6 +59,13 @@ electron.contextBridge.exposeInMainWorld("electron", {
     agePreference: {
         save: (data) => ipcInvoke('config:saveAgePreference', data),
         get: () => ipcInvoke('config:getAgePreference'),
+    },
+    authenticate: {
+        login: (username, password) => ipcInvoke('authenticate:login', username, password),
+        isAdmin: () => ipcInvoke('authenticate:isAdmin'),
+        getUsers: () => ipcInvoke('authenticate:getUsers'),
+        updateUser: (id, username, role) => ipcInvoke('authenticate:updateUser', id, username, role),
+        updatePassword: (id, currentPassword, newPassword) => ipcInvoke('authenticate:updatePassword', id, currentPassword, newPassword),
     }
 } satisfies Window['electron']);
 

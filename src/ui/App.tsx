@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 
-import { Button, Layout, theme } from 'antd'
-import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
+import { Button, Layout, Modal, theme } from 'antd'
+import { MenuUnfoldOutlined, MenuFoldOutlined, LockTwoTone } from '@ant-design/icons';
 import Logo from './components/Logo';
 import Sidebar from './components/Sidebar';
 import ToggleThemeButton from './components/ToggleThemeButton';
@@ -24,14 +24,19 @@ import PatientAnalysis from './pages/analysis/PatientAnalysis';
 import TestAnalysis from './pages/analysis/TestAnalysis';
 import FinancialAnalysis from './pages/analysis/FinancialAnalysis';
 import GeneralSettings from './pages/settings/GeneralSettings';
+import LoginForm from './components/LoginForm';
+import UserSettings from './pages/settings/UserSettings';
 
 const { Header, Sider, Content } = Layout;
+
 
 function App() {
     const [darkTheme, setDarkTheme] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
 
     const [editTestRegistrationId, setEditTestRegistrationId] = useState<number>(-1);
+
+    const [modal, contextHolder] = Modal.useModal();
 
     const toggleTheme = () => {
         setDarkTheme(!darkTheme);
@@ -48,8 +53,21 @@ function App() {
         setEditTestRegistrationId(id);
     }
 
+    useEffect(() => {
+        modal.confirm({
+            title: 'Authentication',
+            icon: <LockTwoTone />,
+            content: <LoginForm />,
+            okCancel: false,
+            footer: false,
+            closable: false,
+            keyboard: false,
+        });
+    }, []);
+
     return (
         <Router>
+            {contextHolder}
             <Layout>
                 <Sider
                     theme={darkTheme ? 'dark' : 'light'}
@@ -75,7 +93,7 @@ function App() {
                         <Content className='m-5' style={{ height: "calc(98vh - 100px)" }} >
                             <Routes>
                                 <Route path="/" element={<Home />} />
-                                <Route path="/test-registration" element={<RegisteredTests editTestFunctionHandle={setIdToEditTestRegistration}/>} />
+                                <Route path="/test-registration" element={<RegisteredTests editTestFunctionHandle={setIdToEditTestRegistration} />} />
                                 <Route path="/edit-test-registration" element={<EditTestRegistration testRegistrationId={editTestRegistrationId} />} />
                                 <Route path="/new-test" element={<NewTest />} />
                                 <Route path="/patients" element={<Patients />} />
@@ -84,11 +102,12 @@ function App() {
                                 <Route path="/settings/tests" element={<Tests />} />
                                 <Route path="/settings/general" element={<GeneralSettings />} />
                                 <Route path="/settings/normal-ranges" element={<NormalRanges />} />
-                                <Route path="/settings/page" element={<PageSettings />} />                                
-                                <Route path="/reports" element={<Reports />} />                                
-                                <Route path="/analysis/patient-analysis" element={<PatientAnalysis />} />                                
-                                <Route path="/analysis/test-analysis" element={<TestAnalysis />} />                                
-                                <Route path="/analysis/finantial-analysis" element={<FinancialAnalysis />} />                                
+                                <Route path="/settings/page" element={<PageSettings />} />
+                                <Route path="/settings/users" element={<UserSettings />} />
+                                <Route path="/reports" element={<Reports />} />
+                                <Route path="/analysis/patient-analysis" element={<PatientAnalysis />} />
+                                <Route path="/analysis/test-analysis" element={<TestAnalysis />} />
+                                <Route path="/analysis/finantial-analysis" element={<FinancialAnalysis />} />
                             </Routes>
                         </Content>
                     </ScrollArea>

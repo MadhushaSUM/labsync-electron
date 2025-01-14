@@ -46,7 +46,7 @@ const Sidebar = ({ darkTheme }: SidebarProps) => {
                 <Menu.Item key="/settings/general">General</Menu.Item>
                 <Menu.Item key="/settings/tests">Tests</Menu.Item>
                 <Menu.Item key="/settings/normal-ranges">Normal ranges</Menu.Item>
-                <Menu.Item key="/settings/user">Users</Menu.Item>
+                <Menu.Item key="/settings/users">Users</Menu.Item>
             </Menu.SubMenu>
         </Menu>
     )

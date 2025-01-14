@@ -21,6 +21,9 @@ import './ipc_handlers/pdfIpcHandlers.js';
 // Importing analysis ipc handlers
 import './ipc_handlers/analysisIpcHandlers.js';
 
+// Importing authenticate ipc handlers
+import './ipc_handlers/authenticateIpcHandlers.js';
+
 
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({

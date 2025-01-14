@@ -59,6 +59,13 @@ interface Window {
         agePreference: {
             save: (data: { age_format: string[] }) => Promise<{ success: boolean; error?: string }>;
             get: () => Promise<{ age_format: string[] }>;
+        },
+        authenticate: {
+            login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+            isAdmin: () => Promise<boolean>;
+            getUsers: () => Promise<{ users: User[] }>;
+            updateUser: (id: number, username: string, role: string) => Promise<{ success: boolean; error?: string }>;
+            updatePassword: (id: number, currentPassword: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
         }
     };
 }
@@ -113,6 +120,12 @@ type EventPayloadMapping = {
 
     'config:saveAgePreference': { args: [{ age_format: string[] }], return: { success: boolean; error?: string } };
     'config:getAgePreference': { args: [], return: { age_format: string[] } };
+
+    'authenticate:login': { args: [string, string], return: { success: boolean; error?: string } };
+    'authenticate:isAdmin': { args: [], return: boolean };
+    'authenticate:getUsers': { args: [], return: { users: User[] } };
+    'authenticate:updateUser': { args: [number, string, string], return: { success: boolean; error?: string } };
+    'authenticate:updatePassword': { args: [number, string, string], return: { success: boolean; error?: string } };
 };
 
 type UnsubscribeFunction = () => void;
@@ -213,4 +226,10 @@ interface FinancialAnalysisOutput {
             testTotalCost: number;
         }[]
     }[]
+}
+
+interface User {
+    id: number;
+    username: string;
+    role: string;
 }
