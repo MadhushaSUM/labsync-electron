@@ -161,7 +161,7 @@ const BloodSugarProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, cl
         <div className="w-full">
             {contextHolder}
             <p className="w-full text-lg text-center m-5 font-bold">
-                Lipid Profile
+                Blood sugar series
             </p>
             <Form
                 name="complex-form"
@@ -263,7 +263,7 @@ const BloodSugarProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, cl
                     </div>
                 </Form.Item>
 
-                <Form.Item label="PPBS (Pre breakfast)" style={{ marginBottom: 0 }}>
+                <Form.Item label="PPBS (Post breakfast)" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="ppbsPreBfValue"
                         rules={[{ required: true }]}
@@ -287,7 +287,7 @@ const BloodSugarProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, cl
                     </div>
                 </Form.Item>
 
-                <Form.Item label="RBS (After lunch)" style={{ marginBottom: 0 }}>
+                <Form.Item label="RBS (Pre lunch)" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="rbsAfterLnValue"
                         rules={[{ required: true }]}
@@ -311,7 +311,7 @@ const BloodSugarProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, cl
                     </div>
                 </Form.Item>
 
-                <Form.Item label="PPBS (Pre lunch)" style={{ marginBottom: 0 }}>
+                <Form.Item label="PPBS (Post lunch)" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="ppbsPreLnValue"
                         rules={[{ required: true }]}
@@ -335,7 +335,7 @@ const BloodSugarProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, cl
                     </div>
                 </Form.Item>
 
-                <Form.Item label="RBS (After dinner)" style={{ marginBottom: 0 }}>
+                <Form.Item label="RBS (Pre dinner)" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="rbsAfterDnValue"
                         rules={[{ required: true }]}
@@ -359,7 +359,7 @@ const BloodSugarProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, cl
                     </div>
                 </Form.Item>
 
-                <Form.Item label="PPBS (Pre dinner)" style={{ marginBottom: 0 }}>
+                <Form.Item label="PPBS (Post dinner)" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="ppbsPreDnValue"
                         rules={[{ required: true }]}

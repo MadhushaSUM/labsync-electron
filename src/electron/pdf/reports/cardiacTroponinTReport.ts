@@ -1,6 +1,7 @@
-import { addTextEntries, generateTestPDFConfig, TestEntry, writeOnDocument } from './pdfUtils.js';
+import { addTextEntries, generateTestPDFConfig, TestEntry, writeOnDocument } from "./pdfUtils.js";
 
-export function addFBSData(
+
+export function addCardiacTroponinTData(
     data: any,
     doc: PDFKit.PDFDocument,
     topMargin: number,
@@ -12,26 +13,19 @@ export function addFBSData(
     let config = generateTestPDFConfig();
 
     const tests: TestEntry[] = [
-        { name: "FASTING BLOOD SUGAR (FBS)", testFieldId: 1, value: data.fbsValue, unit: "mg/dl", flag: data.fbsValueFlag },
-        { name: "", testFieldId: -1, value: (Math.round((Number(data.fbsValue) * 0.055) * 100) / 100), unit: "mmol/L" },
-    ]
+        { name: "cTnT", testFieldId: -1, value: data.ctnt, unit: "" },
+    ];
 
     let yPosition = topMargin;
 
     yPosition = addTextEntries(tests, config, yPosition, normalRanges, patientDateOfBirth, patientGender, doc);
 
     if (!isMerging) {
-
         const aditionalNotes = [
-            { labelCol1: "REFERENCE VALUES", labelCol2: "", x1: 60, x2: 250, weight: "bold" },
-            { labelCol1: "< 70 mg/dl (3.9 mmol/L)", labelCol2: "Hypoglycemia", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "70 - 100 mg/dl (3.9 - 5.6 mmol/L)", labelCol2: "Normal (Non-diabetic)", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "100 - 125 mg/dl (5.6 - 6.9 mmol/L)", labelCol2: "Impaired glucose (Pre-diabetic)", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "> 125 mg/dl (6.9 mmol/L)", labelCol2: "Diabetic (type 1 or 2)", x1: 60, x2: 250, weight: "normal" },
+            { labelCol1: "REFERENCE VALUE", labelCol2: "", x1: 60, x2: 250, weight: "bold" },
+            { labelCol1: "  < 0.01 ng/ml", labelCol2: "", x1: 60, x2: 250, weight: "normal" },
         ];
-
-        yPosition += 30;
-
+        yPosition += 20;
         aditionalNotes.forEach(test => {
             config.textEntries.push(
                 { label: test.labelCol1, x: test.x1, y: yPosition, fontSize: 11, weight: test.weight as any, options: undefined },
@@ -39,6 +33,14 @@ export function addFBSData(
             );
             yPosition += 20;
         });
+
+        yPosition += 15;
+
+        config.textEntries.push(
+            { label: "The cardiac subtype of troponin T is especially useful in the laboratory diagnosis of heart attack because it is released into the blood stream when damage to heart muscle occurs. The elevation is detectable from 3 - 4 hours after a heart attack, and the levels remain elevated for up to two weeks.", x: 40, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
+        );
+
+        yPosition += 50;
 
         if (data.comment) {
             config.textEntries.push({

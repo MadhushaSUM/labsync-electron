@@ -9,15 +9,33 @@ export function addTextEntries(
     yPosition: number,
     normalRanges: NormalRange[],
     patientDateOfBirth: Date,
-    patientGender: string
+    patientGender: string,
+    doc: PDFKit.PDFDocument,
 ) {
+    const decimalAlignmentX = 235;
+
     tests.forEach(test => {
+        let value = test.value != null ? test.value.toString() : "";
+        let xPosition = decimalAlignmentX;
+
+        // if (textValue) {
+        //     xPosition = decimalAlignmentX;
+        // } else {
+        //     if (value) {
+        //         const [integerPart, fractionalPart] = value.split('.');
+        //         const intWidth = doc.widthOfString(integerPart || "");
+        //         const fracWidth = doc.widthOfString(fractionalPart || "");
+
+        //         xPosition = decimalAlignmentX - intWidth;
+        //     }
+        // }
+
         config.textEntries.push(
             { label: test.name, x: 50, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
-            { label: test.value != null ? test.value.toString() : "", x: 200, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
-            { label: test.unit, x: 270, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
-            { label: test.flag || "", x: 330, y: yPosition, fontSize: 11, weight: "bold", options: undefined },
-            { label: findTheCorrectNormalRangeRule(normalRanges, test.testFieldId, patientDateOfBirth, patientGender, test.unit), x: 420, y: yPosition, fontSize: 11, weight: "normal", options: undefined }
+            { label: value, x: xPosition, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
+            { label: test.unit, x: 305, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
+            { label: test.flag || "", x: 365, y: yPosition, fontSize: 11, weight: "bold", options: undefined },
+            { label: findTheCorrectNormalRangeRule(normalRanges, test.testFieldId, patientDateOfBirth, patientGender, test.unit), x: 430, y: yPosition, fontSize: 11, weight: "normal", options: undefined }
         );
         yPosition += 20;
     });
@@ -41,24 +59,14 @@ export function writeOnDocument(doc: PDFKit.PDFDocument, config: PDFConfig) {
     return doc;
 }
 
-export function generateTestPDFConfig(testName: string, topMargin: number) {
+export function generateTestPDFConfig() {
     const config: PDFConfig = {
         fonts: {
             normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
             bold: path.join(app.getAppPath(), 'fonts/Aptos-Bold.ttf')
         },
-        linePositions: [
-            { x1: 20, y1: 30 + topMargin, x2: 575, y2: 30 + topMargin },
-            { x1: 20, y1: 50 + topMargin, x2: 575, y2: 50 + topMargin },
-        ],
-        textEntries: [
-            { label: testName, x: 0, y: topMargin, fontSize: 15, weight: "bold", options: { align: "center", width: 595 } },
-            { label: "Test", x: 50, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Result", x: 200, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Unit", x: 270, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Flag", x: 330, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-            { label: "Normal Range", x: 420, y: 34 + topMargin, fontSize: 11, weight: "bold", options: undefined },
-        ],
+        linePositions: [],
+        textEntries: [],
     };
 
     return config;

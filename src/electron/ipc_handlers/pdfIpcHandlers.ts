@@ -8,11 +8,25 @@ import pkg from 'pdf-to-printer';
 
 const { print, getPrinters } = pkg;
 
+const secondTypeTestIds = new Set([2, 4, 8, 9, 17, 27, 29, 30, 32]);
+
 ipcMainOn('report:printPreview', async (
     event,
     report
 ) => {
-    const out1 = await generateReportBase(report);
+    let testNames = [];
+    if (report.testId == 15) {
+        testNames.push(`${report.testName.toUpperCase()} (${report.data && report.data.glucoseWeight})`);
+    } else if (report.testId == 6) {
+        testNames.push(`${report.testName} (westergren method)`.toUpperCase());
+    }
+    else {
+        testNames.push(report.testName.toUpperCase());
+    }
+    const hasSecondType = secondTypeTestIds.has(Number(report.testId));
+    console.log(secondTypeTestIds);
+
+    const out1 = await generateReportBase(report, testNames, hasSecondType);
     const { normalRanges } = await getNormalRangesForTest(report.testId);
 
     if (report.data) {
@@ -39,7 +53,17 @@ ipcMainOn('report:print', async (
         const REPORT_PRINTING_PRINTER = printer.configuration.report_printer;
 
         for (const report of reports) {
-            const out1 = await generateReportBase(report);
+            let testNames = [];
+            if (report.testId == 15) {
+                testNames.push(`${report.testName.toUpperCase()} (${report.data && report.data.glucoseWeight})`);
+            } else if (report.testId == 6) {
+                testNames.push(`${report.testName} (westergren method)`.toUpperCase());
+            }
+            else {
+                testNames.push(report.testName.toUpperCase());
+            }
+            const hasSecondType = secondTypeTestIds.has(Number(report.testId));
+            const out1 = await generateReportBase(report, testNames, hasSecondType);
             const { normalRanges } = await getNormalRangesForTest(report.testId);
 
             if (report.data) {
@@ -66,7 +90,19 @@ ipcMainOn('report:mergeReports', async (
     event,
     reports
 ) => {
-    const base = await generateReportBase(reports[0]);
+    let testNames = [];
+    for (const report of reports) {
+        if (report.testId == 15) {
+            testNames.push(`${report.testName.toUpperCase()} (${report.data && report.data.glucoseWeight})`);
+        } else if (report.testId == 6) {
+            testNames.push(`${report.testName} (westergren method)`.toUpperCase());
+        }
+        else {
+            testNames.push(report.testName.toUpperCase());
+        }
+    }
+    const hasSecondType = secondTypeTestIds.intersection(new Set(reports.map(item => Number(item.testId)))).size > 0;
+    const base = await generateReportBase(reports[0], testNames, hasSecondType);
     let currentTopMargin = base.topMargin;
     for (const report of reports) {
         if (report.data) {
@@ -78,7 +114,8 @@ ipcMainOn('report:mergeReports', async (
                 report.data,
                 normalRanges,
                 report.patientDOB,
-                report.patientGender
+                report.patientGender,
+                true
             );
 
             currentTopMargin = temp.topMargin;

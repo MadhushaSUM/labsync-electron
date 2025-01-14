@@ -128,17 +128,17 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                 sAlkalinePhosValueFlag: values.sAlkalinePhosValueFlag,
                 totalBilirubinValue: Number(values.totalBilirubinValue),
                 totalBilirubinValueFlag: values.totalBilirubinValueFlag,
-                directBilirubinValue: Number(values.directBilirubinValue),
-                directBilirubinValueFlag: values.directBilirubinValueFlag,
-                indirectBilirubinValue: Number(values.indirectBilirubinValue),
-                indirectBilirubinValueFlag: values.indirectBilirubinValueFlag,
+                // directBilirubinValue: Number(values.directBilirubinValue),
+                // directBilirubinValueFlag: values.directBilirubinValueFlag,
+                // indirectBilirubinValue: Number(values.indirectBilirubinValue),
+                // indirectBilirubinValueFlag: values.indirectBilirubinValueFlag,
                 totalProteinsValue: Number(values.totalProteinsValue),
                 totalProteinsValueFlag: values.totalProteinsValueFlag,
-                albuminValue: Number(values.albuminValue),
-                albuminValueFlag: values.albuminValueFlag,
-                globulinValue: Number(values.globulinValue),
-                globulinValueFlag: values.globulinValueFlag,
-                agRatioValue: Number(values.agRatioValue),
+                // albuminValue: Number(values.albuminValue),
+                // albuminValueFlag: values.albuminValueFlag,
+                // globulinValue: Number(values.globulinValue),
+                // globulinValueFlag: values.globulinValueFlag,
+                // agRatioValue: Number(values.agRatioValue),
                 gammaGtValue: Number(values.gammaGtValue),
                 gammaGtValueFlag: values.gammaGtValueFlag,
                 comment: values.comment
@@ -190,17 +190,17 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         "sAlkalinePhosValueFlag": data.data?.sAlkalinePhosValueFlag,
                         "totalBilirubinValue": data.data?.totalBilirubinValue,
                         "totalBilirubinValueFlag": data.data?.totalBilirubinValueFlag,
-                        "directBilirubinValue": data.data?.directBilirubinValue,
-                        "directBilirubinValueFlag": data.data?.directBilirubinValueFlag,
-                        "indirectBilirubinValue": data.data?.indirectBilirubinValue,
-                        "indirectBilirubinValueFlag": data.data?.indirectBilirubinValueFlag,
+                        // "directBilirubinValue": data.data?.directBilirubinValue,
+                        // "directBilirubinValueFlag": data.data?.directBilirubinValueFlag,
+                        // "indirectBilirubinValue": data.data?.indirectBilirubinValue,
+                        // "indirectBilirubinValueFlag": data.data?.indirectBilirubinValueFlag,
                         "totalProteinsValue": data.data?.totalProteinsValue,
                         "totalProteinsValueFlag": data.data?.totalProteinsValueFlag,
-                        "albuminValue": data.data?.albuminValue,
-                        "albuminValueFlag": data.data?.albuminValueFlag,
-                        "globulinValue": data.data?.globulinValue,
-                        "globulinValueFlag": data.data?.globulinValueFlag,
-                        "agRatioValue": data.data?.agRatioValue,
+                        // "albuminValue": data.data?.albuminValue,
+                        // "albuminValueFlag": data.data?.albuminValueFlag,
+                        // "globulinValue": data.data?.globulinValue,
+                        // "globulinValueFlag": data.data?.globulinValueFlag,
+                        // "agRatioValue": data.data?.agRatioValue,
                         "gammaGtValue": data.data?.gammaGtValue,
                         "gammaGtValueFlag": data.data?.gammaGtValueFlag,
                         "comment": data.data?.comment,
@@ -303,6 +303,29 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         </span>
                     </div>
                 </Form.Item>
+                <Form.Item label="GAMMA GT" style={{ marginBottom: 0 }}>
+                    <Form.Item
+                        name="gammaGtValue"
+                        rules={[{ required: true }]}
+                        style={{ display: 'inline-block', width: '200px' }}
+                    >
+                        <Input addonAfter="U/L" placeholder="value" onChange={(e) => setFlag('gammaGtValue', e.target.value)} />
+                    </Form.Item>
+                    <div className="flex-row items-center inline-flex">
+                        <Form.Item
+                            name="gammaGtValueFlag"
+                            style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
+                        >
+                            <Select placeholder="flag" mode="tags" maxCount={1}>
+                                <Option value="Low">Low</Option>
+                                <Option value="High">High</Option>
+                            </Select>
+                        </Form.Item>
+                        <span>
+                            {displayNormalRange('gammaGtValue')}
+                        </span>
+                    </div>
+                </Form.Item>
                 <Form.Item label="S. Alkaline Phosphatase" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="sAlkalinePhosValue"
@@ -326,30 +349,8 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         </span>
                     </div>
                 </Form.Item>
-                <Form.Item label="Total Bilirubin" style={{ marginBottom: 0 }}>
-                    <Form.Item
-                        name="totalBilirubinValue"
-                        rules={[{ required: true }]}
-                        style={{ display: 'inline-block', width: '200px' }}
-                    >
-                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('totalBilirubinValue', e.target.value)} />
-                    </Form.Item>
-                    <div className="flex-row items-center inline-flex">
-                        <Form.Item
-                            name="totalBilirubinValueFlag"
-                            style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
-                        >
-                            <Select placeholder="flag" mode="tags" maxCount={1}>
-                                <Option value="Low">Low</Option>
-                                <Option value="High">High</Option>
-                            </Select>
-                        </Form.Item>
-                        <span>
-                            {displayNormalRange('totalBilirubinValue')}
-                        </span>
-                    </div>
-                </Form.Item>
-                <Form.Item label="Direct Bilirubin" style={{ marginBottom: 0 }}>
+
+                {/* <Form.Item label="Direct Bilirubin" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="directBilirubinValue"
                         rules={[{ required: true }]}
@@ -394,7 +395,7 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                             {displayNormalRange('indirectBilirubinValue')}
                         </span>
                     </div>
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item label="Total Proteins" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="totalProteinsValue"
@@ -418,7 +419,31 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         </span>
                     </div>
                 </Form.Item>
-                <Form.Item label="Albumin" style={{ marginBottom: 0 }}>
+                
+                <Form.Item label="Total Bilirubin" style={{ marginBottom: 0 }}>
+                    <Form.Item
+                        name="totalBilirubinValue"
+                        rules={[{ required: true }]}
+                        style={{ display: 'inline-block', width: '200px' }}
+                    >
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('totalBilirubinValue', e.target.value)} />
+                    </Form.Item>
+                    <div className="flex-row items-center inline-flex">
+                        <Form.Item
+                            name="totalBilirubinValueFlag"
+                            style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
+                        >
+                            <Select placeholder="flag" mode="tags" maxCount={1}>
+                                <Option value="Low">Low</Option>
+                                <Option value="High">High</Option>
+                            </Select>
+                        </Form.Item>
+                        <span>
+                            {displayNormalRange('totalBilirubinValue')}
+                        </span>
+                    </div>
+                </Form.Item>
+                {/* <Form.Item label="Albumin" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="albuminValue"
                         rules={[{ required: true }]}
@@ -470,30 +495,7 @@ const LFTForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                     rules={[{ required: true }]}
                 >
                     <Input placeholder="value" style={{ width: 370 }} />
-                </Form.Item>
-                <Form.Item label="GAMMA GT" style={{ marginBottom: 0 }}>
-                    <Form.Item
-                        name="gammaGtValue"
-                        rules={[{ required: true }]}
-                        style={{ display: 'inline-block', width: '200px' }}
-                    >
-                        <Input addonAfter="U/L" placeholder="value" onChange={(e) => setFlag('gammaGtValue', e.target.value)} />
-                    </Form.Item>
-                    <div className="flex-row items-center inline-flex">
-                        <Form.Item
-                            name="gammaGtValueFlag"
-                            style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
-                        >
-                            <Select placeholder="flag" mode="tags" maxCount={1}>
-                                <Option value="Low">Low</Option>
-                                <Option value="High">High</Option>
-                            </Select>
-                        </Form.Item>
-                        <span>
-                            {displayNormalRange('gammaGtValue')}
-                        </span>
-                    </div>
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item
                     label="Comment"

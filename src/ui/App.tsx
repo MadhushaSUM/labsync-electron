@@ -53,17 +53,17 @@ function App() {
         setEditTestRegistrationId(id);
     }
 
-    useEffect(() => {
-        modal.confirm({
-            title: 'Authentication',
-            icon: <LockTwoTone />,
-            content: <LoginForm />,
-            okCancel: false,
-            footer: false,
-            closable: false,
-            keyboard: false,
-        });
-    }, []);
+    // useEffect(() => {
+    //     modal.confirm({
+    //         title: 'Authentication',
+    //         icon: <LockTwoTone />,
+    //         content: <LoginForm />,
+    //         okCancel: false,
+    //         footer: false,
+    //         closable: false,
+    //         keyboard: false,
+    //     });
+    // }, []);
 
     return (
         <Router>

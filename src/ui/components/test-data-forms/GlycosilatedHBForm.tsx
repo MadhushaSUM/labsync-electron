@@ -1,6 +1,7 @@
 import { Button, Divider, Form, Input, message, Select, Spin } from "antd";
 import { debounce } from "lodash";
 import { useEffect, useState } from "react";
+import { isWithinNormalRange } from "../../lib/utils";
 
 const { Option } = Select;
 
@@ -12,6 +13,9 @@ const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clear
     const [doctors, setDoctors] = useState<Doctor[]>([]);
     const [selectedDoctor, setSelectedDoctor] = useState<string | null>(null);
     const [selectedDoctorId, setSelectedDoctorId] = useState<number | undefined>(undefined);
+
+    const [normalRanges, setNormalRanges] = useState<NormalRange[]>([]);
+    const [testFields, setTestFields] = useState<TestField[]>([]);
 
     const fetchDoctors = debounce(async (search: string) => {
         try {
@@ -25,6 +29,16 @@ const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clear
         }
     }, 500);
 
+    const fetchNormalRanges = async () => {
+        const res = await window.electron.normalRanges.getForTest(data.testId);
+        setNormalRanges(res.normalRanges);
+    }
+
+    const fetchTestFields = async () => {
+        const res = await window.electron.testFields.getForTest(data.testId);
+        setTestFields(res.test_fields);
+    }
+
     const handleDoctorSelect = (value: string) => {
         setSelectedDoctor(value);
         setSelectedDoctorId(doctors.find((doctor) => doctor.name === value)?.id);
@@ -34,10 +48,68 @@ const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clear
         setSelectedDoctorId(undefined);
     }
 
+    const setFlag = (label: string, value: string) => {
+        const valueNum = Number(value);
+        const fieldId = testFields.find((item) => item.name == label)?.id;
+
+        if (fieldId) {
+            const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == fieldId)?.rules;
+            if (normalRangeRules) {
+                for (const rule of normalRangeRules) {
+                    if (isWithinNormalRange(data.patientDOB, data.patientGender, rule))
+                        if (rule.type == "range") {
+                            if (valueNum > rule.valueUpper) {
+                                form.setFieldValue(`${label}Flag`, 'High');
+                            } else if (valueNum < rule.valueLower) {
+                                form.setFieldValue(`${label}Flag`, 'Low');
+                            } else {
+                                form.setFieldValue(`${label}Flag`, null);
+                            }
+                        } else if (rule.type == "≥") {
+                            if (valueNum < rule.valueLower) {
+                                form.setFieldValue(`${label}Flag`, 'Low');
+                            } else {
+                                form.setFieldValue(`${label}Flag`, null);
+                            }
+                        } else {
+                            if (valueNum > rule.valueUpper) {
+                                form.setFieldValue(`${label}Flag`, 'High');
+                            } else {
+                                form.setFieldValue(`${label}Flag`, null);
+                            }
+                        }
+                    break;
+                }
+            }
+        }
+    }
+
+    const displayNormalRange = (label: string) => {
+        const fieldId = testFields.find((item) => item.name == label)?.id;
+        if (fieldId) {
+            const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == fieldId)?.rules;
+            if (normalRangeRules) {
+                for (const rule of normalRangeRules) {
+                    if (isWithinNormalRange(data.patientDOB, data.patientGender, rule)) {
+                        if (rule.type == "range") {
+                            return `${rule.valueLower} - ${rule.valueUpper}`;
+                        } else if (rule.type == "≥") {
+                            return `≥ ${rule.valueLower}`;
+                        } else {
+                            return `≤ ${rule.valueUpper}`;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     useEffect(() => {
         if (data.doctorId) {
             setSelectedDoctorId(Number(data.doctorId));
         }
+        fetchNormalRanges();
+        fetchTestFields();
     }, [data]);
 
     const onFinish = async (values: any) => {
@@ -50,8 +122,8 @@ const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clear
             const savingData = {
                 glycoHBValue: Number(values.glycoHBValue),
                 glycoHBValueFlag: values.glycoHBValueFlag,
-                meanBloodGlucoseValue: Number(values.meanBloodGlucoseValue),
-                meanBloodGlucoseValueFlag: values.meanBloodGlucoseValueFlag,
+                // meanBloodGlucoseValue: Number(values.meanBloodGlucoseValue),
+                // meanBloodGlucoseValueFlag: values.meanBloodGlucoseValueFlag,
                 comment: values.comment
             };
             const options = {
@@ -95,8 +167,8 @@ const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clear
                         "doctor": data.doctorName,
                         "glycoHBValue": data.data?.glycoHBValue,
                         "glycoHBValueFlag": data.data?.glycoHBValueFlag,
-                        "meanBloodGlucoseValue": data.data?.meanBloodGlucoseValue,
-                        "meanBloodGlucoseValueFlag": data.data?.meanBloodGlucoseValueFlag,
+                        // "meanBloodGlucoseValue": data.data?.meanBloodGlucoseValue,
+                        // "meanBloodGlucoseValueFlag": data.data?.meanBloodGlucoseValueFlag,
                         "comment": data.data?.comment,
                         "ageFormat": data.options.preferred_age_format ? JSON.stringify(data.options.preferred_age_format) : '["years"]'
                     }
@@ -157,7 +229,7 @@ const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clear
                         rules={[{ required: true }]}
                         style={{ display: 'inline-block', width: '200px' }}
                     >
-                        <Input addonAfter="%" placeholder="value" />
+                        <Input addonAfter="%" placeholder="value" onChange={(e) => setFlag('glycoHBValue', e.target.value)} />
                     </Form.Item>
                     <div className="flex-row items-center inline-flex">
                         <Form.Item
@@ -169,9 +241,12 @@ const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clear
                                 <Option value="High">High</Option>
                             </Select>
                         </Form.Item>
+                        <span>
+                            {displayNormalRange('glycoHBValue')}
+                        </span>
                     </div>
                 </Form.Item>
-                <Form.Item label="Mean blood glucose" style={{ marginBottom: 0 }}>
+                {/* <Form.Item label="Mean blood glucose" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="meanBloodGlucoseValue"
                         rules={[{ required: true }]}
@@ -190,7 +265,7 @@ const GlycosilatedHBForm = ({ data, clearScreen }: { data: DataEmptyTests, clear
                             </Select>
                         </Form.Item>
                     </div>
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item
                     label="Comment"

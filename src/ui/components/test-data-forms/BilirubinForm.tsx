@@ -49,60 +49,60 @@ const BilirubinForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScree
     }
 
     const setFlag = (label: string, value: string) => {
-            const valueNum = Number(value);
-            const fieldId = testFields.find((item) => item.name == label)?.id;
-    
-            if (fieldId) {
-                const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == fieldId)?.rules;
-                if (normalRangeRules) {
-                    for (const rule of normalRangeRules) {
-                        if (isWithinNormalRange(data.patientDOB, data.patientGender, rule))
-                            if (rule.type == "range") {
-                                if (valueNum > rule.valueUpper) {
-                                    form.setFieldValue(`${label}Flag`, 'High');
-                                } else if (valueNum < rule.valueLower) {
-                                    form.setFieldValue(`${label}Flag`, 'Low');
-                                } else {
-                                    form.setFieldValue(`${label}Flag`, null);
-                                }
-                            } else if (rule.type == "≥") {
-                                if (valueNum < rule.valueLower) {
-                                    form.setFieldValue(`${label}Flag`, 'Low');
-                                } else {
-                                    form.setFieldValue(`${label}Flag`, null);
-                                }
+        const valueNum = Number(value);
+        const fieldId = testFields.find((item) => item.name == label)?.id;
+
+        if (fieldId) {
+            const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == fieldId)?.rules;
+            if (normalRangeRules) {
+                for (const rule of normalRangeRules) {
+                    if (isWithinNormalRange(data.patientDOB, data.patientGender, rule))
+                        if (rule.type == "range") {
+                            if (valueNum > rule.valueUpper) {
+                                form.setFieldValue(`${label}Flag`, 'High');
+                            } else if (valueNum < rule.valueLower) {
+                                form.setFieldValue(`${label}Flag`, 'Low');
                             } else {
-                                if (valueNum > rule.valueUpper) {
-                                    form.setFieldValue(`${label}Flag`, 'High');
-                                } else {
-                                    form.setFieldValue(`${label}Flag`, null);
-                                }
+                                form.setFieldValue(`${label}Flag`, null);
                             }
-                        break;
-                    }
+                        } else if (rule.type == "≥") {
+                            if (valueNum < rule.valueLower) {
+                                form.setFieldValue(`${label}Flag`, 'Low');
+                            } else {
+                                form.setFieldValue(`${label}Flag`, null);
+                            }
+                        } else {
+                            if (valueNum > rule.valueUpper) {
+                                form.setFieldValue(`${label}Flag`, 'High');
+                            } else {
+                                form.setFieldValue(`${label}Flag`, null);
+                            }
+                        }
+                    break;
                 }
             }
         }
-    
-        const displayNormalRange = (label: string) => {
-            const fieldId = testFields.find((item) => item.name == label)?.id;
-            if (fieldId) {
-                const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == fieldId)?.rules;
-                if (normalRangeRules) {
-                    for (const rule of normalRangeRules) {
-                        if (isWithinNormalRange(data.patientDOB, data.patientGender, rule)) {
-                            if (rule.type == "range") {
-                                return `${rule.valueLower} - ${rule.valueUpper}`;
-                            } else if (rule.type == "≥") {
-                                return `≥ ${rule.valueLower}`;
-                            } else {
-                                return `≤ ${rule.valueUpper}`;
-                            }
+    }
+
+    const displayNormalRange = (label: string) => {
+        const fieldId = testFields.find((item) => item.name == label)?.id;
+        if (fieldId) {
+            const normalRangeRules: any = normalRanges.find((item) => item.test_field_id == fieldId)?.rules;
+            if (normalRangeRules) {
+                for (const rule of normalRangeRules) {
+                    if (isWithinNormalRange(data.patientDOB, data.patientGender, rule)) {
+                        if (rule.type == "range") {
+                            return `${rule.valueLower} - ${rule.valueUpper}`;
+                        } else if (rule.type == "≥") {
+                            return `≥ ${rule.valueLower}`;
+                        } else {
+                            return `≤ ${rule.valueUpper}`;
                         }
                     }
                 }
             }
         }
+    }
 
     useEffect(() => {
         if (data.doctorId) {

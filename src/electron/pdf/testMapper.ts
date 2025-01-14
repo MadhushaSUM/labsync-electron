@@ -30,6 +30,8 @@ import { addHIVData } from "./reports/hivReport.js";
 import { addBloodGroupData } from "./reports/bloodGroupReport.js";
 import { addBloodSugarProfileData } from "./reports/bloodSugarProfileReport.js";
 import { addUrineSugarData } from "./reports/urineSugarReport.js";
+import { addCardiacTroponinTData } from "./reports/cardiacTroponinTReport.js";
+import { addCardiacTroponinIData } from "./reports/cardiacTroponinIReport.js";
 
 
 export function testMapper(
@@ -39,73 +41,78 @@ export function testMapper(
     data: object,
     normalRanges: NormalRange[],
     patientDateOfBirth: Date,
-    patientGender: string
+    patientGender: string,
+    isMerging: boolean = false,
 ) {
     switch (testId) {
         case 1:
-            return addFBSData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addFBSData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 2:
-            return addFBCData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addFBCData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 3:
-            return addLipidProfileData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addLipidProfileData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 4:
-            return addUFRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addUFRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 5:
-            return addCRPData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addCRPData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 6:
-            return addESRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addESRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 7:
-            return addOTPTData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addOTPTData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 8:
-            return addHCGData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addHCGData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 9:
-            return addDengueTestData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addDengueTestData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 10:
-            return addHBData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addHBData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 11:
-            return addWBCDCData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addWBCDCData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 12:
-            return addRHFactorData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addRHFactorData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 13:
-            return addSCalciumData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addSCalciumData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 14:
-            return addSElectrolyteData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addSElectrolyteData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 15:
-            return addOralGlucoseData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addOralGlucoseData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 16:
-            return addPPBSData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addPPBSData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 17:
-            return addSFRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addSFRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 18:
-            return addLFTData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addLFTData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 19:
-            return addSCreatinineData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addSCreatinineData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 20:
-            return addBloodUreaData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addBloodUreaData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 21:
-            return addSProteinsData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addSProteinsData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 22:
-            return addBilirubinData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addBilirubinData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 23:
-            return addSAlkPhosphataseData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addSAlkPhosphataseData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 24:
-            return addSCholesterolData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addSCholesterolData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 25:
-            return addGammaGTData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addGammaGTData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 26:
-            return addRBSData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addRBSData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 27:
-            return addEGFRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addEGFRData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 28:
-            return addGlycoHBData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addGlycoHBData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 29:
-            return addHIVData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addHIVData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 30:
-            return addBloodGroupData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addBloodGroupData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 31:
-            return addBloodSugarProfileData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addBloodSugarProfileData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 32:
-            return addUrineSugarData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender);
+            return addUrineSugarData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
+        case 33:
+            return addCardiacTroponinTData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
+        case 34:
+            return addCardiacTroponinIData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
 
         default:
             return { document: doc, topMargin: topMargin };

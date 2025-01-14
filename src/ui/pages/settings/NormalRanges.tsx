@@ -289,7 +289,6 @@ const NormalRanges = () => {
                                                                 { label: '≥', value: '≥' },
                                                                 { label: '≤', value: '≤' },
                                                             ]}
-                                                            defaultValue="range"
                                                             optionType="button"
                                                             buttonStyle="solid"
                                                         />
@@ -302,13 +301,13 @@ const NormalRanges = () => {
                                                             <Form.Item label="Age lower bound" labelCol={{ span: 12 }}>
                                                                 <Space.Compact>
                                                                     <Form.Item name={[field.name, 'ageLower', 'y']}>
-                                                                        <InputNumber placeholder="YY" style={{ width: 60 }} />
+                                                                        <InputNumber placeholder="YY" style={{ width: 60 }} defaultValue={0}/>
                                                                     </Form.Item>
                                                                     <Form.Item name={[field.name, 'ageLower', 'm']}>
-                                                                        <InputNumber placeholder="MM" style={{ width: 60 }} />
+                                                                        <InputNumber placeholder="MM" style={{ width: 60 }} defaultValue={0}/>
                                                                     </Form.Item>
                                                                     <Form.Item name={[field.name, 'ageLower', 'd']}>
-                                                                        <InputNumber placeholder="DD" style={{ width: 60 }} />
+                                                                        <InputNumber placeholder="DD" style={{ width: 60 }} defaultValue={0}/>
                                                                     </Form.Item>
                                                                 </Space.Compact>
                                                             </Form.Item>
@@ -319,13 +318,13 @@ const NormalRanges = () => {
                                                             <Form.Item label="Age upper bound" labelCol={{ span: 12 }}>
                                                                 <Space.Compact>
                                                                     <Form.Item name={[field.name, 'ageUpper', 'y']}>
-                                                                        <InputNumber placeholder="YY" style={{ width: 60 }} />
+                                                                        <InputNumber placeholder="YY" style={{ width: 60 }} defaultValue={120}/>
                                                                     </Form.Item>
                                                                     <Form.Item name={[field.name, 'ageUpper', 'm']}>
-                                                                        <InputNumber placeholder="MM" style={{ width: 60 }} />
+                                                                        <InputNumber placeholder="MM" style={{ width: 60 }} defaultValue={0}/>
                                                                     </Form.Item>
                                                                     <Form.Item name={[field.name, 'ageUpper', 'd']}>
-                                                                        <InputNumber placeholder="DD" style={{ width: 60 }} />
+                                                                        <InputNumber placeholder="DD" style={{ width: 60 }} defaultValue={0}/>
                                                                     </Form.Item>
                                                                 </Space.Compact>
                                                             </Form.Item>

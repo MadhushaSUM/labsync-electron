@@ -1,6 +1,6 @@
-import { addTextEntries, generateTestPDFConfig, TestEntry, writeOnDocument } from './pdfUtils.js';
+import { addTextEntries, generateTestPDFConfig, TestEntry, writeOnDocument } from "./pdfUtils.js";
 
-export function addFBSData(
+export function addCardiacTroponinIData(
     data: any,
     doc: PDFKit.PDFDocument,
     topMargin: number,
@@ -12,26 +12,19 @@ export function addFBSData(
     let config = generateTestPDFConfig();
 
     const tests: TestEntry[] = [
-        { name: "FASTING BLOOD SUGAR (FBS)", testFieldId: 1, value: data.fbsValue, unit: "mg/dl", flag: data.fbsValueFlag },
-        { name: "", testFieldId: -1, value: (Math.round((Number(data.fbsValue) * 0.055) * 100) / 100), unit: "mmol/L" },
-    ]
+        { name: "cTnI", testFieldId: -1, value: data.ctni, unit: "" },
+    ];
 
     let yPosition = topMargin;
 
     yPosition = addTextEntries(tests, config, yPosition, normalRanges, patientDateOfBirth, patientGender, doc);
 
     if (!isMerging) {
-
         const aditionalNotes = [
-            { labelCol1: "REFERENCE VALUES", labelCol2: "", x1: 60, x2: 250, weight: "bold" },
-            { labelCol1: "< 70 mg/dl (3.9 mmol/L)", labelCol2: "Hypoglycemia", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "70 - 100 mg/dl (3.9 - 5.6 mmol/L)", labelCol2: "Normal (Non-diabetic)", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "100 - 125 mg/dl (5.6 - 6.9 mmol/L)", labelCol2: "Impaired glucose (Pre-diabetic)", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "> 125 mg/dl (6.9 mmol/L)", labelCol2: "Diabetic (type 1 or 2)", x1: 60, x2: 250, weight: "normal" },
+            { labelCol1: "REFERENCE VALUE", labelCol2: "", x1: 60, x2: 250, weight: "bold" },
+            { labelCol1: "  ≤ 0.04 ng/ml", labelCol2: "", x1: 60, x2: 250, weight: "normal" },
         ];
-
-        yPosition += 30;
-
+        yPosition += 20;
         aditionalNotes.forEach(test => {
             config.textEntries.push(
                 { label: test.labelCol1, x: test.x1, y: yPosition, fontSize: 11, weight: test.weight as any, options: undefined },
@@ -39,6 +32,14 @@ export function addFBSData(
             );
             yPosition += 20;
         });
+
+        yPosition += 15;
+
+        config.textEntries.push(
+            { label: "Troponin I is part of a protein complex which regulates the contraction of striated muscle. In acute coronary syndromes(ACS), it can be detected in blood at 4 - 8 hours following the onset of chest pain, reaches a peak concentration at 12 - 16 hours, and remains elevated for 5 - 9 days.", x: 40, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
+        );
+
+        yPosition += 50;
 
         if (data.comment) {
             config.textEntries.push({
