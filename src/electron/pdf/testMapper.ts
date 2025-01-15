@@ -32,6 +32,7 @@ import { addBloodSugarProfileData } from "./reports/bloodSugarProfileReport.js";
 import { addUrineSugarData } from "./reports/urineSugarReport.js";
 import { addCardiacTroponinTData } from "./reports/cardiacTroponinTReport.js";
 import { addCardiacTroponinIData } from "./reports/cardiacTroponinIReport.js";
+import { addRCholesterolData } from "./reports/rCholesterolReport.js";
 
 
 export function testMapper(
@@ -113,6 +114,8 @@ export function testMapper(
             return addCardiacTroponinTData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
         case 34:
             return addCardiacTroponinIData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
+        case 35:
+            return addRCholesterolData(data, doc, topMargin, normalRanges, patientDateOfBirth, patientGender, isMerging);
 
         default:
             return { document: doc, topMargin: topMargin };

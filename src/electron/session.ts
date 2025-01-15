@@ -28,7 +28,6 @@ export class Session {
     }
 
     public static isAdmin() {
-        // return this.role == 'admin';
-        return true;
+        return this.role == 'admin';
     }
 }

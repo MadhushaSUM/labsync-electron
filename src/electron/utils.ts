@@ -3,6 +3,9 @@ import { getUIPath } from "./pathResolver.js";
 import { pathToFileURL } from 'url';
 import { differenceInDays, differenceInMonths, differenceInYears } from "date-fns";
 import { getConfigs } from "./database/db.js";
+import fs from 'fs';
+import path from 'path';
+import { app, BrowserWindow } from 'electron';
 
 export function isDev(): boolean {
     return process.env.NODE_ENV === 'development';
@@ -173,4 +176,22 @@ export function isWithinNormalRange(patientDOB: Date, patientGender: string, nor
     const isGenderValid = normalRange.gender.includes(patientGender);
 
     return isAgeWithinRange && isGenderValid;
+}
+
+export function writeErrorLog(error: any) {
+    const outputPath = path.join(app.getPath('desktop'), 'pdf-output', 'crash-reports');
+    if (!fs.existsSync(outputPath)) {
+        fs.mkdirSync(outputPath);
+    }
+
+    const date = new Date();
+    const filePath = path.join(outputPath, `${date.toLocaleDateString().split('/').join('-')}_${(new Date()).toString().split('/').join('-')}.txt`);
+    const message = `
+    Date / Time: ${date.toString()} \n
+    \n
+    Message: ${error.message}\n
+    \n
+    Error: ${error}
+    `;
+    fs.writeFileSync(filePath, message);
 }

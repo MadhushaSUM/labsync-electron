@@ -62,8 +62,8 @@ export function writeOnDocument(doc: PDFKit.PDFDocument, config: PDFConfig) {
 export function generateTestPDFConfig() {
     const config: PDFConfig = {
         fonts: {
-            normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
-            bold: path.join(app.getAppPath(), 'fonts/Aptos-Bold.ttf')
+            normal: path.join(app.getPath("userData"), 'fonts/Aptos.ttf'),
+            bold: path.join(app.getPath("userData"), 'fonts/Aptos-Bold.ttf')
         },
         linePositions: [],
         textEntries: [],

@@ -10,11 +10,12 @@ export async function generateReportBase(
     testNames: string[],
     hasSecondType = false,
 ) {
+
     const config = {
         outputPath: path.join(app.getPath('desktop'), 'pdf-output', 'reports'),
         fonts: {
-            normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
-            bold: path.join(app.getAppPath(), 'fonts/Aptos-Bold.ttf')
+            normal: path.join(app.getPath("userData"), 'fonts/Aptos.ttf'),
+            bold: path.join(app.getPath("userData"), 'fonts/Aptos-Bold.ttf')
         },
         linePositions: [
             { x1: 0, y1: 150, x2: 595, y2: 150 },
@@ -37,7 +38,7 @@ export async function generateReportBase(
             { label: "RESULT", x: 235, y: 284, fontSize: 11, weight: "bold", options: undefined },
         ]
     };
-    
+
     if (!hasSecondType) {
         config.tableHeader.push(
             { label: "UNIT", x: 305, y: 284, fontSize: 11, weight: "bold", options: undefined },

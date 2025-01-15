@@ -2,7 +2,7 @@ import { getConfigs, getNormalRangesForTest, updateConfigs } from "../database/d
 import { printReceipt } from "../pdf/receipts/receipt.js";
 import { generateReportBase, previewPDF } from "../pdf/reports/reportbase.js";
 import { testMapper } from "../pdf/testMapper.js";
-import { ipcMainHandle, ipcMainOn } from "../utils.js";
+import { delay, ipcMainHandle, ipcMainOn, writeErrorLog } from "../utils.js";
 import pkg from 'pdf-to-printer';
 
 
@@ -14,33 +14,37 @@ ipcMainOn('report:printPreview', async (
     event,
     report
 ) => {
-    let testNames = [];
-    if (report.testId == 15) {
-        testNames.push(`${report.testName.toUpperCase()} (${report.data && report.data.glucoseWeight})`);
-    } else if (report.testId == 6) {
-        testNames.push(`${report.testName} (westergren method)`.toUpperCase());
-    }
-    else {
-        testNames.push(report.testName.toUpperCase());
-    }
-    const hasSecondType = secondTypeTestIds.has(Number(report.testId));
-    console.log(secondTypeTestIds);
+    try {
+        let testNames = [];
+        if (report.testId == 15) {
+            testNames.push(`${report.testName.toUpperCase()} (${report.data && report.data.glucoseWeight})`);
+        } else if (report.testId == 6) {
+            testNames.push(`${report.testName} (westergren method)`.toUpperCase());
+        }
+        else {
+            testNames.push(report.testName.toUpperCase());
+        }
+        const hasSecondType = secondTypeTestIds.has(Number(report.testId));
+        console.log(secondTypeTestIds);
 
-    const out1 = await generateReportBase(report, testNames, hasSecondType);
-    const { normalRanges } = await getNormalRangesForTest(report.testId);
+        const out1 = await generateReportBase(report, testNames, hasSecondType);
+        const { normalRanges } = await getNormalRangesForTest(report.testId);
 
-    if (report.data) {
-        const out2 = testMapper(
-            Number(report.testId),
-            out1.document,
-            out1.topMargin,
-            report.data,
-            normalRanges,
-            report.patientDOB,
-            report.patientGender
-        );
-        out2.document.end();
-        previewPDF(out1.filePath);
+        if (report.data) {
+            const out2 = testMapper(
+                Number(report.testId),
+                out1.document,
+                out1.topMargin,
+                report.data,
+                normalRanges,
+                report.patientDOB,
+                report.patientGender
+            );
+            out2.document.end();
+            previewPDF(out1.filePath);
+        }
+    } catch (error) {
+        writeErrorLog(error);
     }
 });
 
@@ -77,12 +81,11 @@ ipcMainOn('report:print', async (
                     report.patientGender
                 );
                 out2.document.end();
-
                 print(out1.filePath, { printer: REPORT_PRINTING_PRINTER });
             }
         }
     } catch (error) {
-        console.error(error);
+        writeErrorLog(error);
     }
 });
 
@@ -90,40 +93,44 @@ ipcMainOn('report:mergeReports', async (
     event,
     reports
 ) => {
-    let testNames = [];
-    for (const report of reports) {
-        if (report.testId == 15) {
-            testNames.push(`${report.testName.toUpperCase()} (${report.data && report.data.glucoseWeight})`);
-        } else if (report.testId == 6) {
-            testNames.push(`${report.testName} (westergren method)`.toUpperCase());
+    try {
+        let testNames = [];
+        for (const report of reports) {
+            if (report.testId == 15) {
+                testNames.push(`${report.testName.toUpperCase()} (${report.data && report.data.glucoseWeight})`);
+            } else if (report.testId == 6) {
+                testNames.push(`${report.testName} (westergren method)`.toUpperCase());
+            }
+            else {
+                testNames.push(report.testName.toUpperCase());
+            }
         }
-        else {
-            testNames.push(report.testName.toUpperCase());
-        }
-    }
-    const hasSecondType = secondTypeTestIds.intersection(new Set(reports.map(item => Number(item.testId)))).size > 0;
-    const base = await generateReportBase(reports[0], testNames, hasSecondType);
-    let currentTopMargin = base.topMargin;
-    for (const report of reports) {
-        if (report.data) {
-            const { normalRanges } = await getNormalRangesForTest(report.testId);
-            const temp = testMapper(
-                Number(report.testId),
-                base.document,
-                currentTopMargin,
-                report.data,
-                normalRanges,
-                report.patientDOB,
-                report.patientGender,
-                true
-            );
+        const hasSecondType = secondTypeTestIds.intersection(new Set(reports.map(item => Number(item.testId)))).size > 0;
+        const base = await generateReportBase(reports[0], testNames, hasSecondType);
+        let currentTopMargin = base.topMargin;
+        for (const report of reports) {
+            if (report.data) {
+                const { normalRanges } = await getNormalRangesForTest(report.testId);
+                const temp = testMapper(
+                    Number(report.testId),
+                    base.document,
+                    currentTopMargin,
+                    report.data,
+                    normalRanges,
+                    report.patientDOB,
+                    report.patientGender,
+                    true
+                );
 
-            currentTopMargin = temp.topMargin;
-        }
+                currentTopMargin = temp.topMargin;
+            }
 
+        }
+        base.document.end();
+        previewPDF(base.filePath);
+    } catch (error) {
+        writeErrorLog(error);
     }
-    base.document.end();
-    previewPDF(base.filePath);
 });
 
 ipcMainOn('report:printReceipt', async (
@@ -139,6 +146,7 @@ ipcMainHandle('printers:get', async () => {
         return { printers }
     } catch (error) {
         console.error(error);
+        writeErrorLog(error);
         return { printers: [] };
     }
 });
@@ -148,6 +156,7 @@ ipcMainHandle('printers:save', async (data) => {
         await updateConfigs(1, data);
         return { success: true };
     } catch (error: any) {
+        writeErrorLog(error);
         return { success: false, error: error.message };
     }
 });
@@ -157,6 +166,7 @@ ipcMainHandle('config:saveAgePreference', async (data) => {
         await updateConfigs(2, data);
         return { success: true };
     } catch (error: any) {
+        writeErrorLog(error);
         return { success: false, error: error.message };
     }
 });
@@ -166,6 +176,7 @@ ipcMainHandle('config:getAgePreference', async () => {
         return { age_format: res.configuration.age_format };
     } catch (error: any) {
         console.log(error);
+        writeErrorLog(error);
         return { age_format: ["years"] };
     }
 });

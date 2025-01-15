@@ -34,8 +34,8 @@ export async function printReceipt(registration: Registration) {
     const config: ReceiptPDFConfig = {
         outputPath: path.join(app.getPath('desktop'), 'pdf-output', 'receipts'),
         fonts: {
-            normal: path.join(app.getAppPath(), 'fonts/Aptos.ttf'),
-            bold: path.join(app.getAppPath(), 'fonts/Aptos-Bold.ttf')
+            normal: path.join(app.getPath("userData"), 'fonts/Aptos.ttf'),
+            bold: path.join(app.getPath("userData"), 'fonts/Aptos-Bold.ttf')
         },
         linePositions: [
             { x1: 5, y1: 136 + topMargin, x2: 221, y2: 136 + topMargin },

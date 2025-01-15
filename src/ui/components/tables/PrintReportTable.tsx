@@ -153,17 +153,32 @@ const PrintReportTable = () => {
     const handlePrintPreview = (key: string) => {
         const selectedRow = dataSource.find((item) => item.key == key);
         if (selectedRow) {
+            messageApi.open({
+                key: "login_message",
+                type: "info",
+                content: "Previewing..."
+            });
             window.electron.report.printPreview(selectedRow);
         }
     }
 
     const handlePrintReport = () => {
         const selectedReports = dataSource.filter(item => selectedRowKeys.includes(item.key)) as DataEmptyTests[];
+        messageApi.open({
+            key: "login_message",
+            type: "info",
+            content: "Printing..."
+        });
         window.electron.report.print(selectedReports);
     }
 
     const handleMergeReports = () => {
         const selectedReports = dataSource.filter(item => selectedRowKeys.includes(item.key)) as DataEmptyTests[];
+        messageApi.open({
+            key: "login_message",
+            type: "info",
+            content: "Merging..."
+        });
         window.electron.report.mergeReports(selectedReports);
     }
 

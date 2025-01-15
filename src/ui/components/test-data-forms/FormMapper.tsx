@@ -32,6 +32,7 @@ import BloodSugarProfileForm from "./BloodSugarProfile.tsx";
 import UrineSugarForm from "./UrineSugarForm.tsx";
 import CardiacTroponinTForm from "./CardiacTroponinTForm.tsx";
 import CardiacTroponinIForm from "./CardiacTroponinIForm.tsx";
+import RCholesterolForm from "./rCholesterolForm.tsx";
 
 
 const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, clearScreen: () => void }> } = {
@@ -69,6 +70,7 @@ const formMapper: { [key: number]: React.ComponentType<{ data: DataEmptyTests, c
     32: UrineSugarForm,
     33: CardiacTroponinTForm,
     34: CardiacTroponinIForm,
+    35: RCholesterolForm,
 };
 
 export default formMapper;
