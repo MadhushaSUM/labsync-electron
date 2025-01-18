@@ -1,6 +1,7 @@
 import { Button, Divider, Form, Input, message, Select, Spin } from "antd";
 import { debounce } from "lodash";
 import { useEffect, useState } from "react";
+import { calculateAgeArray, calculateEGFR } from "../../lib/utils";
 
 const { Option } = Select;
 
@@ -48,6 +49,7 @@ const EGFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
                 content: "Saving test data..."
             });
             const savingData = {
+                sCreatinineValue: Number(values.sCreatinineValue),
                 egfrValue: Number(values.egfrValue),
                 egfrValueFlag: values.egfrValueFlag,
                 comment: values.comment
@@ -75,6 +77,16 @@ const EGFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
         }
     };
 
+    const setEGFRFieldValue = (value: string) => {
+        const ageArr = calculateAgeArray(data.patientDOB);
+        if (value && Number(value)) {
+            const egfr = calculateEGFR(Number(value), data.patientGender, false, ageArr[0]);
+            form.setFieldValue("egfrValue", (Math.round(egfr * 100) / 100));
+        } else {
+            form.setFieldValue("egfrValue", "");
+        }
+    }
+
     return (
         <div className="w-full">
             {contextHolder}
@@ -91,6 +103,7 @@ const EGFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
                     {
                         "patient": data.patientName,
                         "doctor": data.doctorName,
+                        "sCreatinineValue": data.data?.sCreatinineValue,
                         "egfrValue": data.data?.egfrValue,
                         "egfrValueFlag": data.data?.egfrValueFlag,
                         "comment": data.data?.comment,
@@ -146,6 +159,14 @@ const EGFRForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: ()
                 </Form.Item>
 
                 <Divider />
+
+                <Form.Item
+                    name="sCreatinineValue"
+                    label="S. Creatinine"
+                    rules={[{ required: true }]}
+                >
+                    <Input addonAfter="mg/dl" placeholder="value" style={{ width: 300 }} onChange={(event) => setEGFRFieldValue(event.target.value)} />
+                </Form.Item>
 
                 <Form.Item label="e - GFR" style={{ marginBottom: 0 }}>
                     <Form.Item

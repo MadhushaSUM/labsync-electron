@@ -13,6 +13,7 @@ export function addEGFRData(
     const config = generateTestPDFConfig();
 
     const tests: TestEntry[] = [
+        { name: "SERUM CREATININE", testFieldId: -1, value: data.sCreatinineValue, unit: "mg/dl" },
         { name: "e - GFR", testFieldId: -1, value: data.egfrValue, unit: "ml/min/1.73m²", flag: data.egfrValueFlag },
     ]
 

@@ -53,7 +53,8 @@ export async function generateReportBase(
     }
 
     const doc = new PDFDocument({ size: "A4" });
-    const filePath = path.join(config.outputPath, `${report.patientName}_${report.testName.split('/').join('_')}_${report.date.toLocaleDateString().split('/').join('-')}_${(new Date()).toLocaleTimeString().split('/').join('-')}.pdf`);
+    const fileName = `${report.patientName}-${report.date.toString().replaceAll(':', '')}`
+    const filePath = path.join(config.outputPath, `${fileName}.pdf`);
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);
 

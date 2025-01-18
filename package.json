@@ -1,5 +1,6 @@
 {
   "name": "labsync-electron",
+  "author": "Madhusha Laksitha Egoda Gamage",
   "private": true,
   "version": "0.0.0",
   "type": "module",

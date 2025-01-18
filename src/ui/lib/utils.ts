@@ -97,3 +97,15 @@ export function isWithinNormalRange(patientDOB: Date, patientGender: string, nor
 
     return isAgeWithinRange && isGenderValid;
 }
+
+export function calculateEGFR(creatinine: number, gender: string, isBlack: boolean, age: number) {
+    let egfr = 175 * Math.pow(creatinine, -1.154) * Math.pow(age, -0.203);
+    if (gender == 'female') {
+        egfr = egfr * 0.742;
+    }
+    if (isBlack) {
+        egfr = egfr * 1.212;
+    }
+
+    return egfr;
+}

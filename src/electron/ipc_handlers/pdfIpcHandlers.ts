@@ -25,7 +25,6 @@ ipcMainOn('report:printPreview', async (
             testNames.push(report.testName.toUpperCase());
         }
         const hasSecondType = secondTypeTestIds.has(Number(report.testId));
-        console.log(secondTypeTestIds);
 
         const out1 = await generateReportBase(report, testNames, hasSecondType);
         const { normalRanges } = await getNormalRangesForTest(report.testId);
@@ -44,6 +43,7 @@ ipcMainOn('report:printPreview', async (
             previewPDF(out1.filePath);
         }
     } catch (error) {
+        console.error(error);
         writeErrorLog(error);
     }
 });
@@ -85,6 +85,7 @@ ipcMainOn('report:print', async (
             }
         }
     } catch (error) {
+        console.error(error);
         writeErrorLog(error);
     }
 });
@@ -129,6 +130,7 @@ ipcMainOn('report:mergeReports', async (
         base.document.end();
         previewPDF(base.filePath);
     } catch (error) {
+        console.error(error);
         writeErrorLog(error);
     }
 });
@@ -156,6 +158,7 @@ ipcMainHandle('printers:save', async (data) => {
         await updateConfigs(1, data);
         return { success: true };
     } catch (error: any) {
+        console.error(error);
         writeErrorLog(error);
         return { success: false, error: error.message };
     }
@@ -166,6 +169,7 @@ ipcMainHandle('config:saveAgePreference', async (data) => {
         await updateConfigs(2, data);
         return { success: true };
     } catch (error: any) {
+        console.error(error);
         writeErrorLog(error);
         return { success: false, error: error.message };
     }
@@ -175,7 +179,7 @@ ipcMainHandle('config:getAgePreference', async () => {
         const res = await getConfigs(2);
         return { age_format: res.configuration.age_format };
     } catch (error: any) {
-        console.log(error);
+        console.error(error);
         writeErrorLog(error);
         return { age_format: ["years"] };
     }
