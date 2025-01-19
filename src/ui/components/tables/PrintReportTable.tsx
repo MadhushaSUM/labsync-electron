@@ -1,10 +1,20 @@
-import { Button, DatePicker, Flex, InputNumber, message, Select, Spin, Switch, Table, TableColumnsType, Tag } from "antd";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+    Button,
+    DatePicker,
+    Flex,
+    InputNumber,
+    message,
+    Select,
+    Spin,
+    Switch,
+    Table,
+    Tag,
+} from "antd";
 import { debounce } from "lodash";
-import { useEffect, useState } from "react";
-import { calculateAge } from "../../lib/utils";
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { TableRowSelection } from "antd/es/table/interface";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { formatISO } from "date-fns";
+import { calculateAge } from "../../lib/utils";
 
 interface TestRegistrationTableItems extends DataEmptyTests {
     key: string;
@@ -12,367 +22,234 @@ interface TestRegistrationTableItems extends DataEmptyTests {
 
 const PrintReportTable = () => {
     const [messageApi, contextHolder] = message.useMessage();
-
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const [mergeDisabled, setMergeDisabled] = useState<boolean>(true);
     const [loading, setLoading] = useState(false);
     const [dataSource, setDataSource] = useState<TestRegistrationTableItems[]>([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
-    const [total, setTotal] = useState(0);
-
-    const [testRegistrations, setTestRegistrations] = useState<DataEmptyTests[]>([]);
+    const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 10, total: 0 });
 
     const [patients, setPatients] = useState<Patient[]>([]);
-    const [selectedPatient, setSelectedPatient] = useState<string | null>(null);
-    const [selectedPatientId, setSelectedPatientId] = useState<number | undefined>(undefined);
-    const [refNumber, setRefNumber] = useState<number | undefined>(undefined);
-    const [dateRange, setDateRange] = useState<{ fromDate: Date | undefined, toDate: Date | undefined }>({ fromDate: undefined, toDate: undefined });
-    const [allReports, setAllReports] = useState<boolean>(false);
-    const [filterApplied, setFilterApplied] = useState<boolean>(false);
+    const [filters, setFilters] = useState({
+        patientId: undefined,
+        refNumber: undefined,
+        dateRange: { fromDate: undefined, toDate: undefined },
+        allReports: false,
+    });
 
-    const [mergeDisabled, setMergeDisabled] = useState<boolean>(true);
-
-    const columns: TableColumnsType<TestRegistrationTableItems> = [
+    const columns = useMemo(() => [
         {
-            title: 'Date', dataIndex: 'date', key: 'date',
-            render(value) {
-                return (
-                    <p>{formatISO(value, { representation: "date" })}</p>
-                )
-            },
+            title: "Date",
+            dataIndex: "date",
+            render: (value: any) => <p>{formatISO(value, { representation: "date" })}</p>,
         },
         {
-            title: 'Patient Name', dataIndex: 'patientName', key: 'patientName',
-            render(value) {
-                return (
-                    <p>{value}</p>
-                )
-            },
+            title: "Patient Name",
+            dataIndex: "patientName",
+            render: (value: any) => <p>{value}</p>,
         },
         {
-            title: 'Reference number', dataIndex: 'ref_number', key: 'refNumber',
-            render(value) {
-                return (
-                    <p>{value ? value : <Tag bordered={false} color="warning">Empty</Tag>}</p>
-                )
-            }
-        },
-        { title: 'Test', dataIndex: 'testName', key: 'testName' },
-        // { title: 'Reports collected', dataIndex: 'report_collected' },
-        {
-            title: 'Action',
-            dataIndex: '',
-            key: 'a',
-            render: (record, _) => (
-                <Flex gap={5}>
-                    <Button
-                        size="small"
-                        color="primary"
-                        variant="solid"
-                        onClick={() => handlePrintReport(record.key)}
-                    >
-                        Print
-                    </Button>
-
-                    <Button
-                        size='small'
-                        variant='outlined'
-                        color='default'
-                        onClick={() => handlePrintPreview(record.key)}
-                    >
-                        Preview
-                    </Button>
-
-                    <Button
-                        size="small"
-                        color="primary"
-                        variant="outlined"
-                        onClick={() => handleExportReports(record.key)}
-                    >
-                        Export
-                    </Button>
-                </Flex>
+            title: "Reference Number",
+            dataIndex: "ref_number",
+            render: (value: any) => (
+                <p>
+                    {value ? value : <Tag color="warning">Empty</Tag>}
+                </p>
             ),
         },
-    ];
+        { title: "Test", dataIndex: "testName" },
+        {
+            title: "Action",
+            render: (record: any) => (
+                <div style={{ display: "flex", gap: "5px" }}>
+                    <Button size="small" onClick={() => handlePrintReport(record.key)}>
+                        Print
+                    </Button>
+                    <Button size="small" onClick={() => handlePrintPreview(record.key)}>
+                        Preview
+                    </Button>
+                    <Button size="small" onClick={() => handleExportReports(record.key)}>
+                        Export
+                    </Button>
+                </div>
+            ),
+        },
+    ], []);
 
-    const fetchTestsToPrint = async (page: number, pageSizeL: number, wantAll: boolean, patientId?: number, refNumber?: number, fromDate?: Date, toDate?: Date) => {
-        const data = await window.electron.report.getTests(
-            page,
-            pageSizeL,
-            wantAll,
-            fromDate,
-            toDate,
-            patientId,
-            refNumber
-        );
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const { currentPage, pageSize } = pagination;
+            const { patientId, refNumber, dateRange, allReports } = filters;
 
-        setTestRegistrations(data.registrations);
-        setTotal(data.total);
-    }
+            const data = await window.electron.report.getTests(
+                currentPage,
+                pageSize,
+                allReports,
+                dateRange.fromDate,
+                dateRange.toDate,
+                patientId,
+                refNumber
+            );
 
-    const fetchPatients = debounce(async (search: string) => {
+            setDataSource(data.registrations.map((item) => ({ ...item, key: `${item.testRegisterId},${item.testId}` })));
+            setPagination((prev) => ({ ...prev, total: data.total }));
+        } catch (error) {
+            console.error("Failed to fetch data:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchPatients = debounce(async (search) => {
         try {
             setLoading(true);
             const data = await window.electron.patients.get(1, 5, search);
             setPatients(data.patients);
         } catch (error) {
-            console.error("Failed to fetch patient data:", error);
+            console.error("Failed to fetch patients:", error);
         } finally {
             setLoading(false);
         }
     }, 500);
 
-    const handlePatientSelect = (value: string) => {
-        setSelectedPatient(value);
-        setSelectedPatientId(patients.find((patient) => `${patient.name} [${calculateAge(patient.date_of_birth)}]` === value)?.id);
+    const updateFilter = (key: any, value: any) => {
+        setFilters((prev) => ({ ...prev, [key]: value }));
     };
 
-    const handlePatientClear = () => {
-        setSelectedPatient(null);
-        setSelectedPatientId(undefined);
-    }
+    useEffect(() => {
+        fetchData();
+    }, [pagination.currentPage, pagination.pageSize, filters]);
 
-    const handleRefNumberChange = (value: any) => {
-        setRefNumber(Number(value));
-    }
-
-    const handleDateRangeChange = (dateString: string[]) => {
-        let fd = undefined;
-        let td = undefined;
-        if (dateString && dateString[0] != '') {
-            fd = new Date(dateString[0])
-        }
-        if (dateString && dateString[1] != '') {
-            td = new Date(dateString[1])
-        }
-        setDateRange({
-            fromDate: fd,
-            toDate: td,
-        });
-    }
-
-    const handleIsAllReports = (value: any) => {
-        if (value == "allReports") {
-            setAllReports(true);
-        } else {
-            setAllReports(false);
-        }
-    }
-
-    const handleApplyFilter = (isChecked: boolean) => {
-        setCurrentPage(1);
-        setFilterApplied(isChecked);
-        if (isChecked) {
-            fetchTestsToPrint(currentPage, pageSize, allReports, selectedPatientId, refNumber, dateRange.fromDate, dateRange.toDate);
-        } else {
-            setAllReports(false);
-            fetchTestsToPrint(currentPage, pageSize, false);
-        }
-    }
-
-    const handlePrintPreview = (key: string) => {
-        const selectedRow = dataSource.find((item) => item.key == key);
-        if (selectedRow) {
-            messageApi.open({
-                key: "login_message",
-                type: "info",
-                content: "Previewing..."
-            });
-            window.electron.report.printPreview(selectedRow);
-        }
-    }
-
-    const handlePrintReport = (key: string | undefined = undefined) => {
-        const keys = key ? [key] : selectedRowKeys;
-        const selectedReports = dataSource.filter(item => keys.includes(item.key)) as DataEmptyTests[];
+    const handlePrintReport = (key: string | undefined) => {
+        const selectedKeys = key ? [key] : selectedRowKeys;
+        const selectedData = dataSource.filter((item) => selectedKeys.includes(item.key)) as DataEmptyTests[];
         messageApi.open({
-            key: "login_message",
-            type: "info",
+            key: "message",
+            type: "loading",
             content: "Printing..."
         });
-        window.electron.report.print(selectedReports);
-    }
+        window.electron.report.print(selectedData);
+    };
+
+    const handlePrintPreview = (key: string) => {
+        const selectedItem = dataSource.find((item) => item.key === key) as DataEmptyTests;
+        if (selectedItem) {
+            messageApi.open({
+                key: "message",
+                type: "loading",
+                content: "Previewing..."
+            });
+            window.electron.report.printPreview(selectedItem);
+        }
+    };
 
     const handleMergeReports = () => {
         const selectedReports = dataSource.filter(item => selectedRowKeys.includes(item.key)) as DataEmptyTests[];
         messageApi.open({
             key: "login_message",
-            type: "info",
+            type: "loading",
             content: "Merging..."
         });
         window.electron.report.mergeReports(selectedReports);
     }
 
-    const handleExportReports = (key: string | undefined = undefined) => {
-        const keys = key ? [key] : selectedRowKeys;
-        const selectedReports = dataSource.filter(item => keys.includes(item.key)) as DataEmptyTests[];
+    const handleExportReports = (key: string | undefined) => {
+        const selectedKeys = key ? [key] : selectedRowKeys;
+        const selectedData = dataSource.filter((item) => selectedKeys.includes(item.key)) as DataEmptyTests[];
         messageApi.open({
-            key: "login_message",
-            type: "info",
+            key: "message",
+            type: "loading",
             content: "Exporting..."
         });
-        window.electron.report.export(selectedReports);
-    }
-
-    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        setSelectedRowKeys(newSelectedRowKeys);
+        window.electron.report.export(selectedData);
     };
 
-    const rowSelection: TableRowSelection<TestRegistrationTableItems> = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-    };
-
-    const hasSelected = selectedRowKeys.length > 0;
-
     useEffect(() => {
-        fetchTestsToPrint(currentPage, pageSize, allReports);
-    }, [currentPage, pageSize]);
-
-    useEffect(() => {
-        setDataSource(testRegistrations.map((value) => ({ ...value, key: `${value.testRegisterId},${value.testId}` })));
-    }, [testRegistrations]);
-
-    useEffect(() => {
-        const selectedRecords = dataSource.filter((item) => selectedRowKeys.includes(item.key));
-        for (const element of selectedRecords) {
-            if (selectedRecords.length > 1 && selectedRecords.length < 4) {
+        if (selectedRowKeys.length < 2 || selectedRowKeys.length > 3) {
+            setMergeDisabled(true);
+        } else {
+            const selectedRecords = dataSource.filter((item) => selectedRowKeys.includes(item.key));
+            for (const element of selectedRecords) {
                 if (selectedRecords[0].testRegisterId != element.testRegisterId) {
                     setMergeDisabled(true);
-                    return;
+                    break;
                 }
-            } else {
-                setMergeDisabled(true);
-                return;
             }
+            setMergeDisabled(false);
         }
-        setMergeDisabled(false);
     }, [selectedRowKeys]);
 
     return (
         <div className="p-5">
             {contextHolder}
-            <div className="my-5">
-                <Flex gap={5} justify="end">
-                    <Button
-                        style={{ width: 100 }}
-                        color="primary"
-                        variant="solid"
-                        onClick={() => handlePrintReport()}
-                    >
-                        Print
-                    </Button>
-                    <Button
-                        style={{ width: 100 }}
-                        color="primary"
-                        variant="outlined"
-                        disabled={mergeDisabled}
-                        onClick={handleMergeReports}
-                    >
-                        Merge
-                    </Button>
-                    <Button
-                        style={{ width: 100 }}
-                        color="primary"
-                        variant="outlined"
-                        disabled={selectedRowKeys.length == 0}
-                        onClick={() => handleExportReports()}
-                    >
-                        Export
-                    </Button>
-                </Flex>
-            </div>
-            <div className="my-5">
-                <Flex gap={5}>
-                    <Select
-                        showSearch
-                        allowClear
-                        placeholder="Select a patient"
-                        onSearch={fetchPatients}
-                        onSelect={handlePatientSelect}
-                        onClear={handlePatientClear}
-                        notFoundContent={loading ? <Spin size="small" /> : "No patients found"}
-                        filterOption={false}
-                        style={{ width: 300 }}
-                        value={selectedPatient}
-                    >
-                        {patients.map((patient) => (
-                            <Select.Option key={patient.id} value={`${patient.name} [${calculateAge(patient.date_of_birth)}]`}>
-                                {patient.name} [{calculateAge(patient.date_of_birth)}]
-                            </Select.Option>
-                        ))}
-                    </Select>
-
-                    <InputNumber
-                        controls={false}
-                        placeholder="Enter a reference number"
-                        style={{ width: 200 }}
-                        onChange={(value) => handleRefNumberChange(value)}
-                        onPressEnter={(e: any) => {
-                            setPageSize(100);
-                            setFilterApplied(true);
-                            setAllReports(true);
-                            fetchTestsToPrint(1, 100, true, undefined, Number(e.target.value), undefined, undefined);
-                        }}
-                    />
-
-                    <DatePicker.RangePicker
-                        placeholder={['Start date', 'End date']}
-                        allowEmpty={[false, false]}
-                        onChange={(_, dateString) => handleDateRangeChange(dateString)}
-                    />
-
-                    <Select
-                        defaultValue="notPrinted"
-                        style={{ width: 120 }}
-                        onChange={(value) => handleIsAllReports(value)}
-                        value={allReports ? "allReports" : "notPrinted"}
-                        options={[
-                            { value: 'notPrinted', label: 'Not Printed' },
-                            { value: 'allReports', label: 'All Reports' },
-                        ]}
-                    />
-
-                    <div className="ml-5 flex flex-row gap-2 items-center">
-
-                        <p>Filter:</p>
-
+            <div className="mb-5">
+                <Flex justify="space-between">
+                    <Flex gap={10} align="center">
+                        <Select
+                            showSearch
+                            allowClear
+                            placeholder="Select a patient"
+                            onSearch={fetchPatients}
+                            onSelect={(value) => updateFilter("patientId", value)}
+                            onClear={() => updateFilter("patientId", undefined)}
+                            notFoundContent={loading ? <Spin size="small" /> : "No patients found"}
+                            filterOption={false}
+                            style={{ width: 300 }}
+                        >
+                            {patients.map((patient) => (
+                                <Select.Option key={patient.id} value={patient.id}>
+                                    {patient.name} [{calculateAge(patient.date_of_birth, ["years"])}]
+                                </Select.Option>
+                            ))}
+                        </Select>
+                        <InputNumber
+                            placeholder="Reference Number"
+                            style={{ width: 150 }}
+                            onChange={(value) => updateFilter("refNumber", value)}
+                        />
+                        <DatePicker.RangePicker
+                            onChange={(_, dateStrings) => {
+                                console.log(dateStrings);
+                                updateFilter("dateRange", {
+                                    fromDate: dateStrings[0] ? new Date(dateStrings[0]) : undefined,
+                                    toDate: dateStrings[1] ? new Date(dateStrings[1]) : undefined,
+                                })
+                            }}
+                            allowClear
+                        />
                         <Switch
+                            checked={filters.allReports}
+                            onChange={(checked) => updateFilter("allReports", checked)}
                             checkedChildren={<CheckOutlined />}
                             unCheckedChildren={<CloseOutlined />}
-                            defaultValue={false}
-                            onChange={(isChecked) => handleApplyFilter(isChecked)}
-                            value={filterApplied}
                         />
+                    </Flex>
+
+                    <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+                        <Button onClick={() => handlePrintReport(undefined)} disabled={!selectedRowKeys.length}>Print</Button>
+                        <Button onClick={handleMergeReports} disabled={mergeDisabled}>Merge</Button>
+                        <Button onClick={() => handleExportReports(undefined)} disabled={!selectedRowKeys.length}>Export</Button>
                     </div>
                 </Flex>
             </div>
-            <div>
-                <Table
-                    rowSelection={rowSelection}
-                    columns={columns}
-                    dataSource={dataSource}
-                    pagination={{
-                        current: currentPage,
-                        pageSize,
-                        total,
-                        showSizeChanger: true,
-                        onChange(page, pageSize) {
-                            setCurrentPage(page || 1);
-                            setPageSize(pageSize || 10);
-                        },
-                    }}
-                    footer={() => (
-                        <span>
-                            {hasSelected ? `Selected ${selectedRowKeys.length} items` : "Empty selection"}
-                        </span>
-                    )}
-                />
-
-            </div>
+            <Table
+                rowSelection={{
+                    selectedRowKeys,
+                    onChange: (keys) => setSelectedRowKeys(keys),
+                }}
+                columns={columns}
+                dataSource={dataSource}
+                loading={loading}
+                pagination={{
+                    current: pagination.currentPage,
+                    pageSize: pagination.pageSize,
+                    total: pagination.total,
+                    showSizeChanger: true,
+                    onChange: (page, pageSize) => setPagination({ ...pagination, currentPage: page, pageSize }),
+                }}
+            />
         </div>
-    )
-}
+    );
+};
 
 export default PrintReportTable;

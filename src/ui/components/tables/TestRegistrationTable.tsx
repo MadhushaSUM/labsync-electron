@@ -321,13 +321,7 @@ const TestRegistrationTable = (
     return (
         <div className="p-5">
             {contextHolder}
-            <div>
-                <Flex justify="end" gap={5}>
-                    <Button variant="solid" color="primary" onClick={() => navigate("/new-test")}>New Test Registration</Button>
-                    <Button variant="outlined" color="danger" onClick={deleteTestRegisters}>Delete</Button>
-                </Flex>
-            </div>
-            <div className="my-5">
+            <Flex justify="space-between" className="mb-5">
                 <Flex gap={5}>
                     <Select
                         showSearch
@@ -378,10 +372,13 @@ const TestRegistrationTable = (
                             value={filterApplied}
                         />
                     </div>
-
-
                 </Flex>
-            </div>
+
+                <Flex justify="end" gap={5}>
+                    <Button variant="solid" color="primary" onClick={() => navigate("/new-test")}>New Test Registration</Button>
+                    <Button variant="outlined" color="danger" onClick={deleteTestRegisters}>Delete</Button>
+                </Flex>
+            </Flex>
             <div>
                 <Table
                     rowSelection={rowSelection}
