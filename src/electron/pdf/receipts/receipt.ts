@@ -10,6 +10,7 @@ const { print } = pkg;
 
 interface ReceiptPDFConfig {
     outputPath: string,
+    headerPath: string,
     fonts: {
         normal: string;
         bold: string;
@@ -34,6 +35,7 @@ export async function printReceipt(registration: Registration) {
 
     const config: ReceiptPDFConfig = {
         outputPath: path.join(app.getPath('desktop'), 'pdf-output', 'receipts'),
+        headerPath: path.join(app.getPath("userData"), 'receipt/header.png'),
         fonts: {
             normal: path.join(app.getPath("userData"), 'fonts/receipt.ttf'),
             bold: path.join(app.getPath("userData"), 'fonts/receipt-Bold.ttf')
@@ -43,9 +45,9 @@ export async function printReceipt(registration: Registration) {
             { x1: 5, y1: 156 + topMargin, x2: 221, y2: 156 + topMargin },
         ],
         textEntries: [
-            { label: "<Laboratory Name>", x: 10, y: topMargin, fontSize: 15, weight: "bold", align: "center", width: undefined },
-            { label: "<address line>", x: 10, y: 40 + topMargin, fontSize: 8, weight: "normal", align: "center", width: undefined },
-            { label: "<tele line>", x: 10, y: 50 + topMargin, fontSize: 8, weight: "normal", align: "center", width: undefined },
+            // { label: "<Laboratory Name>", x: 10, y: topMargin, fontSize: 15, weight: "bold", align: "center", width: undefined },
+            // { label: "<address line>", x: 10, y: 40 + topMargin, fontSize: 8, weight: "normal", align: "center", width: undefined },
+            // { label: "<tele line>", x: 10, y: 50 + topMargin, fontSize: 8, weight: "normal", align: "center", width: undefined },
             { label: "Patient name  :", x: 10, y: 80 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
             { label: "Date                    :", x: 10, y: 100 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
             { label: "Reference no. :", x: 10, y: 120 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
@@ -118,6 +120,8 @@ export async function printReceipt(registration: Registration) {
     const filePath = path.join(config.outputPath, 'receipt.pdf');
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);
+
+    doc.image(config.headerPath, 0, 10, { width: 226 });
 
     doc.lineWidth(0.5);
     config.linePositions.forEach(line => {
