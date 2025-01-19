@@ -12,7 +12,8 @@ ipcMainHandle('patientAnalysis:get', async (patientId, startDate, endDate) => {
         tests: {
             date: Date,
             refNumber?: number,
-            testRegisterId: number
+            testRegisterId: number,
+            data: {},
         }[]
     }>();
 
@@ -23,6 +24,7 @@ ipcMainHandle('patientAnalysis:get', async (patientId, startDate, endDate) => {
             totalCount += 1;
 
             const { id: testId, name: testName } = registeredTest.test;
+            const testData = registeredTest.data;
             let data = dataMap.get(testId);
 
             if (!data) {
@@ -36,7 +38,7 @@ ipcMainHandle('patientAnalysis:get', async (patientId, startDate, endDate) => {
             }
 
             data.count += 1;
-            data.tests.push({ date, refNumber: ref_number, testRegisterId });
+            data.tests.push({ date, refNumber: ref_number, testRegisterId, data: testData });
         }
     }
 
@@ -61,7 +63,8 @@ ipcMainHandle('testAnalysis:get', async (startDate, endDate) => {
         tests: {
             date: Date,
             refNumber?: number,
-            testRegisterId: number
+            testRegisterId: number,
+            data: {},
         }[]
     }>();
 
@@ -72,6 +75,7 @@ ipcMainHandle('testAnalysis:get', async (startDate, endDate) => {
             totalCount += 1;
 
             const { id: testId, name: testName } = registeredTest.test;
+            const testData = registeredTest.data;
             let data = dataMap.get(testId);
 
             if (!data) {
@@ -85,7 +89,7 @@ ipcMainHandle('testAnalysis:get', async (startDate, endDate) => {
             }
 
             data.count += 1;
-            data.tests.push({ date, refNumber: ref_number, testRegisterId });
+            data.tests.push({ date, refNumber: ref_number, testRegisterId, data: testData });
         }
     }
 

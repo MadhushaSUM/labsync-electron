@@ -1,6 +1,6 @@
 
 import { useRef } from 'react';
-import { Button, Card, DatePicker, Form, List, Select, Spin } from "antd"
+import { Button, Card, DatePicker, Form, List, Modal, Select, Spin } from "antd"
 import { debounce } from "lodash";
 import { useEffect, useState } from "react";
 import { calculateAge } from "../../lib/utils";
@@ -8,6 +8,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, ChartData } from "chart.
 import { Doughnut, getElementAtEvent } from "react-chartjs-2";
 import { ScrollArea } from '../../components/ScrollArea';
 import { formatISO } from 'date-fns';
+import ShowData from '../../components/ShowData';
 
 const { Option } = Select;
 
@@ -28,7 +29,8 @@ const PatientAnalysis = () => {
     const [listData, setListData] = useState<{
         date: Date,
         refNumber?: number,
-        testRegisterId: number
+        testRegisterId: number,
+        data?: object,
     }[]>([]);
 
     const fetchPatients = debounce(async (search: string) => {
@@ -80,6 +82,19 @@ const PatientAnalysis = () => {
         if (data) {
             setListData(data.pieChartData[getElementAtEvent(chart, event)[0].index].tests);
         }
+    }
+
+    const showDataInModal = (data: any) => {
+        Modal.info({
+            width: "50%",
+            title: 'Investigation data',
+            content: (
+                <div>
+                    <ShowData data={data} />
+                </div>
+            ),
+            onOk() { },
+        });
     }
 
     useEffect(() => {
@@ -164,7 +179,8 @@ const PatientAnalysis = () => {
                                 <List<{
                                     date: Date,
                                     refNumber?: number,
-                                    testRegisterId: number
+                                    testRegisterId: number,
+                                    data?: object,
                                 }>
                                     size="small"
                                     style={{ height: "calc(100vh - 400px)", width: "300px" }}
@@ -175,7 +191,14 @@ const PatientAnalysis = () => {
                                                 <div className='flex flex-col gap-1 w-full'>
                                                     <p>{`Date: ${formatISO(item.date, { representation: 'date' })}`}</p>
                                                     <p>{`Reference no.: ${item.refNumber}`}</p>
-                                                    <Button color='primary' variant='filled' size='small'>View</Button>
+                                                    <Button
+                                                        color='primary'
+                                                        variant='filled'
+                                                        size='small'
+                                                        onClick={() => showDataInModal(item.data)}
+                                                    >
+                                                        View
+                                                    </Button>
 
                                                 </div>
                                             </List.Item>

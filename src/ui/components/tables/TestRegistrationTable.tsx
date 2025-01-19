@@ -6,6 +6,7 @@ import { calculateAge } from "../../lib/utils";
 import { CheckOutlined, CloseOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import { TableRowSelection } from "antd/es/table/interface";
 import { formatISO } from "date-fns";
+import ShowData from "../ShowData";
 
 const { confirm } = Modal;
 
@@ -66,7 +67,6 @@ const TestRegistrationTable = (
         },
         { title: 'Total cost', dataIndex: 'total_cost', key: 'totalCost' },
         { title: 'Paid price', dataIndex: 'paid_price', key: 'paidPrice' },
-        // { title: 'Reports collected', dataIndex: 'report_collected' },
         {
             title: 'Action',
             dataIndex: '',
@@ -117,7 +117,23 @@ const TestRegistrationTable = (
             title: 'Data', dataIndex: 'data', key: 'data',
             render(value) {
                 return (
-                    <p>{value ? <Button size="small" color="primary" variant="outlined">View</Button> : <Tag bordered={false} color="warning">Empty</Tag>}</p>
+                    <p>
+                        {value ?
+                            <Button
+                                size="small"
+                                color="primary"
+                                variant="outlined"
+                                onClick={() => showDataInModal(value)}
+                            >
+                                View
+                            </Button>
+                            :
+                            <Tag
+                                bordered={false}
+                                color="warning">
+                                Empty
+                            </Tag>}
+                    </p>
                 )
             }
         },
@@ -178,6 +194,19 @@ const TestRegistrationTable = (
             ),
         },
     ]
+
+    const showDataInModal = (data: any) => {
+        Modal.info({
+            width: "50%",
+            title: 'Investigation data',
+            content: (
+                <div>
+                    <ShowData data={data} />
+                </div>
+            ),
+            onOk() { },
+        });
+    }
 
     const onPrintReceiptClick = (record: TestRegistrationTableItems) => {
         try {

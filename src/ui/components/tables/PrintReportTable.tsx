@@ -133,6 +133,8 @@ const PrintReportTable = () => {
 
     const handlePrintPreview = (key: string) => {
         const selectedItem = dataSource.find((item) => item.key === key) as DataEmptyTests;
+        console.log(selectedItem);
+        
         if (selectedItem) {
             messageApi.open({
                 key: "message",

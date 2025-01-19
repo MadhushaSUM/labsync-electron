@@ -209,7 +209,8 @@ interface AnalysisData {
         tests: {
             date: Date,
             refNumber?: number,
-            testRegisterId: number
+            testRegisterId: number,
+            data?: object,
         }[]
     }[],
 }

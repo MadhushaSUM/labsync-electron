@@ -1,9 +1,10 @@
-import { Button, Card, DatePicker, Form, List } from "antd";
+import { Button, Card, DatePicker, Form, List, Modal } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { Doughnut, getElementAtEvent } from "react-chartjs-2";
 import { ScrollArea } from "../../components/ScrollArea";
 import { Chart as ChartJS, ChartData } from "chart.js";
 import { formatISO } from "date-fns";
+import ShowData from "../../components/ShowData";
 
 const TestAnalysis = () => {
     const [form] = Form.useForm();
@@ -14,7 +15,8 @@ const TestAnalysis = () => {
     const [listData, setListData] = useState<{
         date: Date,
         refNumber?: number,
-        testRegisterId: number
+        testRegisterId: number,
+        data?: object,
     }[]>([]);
 
     const handleFormSubmit = async (values: any) => {
@@ -44,6 +46,19 @@ const TestAnalysis = () => {
         if (data) {
             setListData(data.pieChartData[getElementAtEvent(chart, event)[0].index].tests);
         }
+    }
+
+    const showDataInModal = (data: any) => {
+        Modal.info({
+            width: "50%",
+            title: 'Investigation data',
+            content: (
+                <div>
+                    <ShowData data={data} />
+                </div>
+            ),
+            onOk() { },
+        });
     }
 
     useEffect(() => {
@@ -105,7 +120,8 @@ const TestAnalysis = () => {
                                 <List<{
                                     date: Date,
                                     refNumber?: number,
-                                    testRegisterId: number
+                                    testRegisterId: number,
+                                    data?: object,
                                 }>
                                     size="small"
                                     style={{ height: "calc(100vh - 400px)", width: "300px" }}
@@ -116,7 +132,14 @@ const TestAnalysis = () => {
                                                 <div className='flex flex-col gap-1 w-full'>
                                                     <p>{`Date: ${formatISO(item.date, { representation: "date" })}`}</p>
                                                     <p>{`Reference no.: ${item.refNumber}`}</p>
-                                                    <Button color='primary' variant='filled' size='small'>View</Button>
+                                                    <Button
+                                                        color='primary'
+                                                        variant='filled'
+                                                        size='small'
+                                                        onClick={() => showDataInModal(item.data)}
+                                                    >
+                                                        View
+                                                    </Button>
 
                                                 </div>
                                             </List.Item>
