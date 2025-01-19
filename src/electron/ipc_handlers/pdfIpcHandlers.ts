@@ -8,7 +8,7 @@ import pkg from 'pdf-to-printer';
 
 const { print, getPrinters } = pkg;
 
-const secondTypeTestIds = new Set([2, 4, 8, 9, 17, 27, 29, 30, 32]);
+const secondTypeTestIds = new Set([4, 8, 9, 17, 27, 29, 30, 32, 33, 34]);
 
 ipcMainOn('report:printPreview', async (
     event,
@@ -82,6 +82,44 @@ ipcMainOn('report:print', async (
                 );
                 out2.document.end();
                 print(out1.filePath, { printer: REPORT_PRINTING_PRINTER });
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        writeErrorLog(error);
+    }
+});
+
+ipcMainOn('report:export', async (
+    event,
+    reports
+) => {
+    try {
+        for (const report of reports) {
+            let testNames = [];
+            if (report.testId == 15) {
+                testNames.push(`${report.testName.toUpperCase()} (${report.data && report.data.glucoseWeight})`);
+            } else if (report.testId == 6) {
+                testNames.push(`${report.testName} (westergren method)`.toUpperCase());
+            }
+            else {
+                testNames.push(report.testName.toUpperCase());
+            }
+            const hasSecondType = secondTypeTestIds.has(Number(report.testId));
+            const out1 = await generateReportBase(report, testNames, hasSecondType, true);
+            const { normalRanges } = await getNormalRangesForTest(report.testId);
+
+            if (report.data) {
+                const out2 = testMapper(
+                    Number(report.testId),
+                    out1.document,
+                    out1.topMargin,
+                    report.data,
+                    normalRanges,
+                    report.patientDOB,
+                    report.patientGender
+                );
+                out2.document.end();
             }
         }
     } catch (error) {

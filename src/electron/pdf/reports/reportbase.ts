@@ -9,41 +9,44 @@ export async function generateReportBase(
     report: DataEmptyTests,
     testNames: string[],
     hasSecondType = false,
+    withHeader = false,
 ) {
 
     const config = {
-        outputPath: path.join(app.getPath('desktop'), 'pdf-output', 'reports'),
+        outputPath: withHeader ? path.join(app.getPath('desktop'), 'pdf-output', 'exports') : path.join(app.getPath('desktop'), 'pdf-output', 'reports'),
+        headerPath: path.join(app.getPath("userData"), 'report/header.png'),
+        footerPath: path.join(app.getPath("userData"), 'report/footer.png'),
         fonts: {
             normal: path.join(app.getPath("userData"), 'fonts/Aptos.ttf'),
             bold: path.join(app.getPath("userData"), 'fonts/Aptos-Bold.ttf')
         },
         linePositions: [
-            { x1: 0, y1: 150, x2: 595, y2: 150 },
-            { x1: 0, y1: 245, x2: 595, y2: 245 },
-            { x1: 20, y1: 280, x2: 575, y2: 280 },
-            { x1: 20, y1: 300, x2: 575, y2: 300 },
+            // { x1: 0, y1: 110, x2: 595, y2: 110 },
+            // { x1: 0, y1: 205, x2: 595, y2: 205 },
+            { x1: 20, y1: 210, x2: 575, y2: 210 },
+            { x1: 20, y1: 230, x2: 575, y2: 230 },
         ],
         textEntries: [
-            { label: "PT'S NAME", value: report.patientName, x1: 40, x2: 110, x3: 115, y: 155 },
-            { label: "GENDER", value: report.patientGender, x1: 40, x2: 110, x3: 115, y: 180 },
-            { label: "TEST(S)", value: testNames.join(', '), x1: 40, x2: 110, x3: 115, y: 205 },
-            { label: "REFERRED BY", value: report.doctorName, x1: 40, x2: 110, x3: 115, y: 230 },
-            { label: "REF. NO.", value: report.ref_number, x1: 400, x2: 450, x3: 455, y: 155 },
-            { label: "AGE", value: (await calculateAge(report.patientDOB, report.options.preferred_age_format)), x1: 220, x2: 250, x3: 255, y: 180 },
-            { label: "DATE", value: report.date.toLocaleDateString(), x1: 400, x2: 450, x3: 455, y: 180 },
+            { label: "PT'S NAME", value: report.patientName, x1: 40, x2: 110, x3: 115, y: 115 },
+            { label: "GENDER", value: report.patientGender, x1: 40, x2: 110, x3: 115, y: 140 },
+            { label: "TEST(S)", value: testNames.join(', '), x1: 40, x2: 110, x3: 115, y: 165 },
+            { label: "REFERRED BY", value: report.doctorName, x1: 40, x2: 110, x3: 115, y: 190 },
+            { label: "REF. NO.", value: report.ref_number, x1: 400, x2: 450, x3: 455, y: 115 },
+            { label: "AGE", value: (await calculateAge(report.patientDOB, report.options.preferred_age_format)), x1: 220, x2: 250, x3: 255, y: 140 },
+            { label: "DATE", value: report.date.toLocaleDateString(), x1: 400, x2: 450, x3: 455, y: 140 },
         ],
         fontSize: 11,
         tableHeader: [
-            { label: "TEST", x: 50, y: 284, fontSize: 11, weight: "bold", options: undefined },
-            { label: "RESULT", x: 235, y: 284, fontSize: 11, weight: "bold", options: undefined },
+            { label: "TEST", x: 50, y: 214, fontSize: 11, weight: "bold", options: undefined },
+            { label: "RESULT", x: 235, y: 214, fontSize: 11, weight: "bold", options: undefined },
         ]
     };
 
     if (!hasSecondType) {
         config.tableHeader.push(
-            { label: "UNIT", x: 305, y: 284, fontSize: 11, weight: "bold", options: undefined },
-            { label: "FLAG", x: 365, y: 284, fontSize: 11, weight: "bold", options: undefined },
-            { label: "NORMAL RANGE", x: 430, y: 284, fontSize: 11, weight: "bold", options: undefined },
+            { label: "UNIT", x: 305, y: 214, fontSize: 11, weight: "bold", options: undefined },
+            { label: "FLAG", x: 365, y: 214, fontSize: 11, weight: "bold", options: undefined },
+            { label: "NORMAL RANGE", x: 430, y: 214, fontSize: 11, weight: "bold", options: undefined },
         );
     }
     // TODO: replace toLocalDateString() s
@@ -53,10 +56,15 @@ export async function generateReportBase(
     }
 
     const doc = new PDFDocument({ size: "A4" });
-    const fileName = `${report.patientName}-${report.date.toString().replaceAll(':', '')}`
+    const fileName = `${report.patientName}-${report.testName.replaceAll('/', '')}-${report.date.toString().replaceAll(':', '')}`
     const filePath = path.join(config.outputPath, `${fileName}.pdf`);
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);
+
+    if (withHeader) {
+        doc.image(config.headerPath, 0, 0, { width: 596 });
+        doc.image(config.footerPath, 0, 815, { width: 596 });
+    }
 
     config.linePositions.forEach(line => {
         doc.moveTo(line.x1, line.y1).lineTo(line.x2, line.y2).stroke();
@@ -75,7 +83,7 @@ export async function generateReportBase(
             .text(entry.label, entry.x, entry.y, entry.options);
     });
 
-    return { document: doc, topMargin: 305, filePath: filePath };
+    return { document: doc, topMargin: 235, filePath: filePath };
 }
 
 export function previewPDF(filePath: string) {

@@ -6,7 +6,7 @@ import {
     SettingOutlined,
     PlusCircleOutlined,
     PrinterOutlined,
-    UsergroupAddOutlined
+    UserOutlined
 } from '@ant-design/icons';
 
 type SidebarProps = {
@@ -64,10 +64,8 @@ const Sidebar = ({ darkTheme }: SidebarProps) => {
                 <Menu.Item key="/analysis/test-analysis">Test analysis</Menu.Item>
                 <Menu.Item key="/analysis/finantial-analysis">Finantial analysis</Menu.Item>
             </Menu.SubMenu>
-            <Menu.SubMenu key="patients-n-doctors" title="P n D" icon={<UsergroupAddOutlined />}>
-                <Menu.Item key="/patients">Patients</Menu.Item>
-                <Menu.Item key="/doctors">Doctors</Menu.Item>
-            </Menu.SubMenu>
+            <Menu.Item key="/patients" icon={<UserOutlined />}>Patients</Menu.Item>
+            <Menu.Item key="/doctors" icon={<UserOutlined />}>Doctors</Menu.Item>
             <Menu.SubMenu key="/settings" title="Settings" icon={<SettingOutlined />}>
                 <Menu.Item key="/settings/general">General</Menu.Item>
                 <Menu.Item key="/settings/tests">Tests</Menu.Item>

@@ -23,6 +23,7 @@ import './ipc_handlers/analysisIpcHandlers.js';
 
 // Importing authenticate ipc handlers
 import './ipc_handlers/authenticateIpcHandlers.js';
+import path from 'path';
 
 
 app.on('ready', () => {
@@ -30,6 +31,7 @@ app.on('ready', () => {
         webPreferences: {
             preload: getPreloadPath(),
         },
+        icon: path.join(app.getPath("userData"), 'microscope.png')
     });
 
     if (isDev()) {

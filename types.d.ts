@@ -40,6 +40,7 @@ interface Window {
             getTests: (page: number, pageSize: number, allReports: boolean, fromDate?: Date, toDate?: Date, patientId?: number, refNumber?: number) => Promise<{ registrations: DataEmptyTests[], total: number }>;
             printPreview: (report: DataEmptyTests) => void;
             print: (reports: DataEmptyTests[]) => void;
+            export: (reports: DataEmptyTests[]) => void;
             printReceipt: (registration: Registration) => void;
             mergeReports: (reports: DataEmptyTests[]) => void;
         },
@@ -108,6 +109,7 @@ type EventPayloadMapping = {
     'report:getTests': { args: [number, number, boolean, Date?, Date?, number?, number?], return: { registrations: DataEmptyTests[], total: number } };
     'report:printPreview': { args: [report: DataEmptyTests], return: {} };
     'report:print': { args: [reports: DataEmptyTests[]], return: {} };
+    'report:export': { args: [reports: DataEmptyTests[]], return: {} };
     'report:printReceipt': { args: [registration: Registration], return: {} };
     'report:mergeReports': { args: [reports: DataEmptyTests[]], return: {} };
 

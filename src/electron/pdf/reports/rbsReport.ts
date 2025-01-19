@@ -21,10 +21,10 @@ export function addRBSData(
 
     if (!isMerging) {
         const aditionalNotes = [
-            { labelCol1: "REFERENCE VALUES", labelCol2: "", x1: 60, x2: 250, weight: "bold" },
-            { labelCol1: "80 - 140 mg/dl (4.4 - 7.8 mmol/L)", labelCol2: "Normal (Non-diabetic)", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "140 - 200 mg/dl (7.8 - 11.1 mmol/L)", labelCol2: "Impaired glucose (Pre-diabetic)", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "> 200 mg/dl (11.1 mmol/L)", labelCol2: "Diabetic (Type 1 or 2)", x1: 60, x2: 250, weight: "normal" },
+            { labelCol1: "REFERENCE VALUES", labelCol2: "", x1: 30, x2: 270, weight: "bold" },
+            { labelCol1: "80 - 140 mg/dl (4.4 - 7.8 mmol/L)", labelCol2: "Normal (Non-diabetic)", x1: 30, x2: 270, weight: "normal" },
+            { labelCol1: "140 - 200 mg/dl (7.8 - 11.1 mmol/L)", labelCol2: "Impaired glucose (Pre-diabetic)", x1: 30, x2: 270, weight: "normal" },
+            { labelCol1: "> 200 mg/dl (11.1 mmol/L)", labelCol2: "Diabetic (Type 1 or 2)", x1: 30, x2: 270, weight: "normal" },
         ];
 
         yPosition += 20;

@@ -41,10 +41,10 @@ export function addPPBSData(
 
     if (!isMerging) {
         const aditionalNotes = [
-            { labelCol1: "REFERENCE VALUES", labelCol2: "", x1: 60, x2: 250, weight: "bold" },
-            { labelCol1: "< 140 mg/dl (7.7 mmol/L)", labelCol2: "Normal (Non-diabetic)", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "140 - 180 mg/dl (7.7 - 9.9 mmol/L)", labelCol2: "Impaired glucose (Pre-diabetic)", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "> 180 mg/dl (9.9 mmol/L)", labelCol2: "Diabetic", x1: 60, x2: 250, weight: "normal" },
+            { labelCol1: "REFERENCE VALUES", labelCol2: "", x1: 30, x2: 270, weight: "bold" },
+            { labelCol1: "< 140 mg/dl (7.7 mmol/L)", labelCol2: "Normal (Non-diabetic)", x1: 30, x2: 270, weight: "normal" },
+            { labelCol1: "140 - 180 mg/dl (7.7 - 9.9 mmol/L)", labelCol2: "Impaired glucose (Pre-diabetic)", x1: 30, x2: 270, weight: "normal" },
+            { labelCol1: "> 180 mg/dl (9.9 mmol/L)", labelCol2: "Diabetic", x1: 30, x2: 270, weight: "normal" },
         ];
 
         yPosition += 20;

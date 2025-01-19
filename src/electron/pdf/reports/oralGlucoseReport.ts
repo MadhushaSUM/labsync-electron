@@ -43,12 +43,12 @@ export function addOralGlucoseData(
     if (!isMerging) {
 
         const aditionalNotes = [
-            { labelCol0: "", labelCol1: "REFERENCE VALUES", labelCol2: "", x0: 60, x1: 120, x2: 250, weight: "bold" },
-            { labelCol0: "FBS", labelCol1: "70 - 100 mg/dl", labelCol2: "Normal", x0: 60, x1: 120, x2: 280, weight: "normal" },
-            { labelCol0: "1 HOUR", labelCol1: "< 180 mg/dl", labelCol2: "Normal", x0: 60, x1: 120, x2: 280, weight: "normal" },
-            { labelCol0: "2 HOURS", labelCol1: "< 140 mg/dl (7.7 mmol/L)", labelCol2: "Normal", x0: 60, x1: 120, x2: 280, weight: "normal" },
-            { labelCol0: "", labelCol1: "140 - 200 mg/dl (7.8 - 11 mmol/L)", labelCol2: "Impaired glucose (Pre-diabetic)", x0: 60, x1: 120, x2: 280, weight: "normal" },
-            { labelCol0: "", labelCol1: "> 200 mg/dl (11 mmol/L)", labelCol2: "Diabetic", x0: 60, x1: 120, x2: 280, weight: "normal" },
+            { labelCol0: "REFERENCE VALUES", labelCol1: "", labelCol2: "", x0: 30, x1: 90, x2: 310, weight: "bold" },
+            { labelCol0: "FBS", labelCol1: "70 - 100 mg/dl", labelCol2: "Normal", x0: 30, x1: 90, x2: 310, weight: "normal" },
+            { labelCol0: "1 HOUR", labelCol1: "< 180 mg/dl", labelCol2: "Normal", x0: 30, x1: 90, x2: 310, weight: "normal" },
+            { labelCol0: "2 HOURS", labelCol1: "< 140 mg/dl (7.7 mmol/L)", labelCol2: "Normal", x0: 30, x1: 90, x2: 310, weight: "normal" },
+            { labelCol0: "", labelCol1: "140 - 200 mg/dl (7.8 - 11 mmol/L)", labelCol2: "Impaired glucose (Pre-diabetic)", x0: 30, x1: 90, x2: 310, weight: "normal" },
+            { labelCol0: "", labelCol1: "> 200 mg/dl (11 mmol/L)", labelCol2: "Diabetic", x0: 30, x1: 90, x2: 310, weight: "normal" },
         ];
 
         yPosition += 20;

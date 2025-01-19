@@ -49,7 +49,7 @@ export function addSAlkPhosphataseData(
             { label: "Serum alkaline phosphatase was the first enzyme utilized in the investigation of hepatic diseases. In response to biliary tree obstruction, the liver induces alkaline phosphatase synthesis in hepatocytes.", x: 40, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
         );
 
-        yPosition += 30;
+        yPosition += 45;
 
         if (data.comment) {
             config.textEntries.push({

@@ -63,14 +63,34 @@ const PrintReportTable = () => {
             dataIndex: '',
             key: 'a',
             render: (record, _) => (
-                <Button
-                    size='small'
-                    variant='outlined'
-                    color='default'
-                    onClick={() => handlePrintPreview(record.key)}
-                >
-                    Preview
-                </Button>
+                <Flex gap={5}>
+                    <Button
+                        size="small"
+                        color="primary"
+                        variant="solid"
+                        onClick={() => handlePrintReport(record.key)}
+                    >
+                        Print
+                    </Button>
+
+                    <Button
+                        size='small'
+                        variant='outlined'
+                        color='default'
+                        onClick={() => handlePrintPreview(record.key)}
+                    >
+                        Preview
+                    </Button>
+
+                    <Button
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                        onClick={() => handleExportReports(record.key)}
+                    >
+                        Export
+                    </Button>
+                </Flex>
             ),
         },
     ];
@@ -162,8 +182,9 @@ const PrintReportTable = () => {
         }
     }
 
-    const handlePrintReport = () => {
-        const selectedReports = dataSource.filter(item => selectedRowKeys.includes(item.key)) as DataEmptyTests[];
+    const handlePrintReport = (key: string | undefined = undefined) => {
+        const keys = key ? [key] : selectedRowKeys;
+        const selectedReports = dataSource.filter(item => keys.includes(item.key)) as DataEmptyTests[];
         messageApi.open({
             key: "login_message",
             type: "info",
@@ -180,6 +201,17 @@ const PrintReportTable = () => {
             content: "Merging..."
         });
         window.electron.report.mergeReports(selectedReports);
+    }
+
+    const handleExportReports = (key: string | undefined = undefined) => {
+        const keys = key ? [key] : selectedRowKeys;
+        const selectedReports = dataSource.filter(item => keys.includes(item.key)) as DataEmptyTests[];
+        messageApi.open({
+            key: "login_message",
+            type: "info",
+            content: "Exporting..."
+        });
+        window.electron.report.export(selectedReports);
     }
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -226,7 +258,7 @@ const PrintReportTable = () => {
                         style={{ width: 100 }}
                         color="primary"
                         variant="solid"
-                        onClick={handlePrintReport}
+                        onClick={() => handlePrintReport()}
                     >
                         Print
                     </Button>
@@ -238,6 +270,15 @@ const PrintReportTable = () => {
                         onClick={handleMergeReports}
                     >
                         Merge
+                    </Button>
+                    <Button
+                        style={{ width: 100 }}
+                        color="primary"
+                        variant="outlined"
+                        disabled={selectedRowKeys.length == 0}
+                        onClick={() => handleExportReports()}
+                    >
+                        Export
                     </Button>
                 </Flex>
             </div>

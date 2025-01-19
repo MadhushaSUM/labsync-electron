@@ -23,11 +23,11 @@ export function addFBSData(
     if (!isMerging) {
 
         const aditionalNotes = [
-            { labelCol1: "REFERENCE VALUES", labelCol2: "", x1: 60, x2: 250, weight: "bold" },
-            { labelCol1: "< 70 mg/dl (3.9 mmol/L)", labelCol2: "Hypoglycemia", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "70 - 100 mg/dl (3.9 - 5.6 mmol/L)", labelCol2: "Normal (Non-diabetic)", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "100 - 125 mg/dl (5.6 - 6.9 mmol/L)", labelCol2: "Impaired glucose (Pre-diabetic)", x1: 60, x2: 250, weight: "normal" },
-            { labelCol1: "> 125 mg/dl (6.9 mmol/L)", labelCol2: "Diabetic (type 1 or 2)", x1: 60, x2: 250, weight: "normal" },
+            { labelCol1: "REFERENCE VALUES", labelCol2: "", x1: 30, x2: 270, weight: "bold" },
+            { labelCol1: "< 70 mg/dl (3.9 mmol/L)", labelCol2: "Hypoglycemia", x1: 30, x2: 270, weight: "normal" },
+            { labelCol1: "70 - 100 mg/dl (3.9 - 5.6 mmol/L)", labelCol2: "Normal (Non-diabetic)", x1: 30, x2: 270, weight: "normal" },
+            { labelCol1: "100 - 125 mg/dl (5.6 - 6.9 mmol/L)", labelCol2: "Impaired glucose (Pre-diabetic)", x1: 30, x2: 270, weight: "normal" },
+            { labelCol1: "> 125 mg/dl (6.9 mmol/L)", labelCol2: "Diabetic (type 1 or 2)", x1: 30, x2: 270, weight: "normal" },
         ];
 
         yPosition += 30;
