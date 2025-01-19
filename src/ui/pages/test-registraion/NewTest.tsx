@@ -1,16 +1,22 @@
-import { Button, Card, Checkbox, Col, DatePicker, Flex, Form, Input, InputNumber, message, Row, Select, Spin } from "antd";
+import { Button, Card, Checkbox, Col, DatePicker, Flex, Form, Input, InputNumber, message, Modal, Row, Select, Space, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { debounce } from 'lodash';
 import dayjs from 'dayjs';
 import { useNavigate } from "react-router-dom";
-import { calculateAge } from "../../lib/utils";
+import { calculateAge, calculateDateOfBirth } from "../../lib/utils";
 
 const { Option } = Select;
+
+interface AddPatientFormType extends Patient {
+}
 
 const NewTest = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
+    const [newPatientForm] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
+
+    const [open, setOpen] = useState(false);
 
     const [patients, setPatients] = useState<Patient[]>([]);
     const [selectedPatient, setSelectedPatient] = useState<string | null>(null);
@@ -163,6 +169,74 @@ const NewTest = () => {
         }
     }
 
+    const onAddNewPatient = async (formData: AddPatientFormType) => {
+        let newPatient: Omit<Patient, "id"> = {
+            name: formData.name,
+            gender: formData.gender,
+            date_of_birth: new Date(formData.date_of_birth),
+        }
+        if (formData.contact_number !== undefined || "") {
+            newPatient.contact_number = formData.contact_number
+        }
+
+        messageApi.open({
+            key: "saving_message",
+            type: "loading",
+            content: "Saving patient..."
+        });
+
+        try {
+            const res = await window.electron.patients.insert(newPatient);
+
+            if (res.success) {
+                messageApi.open({
+                    key: "saving_message",
+                    type: "success",
+                    content: "New patient saved!",
+                    duration: 2
+                });
+            } else {
+                messageApi.open({
+                    key: "saving_message",
+                    type: "error",
+                    content: "Error occurred while saving the new patient!",
+                    duration: 3
+                });
+            }
+        } catch (error) {
+            messageApi.open({
+                key: "saving_message",
+                type: "error",
+                content: "Error occurred while saving the new patient!",
+                duration: 3
+            });
+        }
+
+        setOpen(false);
+    };
+
+    const handleSimpleDateOfBirth = (value: string) => {
+        const matchArr = value.match(new RegExp(/^(\d+y\s?)?(\d+m\s?)?(\d+d\s?)?$/));
+        let years = 0;
+        let months = 0;
+        let days = 0;
+
+        if (matchArr) {
+            if (matchArr[1]) {
+                years = Number(matchArr[1].split('y')[0]);
+            }
+            if (matchArr[2]) {
+                months = Number(matchArr[2].split('m')[0]);
+            }
+            if (matchArr[3]) {
+                days = Number(matchArr[3].split('d')[0]);
+            }
+
+            const dateOfBirth = calculateDateOfBirth(years, months, days);
+            newPatientForm.setFieldValue("date_of_birth", dayjs(dateOfBirth));
+        }
+    }
+
     return (
         <div>
             {contextHolder}
@@ -191,23 +265,35 @@ const NewTest = () => {
                             required
                             rules={[{ required: true, message: 'Please select a patient!' }]}
                         >
-                            <Select
-                                showSearch
-                                allowClear
-                                placeholder="Search for a patient"
-                                onSearch={fetchPatients}
-                                onSelect={handlePatientSelect}
-                                notFoundContent={loading ? <Spin size="small" /> : "No patients found"}
-                                filterOption={false}
-                                style={{ width: "100%" }}
-                                value={selectedPatient}
-                            >
-                                {patients.map((patient) => (
-                                    <Option key={patient.id} value={`${patient.name} [${calculateAge(patient.date_of_birth)}]`}>
-                                        {patient.name} [{calculateAge(patient.date_of_birth)}]
-                                    </Option>
-                                ))}
-                            </Select>
+                            <div className="flex flex-row gap-5 w-[500px]">
+                                <Select
+                                    showSearch
+                                    allowClear
+                                    placeholder="Search for a patient"
+                                    onSearch={fetchPatients}
+                                    onSelect={handlePatientSelect}
+                                    notFoundContent={loading ? <Spin size="small" /> : "No patients found"}
+                                    filterOption={false}
+                                    style={{ width: 300 }}
+                                    value={selectedPatient}
+                                >
+                                    {patients.map((patient) => (
+                                        <Option key={patient.id} value={`${patient.name} [${calculateAge(patient.date_of_birth)}]`}>
+                                            {patient.name} [{calculateAge(patient.date_of_birth)}]
+                                        </Option>
+                                    ))}
+                                </Select>
+
+                                <Button
+                                    color="default"
+                                    variant="filled"
+                                    onClick={() => {
+                                        setOpen(true);
+                                    }}
+                                >
+                                    New patient
+                                </Button>
+                            </div>
                         </Form.Item>
 
                         <Form.Item
@@ -222,7 +308,7 @@ const NewTest = () => {
                                 onSelect={handleDoctorSelect}
                                 notFoundContent={loading ? <Spin size="small" /> : "No doctors found"}
                                 filterOption={false}
-                                style={{ width: "100%" }}
+                                style={{ width: 300 }}
                                 value={selectedDoctor}
                             >
                                 {doctors.map((doctor) => (
@@ -292,6 +378,92 @@ const NewTest = () => {
                             </div>
                         </Form.Item>
                     </Form>
+                </div>
+
+                <div>
+                    <Modal
+                        open={open}
+                        title="Add new patient"
+                        okText="Add"
+                        cancelText="Cancel"
+                        okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
+                        onCancel={() => setOpen(false)}
+                        destroyOnClose
+                        modalRender={(dom) => (
+                            <Form
+                                layout="vertical"
+                                form={newPatientForm}
+                                name="form_in_modal"
+                                clearOnDestroy
+                                onFinish={(values) => onAddNewPatient(values)}
+                            >
+                                {dom}
+                            </Form>
+                        )}
+                    >
+                        <Form.Item<AddPatientFormType>
+                            label="Name"
+                            name="name"
+                            required
+                            rules={[{ required: true, message: 'Please input patient name!' }]}
+                        >
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item<AddPatientFormType>
+                            label="Gender"
+                            name="gender"
+                            required
+                            rules={[{ required: true, message: 'Please select patient gender!' }]}
+                        >
+                            <Select>
+                                <Select.Option value="Male">Male</Select.Option>
+                                <Select.Option value="Female">Female</Select.Option>
+                                <Select.Option value="Other">Other</Select.Option>
+                            </Select>
+                        </Form.Item>
+
+                        <Form.Item<AddPatientFormType>
+                            label="Date of birth"
+                        >
+                            <Space>
+                                <Form.Item
+                                    name="simpleDateOfBirth"
+                                    rules={[
+                                        {
+                                            required: false,
+                                            pattern: /^(\d+y\s?)?(\d+m\s?)?(\d+d\s?)?$/,
+                                            message: "Wrong format!",
+                                        },
+                                    ]}
+                                >
+                                    <Input
+                                        style={{ width: 150 }}
+                                        placeholder="00y 00m 00d"
+                                        onChange={(e) => handleSimpleDateOfBirth(e.target.value)}
+                                    />
+                                </Form.Item>
+
+                                <Form.Item
+                                    name="date_of_birth"
+                                    required
+                                    rules={[{ required: true, message: 'Please select patient date of birth!' }]}
+                                >
+                                    <DatePicker />
+                                </Form.Item>
+                            </Space>
+                        </Form.Item>
+
+                        <Form.Item<AddPatientFormType>
+                            name="contact_number"
+                            label="Contact number"
+                            hasFeedback
+                            validateDebounce={500}
+                            rules={[{ len: 12, message: 'Please enter a valid contact number!' }]}
+                        >
+                            <Input placeholder="+94..." />
+                        </Form.Item>
+                    </Modal>
                 </div>
 
             </Card>
