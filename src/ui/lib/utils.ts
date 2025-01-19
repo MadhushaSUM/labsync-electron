@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { differenceInDays, differenceInMonths, differenceInYears } from "date-fns";
+import { differenceInDays, differenceInMonths, differenceInYears, sub } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -50,6 +50,10 @@ export function calculateAge(
     if (format.includes("days")) result.push(`${days} days`);
 
     return result.join(", ");
+}
+
+export function calculateDateOfBirth(years: number, months: number, days: number) {
+    return sub(new Date(), { years: years, months: months, days: days });
 }
 
 export function calculateAgeArray(dob: Date): number[] {
