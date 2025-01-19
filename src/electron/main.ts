@@ -1,6 +1,7 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 import { isDev } from './utils.js';
-import { getPreloadPath, getUIPath } from './pathResolver.js';
+import { getContactUsUIPath, getPreloadPath, getUIPath } from './pathResolver.js';
+import path from 'path';
 
 // Importing patient ipc handlers
 import './ipc_handlers/patientIpcHandlers.js';
@@ -23,8 +24,6 @@ import './ipc_handlers/analysisIpcHandlers.js';
 
 // Importing authenticate ipc handlers
 import './ipc_handlers/authenticateIpcHandlers.js';
-import path from 'path';
-
 
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({
@@ -39,4 +38,22 @@ app.on('ready', () => {
     } else {
         mainWindow.loadFile(getUIPath());
     }
+
+    const menuTemplate = [
+        {
+            label: 'Support',
+            click: () => {
+                const previewWindow = new BrowserWindow({
+                    width: 600,
+                    height: 400,
+                });
+                previewWindow.loadFile(getContactUsUIPath());
+                previewWindow.setMenu(null);
+                previewWindow.setResizable(false);
+            },
+        },
+    ];
+
+    const menu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(menu);
 });

@@ -5,7 +5,7 @@ import { differenceInDays, differenceInMonths, differenceInYears, formatISO } fr
 import { getConfigs } from "./database/db.js";
 import fs from 'fs';
 import path from 'path';
-import { app, BrowserWindow } from 'electron';
+import { app } from 'electron';
 
 export function isDev(): boolean {
     return process.env.NODE_ENV === 'development';
@@ -16,7 +16,7 @@ export function ipcMainHandle<Key extends keyof EventPayloadMapping>(
     handler: (...args: EventPayloadMapping[Key]['args']) => Promise<EventPayloadMapping[Key]['return']>
 ) {
     ipcMain.handle(key, async (event, ...args) => {
-        // validateEventFrame(event.senderFrame!);
+        validateEventFrame(event.senderFrame!);
         return handler(...(args as EventPayloadMapping[Key]['args']));
     });
 }
