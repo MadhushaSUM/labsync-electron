@@ -48,6 +48,33 @@ const LipidProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, clearSc
         setSelectedDoctorId(undefined);
     }
 
+    const calculateFields = () => {
+        const totalCholesterol = Number(form.getFieldValue('totalCholesterolValue'));
+        const triglycerids = Number(form.getFieldValue('triglyceridsValue'));
+        const hdlCholesterol = Number(form.getFieldValue('hdlCholesterolValue'));
+
+        if (totalCholesterol && triglycerids && hdlCholesterol) {
+            const ldl = Math.round((totalCholesterol - (hdlCholesterol + triglycerids / 5)) * 100) / 100;
+            const vldl = Math.round((triglycerids / 5) * 100) / 100;
+            const last = Math.round((totalCholesterol / hdlCholesterol) * 100) / 100;
+
+            form.setFieldValue('ldlCholesterolValue', ldl);
+            form.setFieldValue('vldlCholesterolValue', vldl);
+            form.setFieldValue('tchoHdlRValue', last);
+
+            setFlag('ldlCholesterolValue', ldl.toString());
+            setFlag('vldlCholesterolValue', vldl.toString());
+            setFlag('tchoHdlRValue', last.toString());
+        } else {
+            form.setFieldValue('ldlCholesterolValue', undefined);
+            form.setFieldValue('vldlCholesterolValue', undefined);
+            form.setFieldValue('tchoHdlRValue', undefined);
+            form.setFieldValue('ldlCholesterolValueFlag', undefined);
+            form.setFieldValue('vldlCholesterolValueFlag', undefined);
+            form.setFieldValue('tchoHdlRValueFlag', undefined);
+        }
+    }
+
     const setFlag = (label: string, value: string) => {
         const valueNum = Number(value);
         const fieldId = testFields.find((item) => item.name == label)?.id;
@@ -306,6 +333,7 @@ const LipidProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, clearSc
                         <span>
                             {displayNormalRange('hdlCholesterolValue')}
                         </span>
+                        <Button color="default" variant="filled" onClick={calculateFields}>Calculate</Button>
                     </div>
                 </Form.Item>
                 <Form.Item label="LDL Cholesterol" style={{ marginBottom: 0 }}>

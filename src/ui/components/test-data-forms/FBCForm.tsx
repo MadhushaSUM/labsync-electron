@@ -48,6 +48,33 @@ const FBCForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
         setSelectedDoctorId(undefined);
     }
 
+    const calculateFields = () => {
+        const hb = Number(form.getFieldValue('heamoglobinValue'));
+        const pcv = Number(form.getFieldValue('htcpvcValue'));
+        const rbc = Number(form.getFieldValue('rbcValue'));
+
+        if (hb && pcv && rbc) {
+            const mcv = Math.round(((pcv / rbc) * 10) * 100) / 100;
+            const mch = Math.round(((hb / rbc) * 10) * 100) / 100;
+            const mchc = Math.round(((hb / mch) * 100) * 100) / 100;
+
+            form.setFieldValue('mcvValue', mcv);
+            form.setFieldValue('mchValue', mch);
+            form.setFieldValue('mchcValue', mchc);
+
+            setFlag('mcvValue', mcv.toString());
+            setFlag('mchValue', mch.toString());
+            setFlag('mchcValue', mchc.toString());
+        } else {
+            form.setFieldValue('mcvValue', undefined);
+            form.setFieldValue('mchValue', undefined);
+            form.setFieldValue('mchcValue', undefined);
+            form.setFieldValue('mcvValueFlag', undefined);
+            form.setFieldValue('mchValueFlag', undefined);
+            form.setFieldValue('mchcValueFlag', undefined);
+        }
+    }
+
     const setFlag = (label: string, value: string) => {
         const valueNum = Number(value);
         const fieldId = testFields.find((item) => item.name == label)?.id;
@@ -456,6 +483,7 @@ const FBCForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScreen: () 
                         <span>
                             {displayNormalRange('htcpvcValue')}
                         </span>
+                        <Button color="default" variant="filled" onClick={calculateFields}>Calculate</Button>
                     </div>
                 </Form.Item>
                 <Form.Item label="MCV" style={{ marginBottom: 0 }}>
