@@ -2,6 +2,7 @@ import { Card, Col, List, message, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import { ScrollArea } from "../../components/ScrollArea";
 import formMapper from "../../components/test-data-forms/FormMapper";
+import { formatISO } from "date-fns";
 
 const Home = () => {
     const [registrations, setRegistrations] = useState<DataEmptyTests[]>([]);
@@ -54,7 +55,7 @@ const Home = () => {
                                             <List.Item
                                                 onClick={() => handleListItemClick(item)}
                                             >
-                                                <p className="cursor-pointer">{`[${item.patientName}] [${item.date.toLocaleDateString()}] [${item.testName}] [${item.ref_number}]`}</p>
+                                                <p className="cursor-pointer">{`[${item.patientName}] [${formatISO(item.date, { representation: "date" })}] [${item.testName}] [${item.ref_number}]`}</p>
                                             </List.Item>
                                         )
                                     }}

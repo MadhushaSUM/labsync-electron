@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { app, BrowserWindow } from 'electron';
 import { calculateAge } from '../../utils.js';
+import { formatISO } from 'date-fns';
 
 
 export async function generateReportBase(
@@ -33,7 +34,7 @@ export async function generateReportBase(
             { label: "REFERRED BY", value: report.doctorName, x1: 40, x2: 110, x3: 115, y: 190 },
             { label: "REF. NO.", value: report.ref_number, x1: 400, x2: 450, x3: 455, y: 115 },
             { label: "AGE", value: (await calculateAge(report.patientDOB, report.options.preferred_age_format)), x1: 220, x2: 250, x3: 255, y: 140 },
-            { label: "DATE", value: report.date.toLocaleDateString(), x1: 400, x2: 450, x3: 455, y: 140 },
+            { label: "DATE", value: formatISO(report.date, { representation: 'date' }), x1: 400, x2: 450, x3: 455, y: 140 },
         ],
         fontSize: 11,
         tableHeader: [
@@ -56,7 +57,7 @@ export async function generateReportBase(
     }
 
     const doc = new PDFDocument({ size: "A4" });
-    const fileName = `${report.patientName}-${report.testName.replaceAll('/', '')}-${report.date.toString().replaceAll(':', '')}`
+    const fileName = `${report.patientName}-${report.testName.replaceAll('/', '')}-${formatISO(report.date, { representation: 'date' })}`
     const filePath = path.join(config.outputPath, `${fileName}.pdf`);
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);

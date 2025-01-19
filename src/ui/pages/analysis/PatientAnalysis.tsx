@@ -7,6 +7,7 @@ import { calculateAge } from "../../lib/utils";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, ChartData } from "chart.js";
 import { Doughnut, getElementAtEvent } from "react-chartjs-2";
 import { ScrollArea } from '../../components/ScrollArea';
+import { formatISO } from 'date-fns';
 
 const { Option } = Select;
 
@@ -49,7 +50,7 @@ const PatientAnalysis = () => {
     const handleFormSubmit = async (values: any) => {
         setListData([]);
         setData(undefined);
-        
+
         if (selectedPatientId) {
             if (values.dateRange) {
                 const res = await window.electron.patientAnalysis.get(selectedPatientId, new Date(values.dateRange[0]), new Date(values.dateRange[1]));
@@ -172,7 +173,7 @@ const PatientAnalysis = () => {
                                         return (
                                             <List.Item>
                                                 <div className='flex flex-col gap-1 w-full'>
-                                                    <p>{`Date: ${item.date.toLocaleDateString()}`}</p>
+                                                    <p>{`Date: ${formatISO(item.date, { representation: 'date' })}`}</p>
                                                     <p>{`Reference no.: ${item.refNumber}`}</p>
                                                     <Button color='primary' variant='filled' size='small'>View</Button>
 

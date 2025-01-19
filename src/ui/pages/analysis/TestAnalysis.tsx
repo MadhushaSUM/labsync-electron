@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Doughnut, getElementAtEvent } from "react-chartjs-2";
 import { ScrollArea } from "../../components/ScrollArea";
 import { Chart as ChartJS, ChartData } from "chart.js";
+import { formatISO } from "date-fns";
 
 const TestAnalysis = () => {
     const [form] = Form.useForm();
@@ -113,7 +114,7 @@ const TestAnalysis = () => {
                                         return (
                                             <List.Item>
                                                 <div className='flex flex-col gap-1 w-full'>
-                                                    <p>{`Date: ${item.date.toLocaleDateString()}`}</p>
+                                                    <p>{`Date: ${formatISO(item.date, { representation: "date" })}`}</p>
                                                     <p>{`Reference no.: ${item.refNumber}`}</p>
                                                     <Button color='primary' variant='filled' size='small'>View</Button>
 

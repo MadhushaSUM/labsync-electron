@@ -4,6 +4,7 @@ import path from 'path';
 import { app } from 'electron';
 import pkg from 'pdf-to-printer';
 import { getConfigs } from '../../database/db.js';
+import { formatISO } from 'date-fns';
 
 const { print } = pkg;
 
@@ -34,8 +35,8 @@ export async function printReceipt(registration: Registration) {
     const config: ReceiptPDFConfig = {
         outputPath: path.join(app.getPath('desktop'), 'pdf-output', 'receipts'),
         fonts: {
-            normal: path.join(app.getPath("userData"), 'fonts/Aptos.ttf'),
-            bold: path.join(app.getPath("userData"), 'fonts/Aptos-Bold.ttf')
+            normal: path.join(app.getPath("userData"), 'fonts/receipt.ttf'),
+            bold: path.join(app.getPath("userData"), 'fonts/receipt-Bold.ttf')
         },
         linePositions: [
             { x1: 5, y1: 136 + topMargin, x2: 221, y2: 136 + topMargin },
@@ -52,7 +53,7 @@ export async function printReceipt(registration: Registration) {
             { label: "Price (Rs.)", x: 140, y: 140 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
 
             { label: registration.patient.name, x: 80, y: 80 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
-            { label: registration.date.toLocaleDateString(), x: 80, y: 100 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
+            { label: formatISO(registration.date, { representation: 'date' }), x: 80, y: 100 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
             { label: registration.ref_number ? registration.ref_number.toString() : "", x: 80, y: 120 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
         ],
     };

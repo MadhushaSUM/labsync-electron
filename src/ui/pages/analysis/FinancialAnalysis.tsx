@@ -11,6 +11,7 @@ import {
     BarElement,
 } from 'chart.js';
 import { Bar, Doughnut, getElementAtEvent } from 'react-chartjs-2';
+import { formatISO } from "date-fns";
 
 ChartJS.register(
     CategoryScale,
@@ -89,7 +90,7 @@ const FinancialAnalysis = () => {
     useEffect(() => {
         if (data) {
             setLineData({
-                labels: data.periods.map(item => item.endDate.toLocaleDateString()),
+                labels: data.periods.map(item => formatISO(item.endDate, { representation: "date" })),
                 datasets: [
                     {
                         label: "Total",

@@ -4,6 +4,7 @@ import { Button, DatePicker, Flex, Form, Input, message, Modal, Select, Table } 
 import type { TableColumnsType, TableProps } from 'antd';
 import Search from 'antd/es/input/Search';
 import moment from 'moment';
+import { formatISO } from 'date-fns';
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
 
@@ -136,7 +137,7 @@ const PatientsTable = () => {
                 name: patient.name,
                 gender: patient.gender,
                 contact_number: patient.contact_number,
-                date_of_birth: patient.date_of_birth.toLocaleDateString(),
+                date_of_birth: formatISO(patient.date_of_birth, { representation: 'date' }),
             }));
             setDataSource(transformedData);
             setTotal(data.total);
@@ -166,7 +167,7 @@ const PatientsTable = () => {
             return;
         }
         setLoading(true);
-        
+
         // ajax request after empty completing
         setTimeout(() => {
             setSelectedRowKeys([]);

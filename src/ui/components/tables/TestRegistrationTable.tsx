@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { calculateAge } from "../../lib/utils";
 import { CheckOutlined, CloseOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import { TableRowSelection } from "antd/es/table/interface";
+import { formatISO } from "date-fns";
 
 const { confirm } = Modal;
 
@@ -51,7 +52,7 @@ const TestRegistrationTable = (
             title: 'Date', dataIndex: 'date', key: 'date',
             render(value) {
                 return (
-                    <p>{value.toLocaleDateString()}</p>
+                    <p>{formatISO(value, { representation: "date" })}</p>
                 )
             },
         },
