@@ -179,19 +179,36 @@ export function isWithinNormalRange(patientDOB: Date, patientGender: string, nor
 }
 
 export function writeErrorLog(error: any) {
-    const outputPath = path.join(app.getPath('desktop'), 'pdf-output', 'crash-reports');
+    const outputPath = path.join(app.getPath('userData'), 'crash-reports');
     if (!fs.existsSync(outputPath)) {
-        fs.mkdirSync(outputPath);
+        fs.mkdirSync(outputPath, { recursive: true });
     }
 
     const date = new Date();
-    const filePath = path.join(outputPath, `${formatISO(date, { representation: "date" })}_${formatISO(new Date(), { representation: "date" })}.txt`);
+    const filePath = path.join(outputPath, `${formatISO(date, { representation: "complete" })}.txt`);
+
     const message = `
-    Date / Time: ${date.toString()} \n
-    \n
-    Message: ${error.message}\n
-    \n
-    Error: ${error}
+--- Crash Report ---
+Date / Time: ${formatISO(date, { representation: "complete" })}
+Error Name: ${error.name || 'N/A'}
+Error Message: ${error.message || 'N/A'}
+Stack Trace:
+${error.stack || 'N/A'}
+
+Additional Details:
+${Object.entries(error)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join('\n')}
+
+System Details:
+Platform: ${process.platform}
+Architecture: ${process.arch}
+Electron Version: ${process.versions.electron}
+Node Version: ${process.versions.node}
+Chrome Version: ${process.versions.chrome}
+--- End of Report ---
     `;
-    fs.writeFileSync(filePath, message);
+
+    fs.writeFileSync(filePath, message.trim());
+    console.log('Crash report written to:', filePath);
 }

@@ -1,6 +1,6 @@
 import { getUserById, getUserByUsername, getUsers, updateUser, updateUserPassword } from "../database/db.js";
 import { Session } from "../session.js";
-import { ipcMainHandle } from "../utils.js";
+import { ipcMainHandle, writeErrorLog } from "../utils.js";
 
 ipcMainHandle('authenticate:login', async (username, password) => {
     try {
@@ -13,6 +13,7 @@ ipcMainHandle('authenticate:login', async (username, password) => {
         }
         return { success: false, error: "Invalid username or password!" }
     } catch (error) {
+        writeErrorLog(error);
         console.error(error);
         return { success: false, error: "Internal error. Failed to login!" }
     }
@@ -27,6 +28,7 @@ ipcMainHandle('authenticate:getUsers', async () => {
         const users = await getUsers();
         return { users }
     } catch (error) {
+        writeErrorLog(error);
         console.error(error);
         return { users: [] }
     }
@@ -37,6 +39,7 @@ ipcMainHandle('authenticate:updateUser', async (id: number, username: string, ro
         await updateUser(id, username, role);
         return { success: true }
     } catch (error: any) {
+        writeErrorLog(error);
         return { success: false, error: error.message }
     }
 });
@@ -52,6 +55,7 @@ ipcMainHandle('authenticate:updatePassword', async (id: number, currentPassword:
         }
         return { success: false, error: "Invalid current password!" }
     } catch (error: any) {
+        writeErrorLog(error);
         return { success: false, error: error.message }
     }
 })

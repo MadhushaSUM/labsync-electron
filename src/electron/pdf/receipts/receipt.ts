@@ -5,6 +5,7 @@ import { app } from 'electron';
 import pkg from 'pdf-to-printer';
 import { getConfigs } from '../../database/db.js';
 import { formatISO } from 'date-fns';
+import { writeErrorLog } from '../../utils.js';
 
 const { print } = pkg;
 
@@ -143,6 +144,7 @@ export async function printReceipt(registration: Registration) {
     try {
         print(filePath, { printer: RECEIPT_PRINTING_PRINTER });
     } catch (error) {
+        writeErrorLog(error);
         console.error(error);
     }
 }

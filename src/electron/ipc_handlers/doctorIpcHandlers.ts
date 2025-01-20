@@ -1,11 +1,16 @@
 import { deleteDoctor, getDoctors, insertDoctor, updateDoctor } from '../database/db.js';
-import { ipcMainHandle } from '../utils.js';
+import { ipcMainHandle, writeErrorLog } from '../utils.js';
 
 ipcMainHandle('doctors:get', async (page, pageSize, search) => {
-    const limit = pageSize;
-    const offset = (page - 1) * pageSize;
-    const { doctors, total } = await getDoctors(offset, limit, search);
-    return { doctors, total };
+    try {
+        const limit = pageSize;
+        const offset = (page - 1) * pageSize;
+        const { doctors, total } = await getDoctors(offset, limit, search);
+        return { doctors, total };
+    } catch (error) {
+        writeErrorLog(error);
+        return { doctors: [], total: 0 }
+    }
 });
 
 ipcMainHandle('doctors:insert', async (doctor) => {
@@ -13,6 +18,7 @@ ipcMainHandle('doctors:insert', async (doctor) => {
         await insertDoctor(doctor);
         return { success: true };
     } catch (error: any) {
+        writeErrorLog(error);
         return { success: false, error: error.message };
     }
 });
@@ -22,6 +28,7 @@ ipcMainHandle('doctors:update', async (id, doctor) => {
         await updateDoctor(id, doctor);
         return { success: true };
     } catch (error: any) {
+        writeErrorLog(error);
         return { success: false, error: error.message };
     }
 });
@@ -31,6 +38,7 @@ ipcMainHandle('doctors:delete', async (id) => {
         await deleteDoctor(id);
         return { success: true };
     } catch (error: any) {
+        writeErrorLog(error);
         return { success: false, error: error.message };
     }
 });

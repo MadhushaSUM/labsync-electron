@@ -1,6 +1,7 @@
 import pkg from 'pg';
 import dotenv from 'dotenv';
 import { formatISO } from 'date-fns';
+import { writeErrorLog } from '../utils.js';
 
 dotenv.config();
 
@@ -13,7 +14,6 @@ const pool = new Pool({
     password: process.env.DB_PW,
     port: Number(process.env.DB_PORT),
 });
-
 
 // Patient database operations
 export async function getPatients(offset: number, limit: number, search: string) {
@@ -38,6 +38,7 @@ export async function getPatients(offset: number, limit: number, search: string)
             total: parseInt(totalResult.rows[0].count, 10),
         };
     } catch (error) {
+        writeErrorLog(error);
         console.error("Error fetching patients:", error);
         throw error;
     }
@@ -81,6 +82,7 @@ export async function getTests(offset: number, limit: number, search: string) {
             total: parseInt(totalResult.rows[0].count, 10),
         };
     } catch (error) {
+        writeErrorLog(error);
         console.error("Error fetching tests:", error);
         throw error;
     }
@@ -115,6 +117,7 @@ export async function getDoctors(offset: number, limit: number, search: string) 
             total: parseInt(totalResult.rows[0].count, 10),
         };
     } catch (error) {
+        writeErrorLog(error);
         console.error("Error fetching patients:", error);
         throw error;
     }
@@ -146,6 +149,7 @@ export async function getFieldsOfTheTest(testId: number) {
             test_fields: result.rows as TestField[]
         };
     } catch (error) {
+        writeErrorLog(error);
         console.error("Error fetching patients:", error);
         throw error;
     }
@@ -164,6 +168,7 @@ export async function getNormalRangesForTestField(testFieldId: number) {
             normalRanges: result.rows as NormalRange[]
         };
     } catch (error) {
+        writeErrorLog(error);
         console.error("Error fetching normal ranges for a test field id:", error);
         throw error;
     }
@@ -180,6 +185,7 @@ export async function getNormalRangesForTest(testId: number) {
             normalRanges: result.rows as NormalRange[]
         };
     } catch (error) {
+        writeErrorLog(error);
         console.error("Error fetching normal ranges for a test id:", error);
         throw error;
     }
@@ -244,6 +250,7 @@ export async function addTestRegisterWithTests(data: {
 
         return { success: true, testRegisterId: testRegisterId };
     } catch (error: any) {
+        writeErrorLog(error);
         await client.query('ROLLBACK');
         throw new Error(`Transaction failed: ${error.message}`);
     } finally {
@@ -520,6 +527,7 @@ export async function updateTestRegister(data: {
 
         return { success: true };
     } catch (error: any) {
+        writeErrorLog(error);
         await client.query('ROLLBACK');
         throw new Error(`Transaction failed: ${error.message}`);
     } finally {
@@ -1008,6 +1016,7 @@ export async function getPeriodsWithTestRegisterIds(granularity: string, startDa
             testRegisterIds: row.test_register_ids,
         }));
     } catch (err) {
+        writeErrorLog(err);
         console.error('Error executing query:', err);
         throw err;
     }

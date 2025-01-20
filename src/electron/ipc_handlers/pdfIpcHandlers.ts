@@ -177,7 +177,11 @@ ipcMainOn('report:printReceipt', async (
     event,
     registration
 ) => {
-    printReceipt(registration);
+    try {
+        printReceipt(registration);
+    } catch (error) {
+        writeErrorLog(error);
+    }
 });
 
 ipcMainHandle('printers:get', async () => {
