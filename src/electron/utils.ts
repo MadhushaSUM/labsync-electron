@@ -185,7 +185,7 @@ export function writeErrorLog(error: any) {
     }
 
     const date = new Date();
-    const filePath = path.join(outputPath, `${formatISO(date, { representation: "complete" })}.txt`);
+    const filePath = path.join(outputPath, `${formatISO(date, { representation: "complete" }).replaceAll(':','_')}.txt`);
 
     const message = `
 --- Crash Report ---
