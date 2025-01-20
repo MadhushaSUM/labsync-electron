@@ -46,6 +46,7 @@ interface Window {
         },
         printers: {
             get: () => Promise<{ printers: Printer[] }>;
+            getSavedPrinters: () => Promise<{ receiptPrinter: string, reportPrinter: string }>;
             save: (data: { report_printer: string, receipt_printer: string }) => Promise<{ success: boolean; error?: string }>;
         },
         patientAnalysis: {
@@ -115,6 +116,7 @@ type EventPayloadMapping = {
 
     'printers:get': { args: [], return: { printers: Printer[] } };
     'printers:save': { args: [{ report_printer: string, receipt_printer: string }], return: { success: boolean; error?: string } };
+    'printers:getSavedPrinters': { args: [], return: { receiptPrinter: string, reportPrinter: string } }
 
     'patientAnalysis:get': { args: [number, Date?, Date?], return: { data: AnalysisData } };
     'testAnalysis:get': { args: [Date?, Date?], return: { data: AnalysisData } };

@@ -47,6 +47,7 @@ electron.contextBridge.exposeInMainWorld("electron", {
     printers: {
         get: () => ipcInvoke('printers:get'),
         save: (data) => ipcInvoke('printers:save', data),
+        getSavedPrinters: () => ipcInvoke('printers:getSavedPrinters'),
     },
     patientAnalysis: {
         get: (patientId, startDate, endDate) => ipcInvoke('patientAnalysis:get', patientId, startDate, endDate),

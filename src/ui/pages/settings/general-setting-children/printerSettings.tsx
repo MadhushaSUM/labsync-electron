@@ -5,12 +5,19 @@ import pkg from 'pdf-to-printer';
 const { Option } = Select;
 
 const PrinterSettings = () => {
+    const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
     const [allPrinters, setAllPrinters] = useState<pkg.Printer[]>([]);
 
     const fetchPrinters = async () => {
         const { printers } = await window.electron.printers.get();
         setAllPrinters(printers);
+    }
+
+    const loadConfig = async () => {
+        const { receiptPrinter, reportPrinter } = await window.electron.printers.getSavedPrinters();
+        form.setFieldValue('report_printer', reportPrinter);
+        form.setFieldValue('receipt_printer', receiptPrinter);
     }
 
     const onFinish = async (values: any) => {
@@ -52,12 +59,14 @@ const PrinterSettings = () => {
 
     useEffect(() => {
         fetchPrinters();
+        loadConfig();
     }, []);
 
     return (
         <div>
             {contextHolder}
             <Form
+                form={form}
                 name="basic"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
@@ -72,7 +81,7 @@ const PrinterSettings = () => {
                 >
                     <Select>
                         {allPrinters.map(printer => (
-                            <Option key={printer.name}>{`${printer.name} ${printer.deviceId}`}</Option>
+                            <Option key={printer.name}>{printer.name}</Option>
                         ))}
                     </Select>
                 </Form.Item>
@@ -84,7 +93,7 @@ const PrinterSettings = () => {
                 >
                     <Select>
                         {allPrinters.map(printer => (
-                            <Option key={printer.name}>{`${printer.name} ${printer.deviceId}`}</Option>
+                            <Option key={printer.name}>{printer.name}</Option>
                         ))}
                     </Select>
                 </Form.Item>

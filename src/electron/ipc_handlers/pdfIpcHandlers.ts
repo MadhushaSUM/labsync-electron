@@ -195,6 +195,17 @@ ipcMainHandle('printers:get', async () => {
     }
 });
 
+ipcMainHandle('printers:getSavedPrinters', async () => {
+    try {
+        const printer = await getConfigs(1);
+        return { receiptPrinter: printer.configuration.receipt_printer, reportPrinter: printer.configuration.report_printer };
+    } catch (error) {
+        console.error(error);
+        writeErrorLog(error);
+        return { receiptPrinter: null, reportPrinter: null };
+    }
+});
+
 ipcMainHandle('printers:save', async (data) => {
     try {
         await updateConfigs(1, data);
