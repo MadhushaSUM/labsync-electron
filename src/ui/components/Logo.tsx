@@ -1,10 +1,9 @@
-import { FireFilled } from '@ant-design/icons';
 
 const Logo = () => {
     return (
         <div className="logo">
             <div className="logo-icon">
-                <FireFilled />
+                <img src="/public/logo-full.png" alt="logo" />
             </div>
         </div>
     )
