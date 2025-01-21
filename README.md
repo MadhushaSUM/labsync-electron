@@ -23,8 +23,7 @@ DB_NAME=labsync_desktop
 DB_PW=
 DB_PORT=
 ```
-5. Depending on your operating system add files in ***AppData*** folder to the ***userData*** path.
-<br />
+5. Depending on your operating system add files in ***AppData*** folder to the ***userData*** path.<br>
 For an example on windows this path is `C:\Users\<user name>\AppData\Roaming\labsync-electron`
 6. Run `npm run dev` to spin up development server
 7. Use ***admin*** as the user name and ***1*** as the password
