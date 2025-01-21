@@ -1,50 +1,35 @@
-# React + TypeScript + Vite
+# LabSync - Desktop #
+LabSync - Desktop is a standalone desktop application developed to handle essential tasks in a medical laboratory. This application includes functionality to save patient details, print reports and receipts, analyze data, and visualize it in charts to make it more user-friendly.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Using this application operators can replace heavy applications like Microsoft Word and can print reports with one click. And this application is cross-platform therefore can export to any operating system like Windows, MacOS, or Linux.
 
-Currently, two official plugins are available:
+## Technologies and libraries ##
+* Node.js
+* PostgreSQL
+* React
+* Electron.js
+* PDFkit
+* Chart.js
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Setting up ##
+1. First run `npm ci` command to install dependancies
+2. Then install postgreSQL and create a database named ***labsync_desktop***
+3. Import the database dump files in ***database-dump*** folder
+4. Create a ***.env*** file in root directory including following information
 ```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+DB_USER=
+DB_HOST=
+DB_NAME=labsync_desktop
+DB_PW=
+DB_PORT=
 ```
+5. Depending on your operating system add files in ***AppData*** folder to the ***userData*** path.
+<br />
+For an example on windows this path is `C:\Users\<user name>\AppData\Roaming\labsync-electron`
+6. Run `npm run dev` to spin up development server
+7. Use ***admin*** as the user name and ***1*** as the password
+8. Run `npm run dist:win`, `npm run dist:linux`, `npm run dist:mac` to build executable files.
+
+## Database ERD ##
+![Database-ERD](image.png)
+

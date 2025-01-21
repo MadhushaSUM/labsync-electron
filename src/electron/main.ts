@@ -30,7 +30,7 @@ app.on('ready', () => {
         webPreferences: {
             preload: getPreloadPath(),
         },
-        icon: path.join(app.getPath("userData"), 'microscope.png')
+        icon: path.join('microscope.png')
     });
 
     if (isDev()) {

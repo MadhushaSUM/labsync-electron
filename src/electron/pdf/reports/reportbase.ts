@@ -15,8 +15,8 @@ export async function generateReportBase(
 
     const config = {
         outputPath: withHeader ? path.join(app.getPath('desktop'), 'pdf-output', 'exports') : path.join(app.getPath('desktop'), 'pdf-output', 'reports'),
-        headerPath: path.join(app.getPath("userData"), 'report/header.png'),
-        footerPath: path.join(app.getPath("userData"), 'report/footer.png'),
+        headerPath: path.join('public/report-header.png'),
+        footerPath: path.join('public/report-footer.png'),
         fonts: {
             normal: path.join(app.getPath("userData"), 'fonts/Aptos.ttf'),
             bold: path.join(app.getPath("userData"), 'fonts/Aptos-Bold.ttf')

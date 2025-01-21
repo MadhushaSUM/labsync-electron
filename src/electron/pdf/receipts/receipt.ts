@@ -36,7 +36,7 @@ export async function printReceipt(registration: Registration) {
 
     const config: ReceiptPDFConfig = {
         outputPath: path.join(app.getPath('desktop'), 'pdf-output', 'receipts'),
-        headerPath: path.join(app.getPath("userData"), 'receipt/header.png'),
+        headerPath: path.join('public/receipt-header.png'),
         fonts: {
             normal: path.join(app.getPath("userData"), 'fonts/receipt.ttf'),
             bold: path.join(app.getPath("userData"), 'fonts/receipt-Bold.ttf')
