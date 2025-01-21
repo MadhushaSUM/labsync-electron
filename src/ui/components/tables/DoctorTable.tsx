@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Button, Flex, Form, Input, message, Modal, Table } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import Search from 'antd/es/input/Search';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
 
 interface DoctorTableItems extends Doctor {
     key: number;
 }
+
+const { confirm } = Modal;
 
 const DoctorsTable = () => {
     const [messageApi, contextHolder] = message.useMessage();
@@ -183,6 +186,7 @@ const DoctorsTable = () => {
 
 
     const deleteSelectedDoctors = async () => {
+        setLoading(true);
         const isAdmin = await window.electron.authenticate.isAdmin();
         if (!isAdmin) {
             messageApi.open({
@@ -190,14 +194,32 @@ const DoctorsTable = () => {
                 type: "warning",
                 content: "Admin user privileges required!"
             });
+            setLoading(false);
             return;
         }
-        setLoading(true);
-        // ajax request after empty completing
-        setTimeout(() => {
-            setSelectedRowKeys([]);
-            setLoading(false);
-        }, 1000);
+        confirm({
+            title: 'Do you want to delete these records?',
+            icon: <ExclamationCircleFilled />,
+            content: 'This action is irreversible. Do you want to proceed?',
+            onOk() {
+                const selectedId = Number(selectedRowKeys[0]);
+                return window.electron.doctors
+                    .delete(selectedId)
+                    .then(() => {
+                        setSelectedRowKeys([]);
+                        fetchDoctors(currentPage, pageSize, searchTerm);
+                    })
+                    .catch((error) => {
+                        console.error('Error deleting records:', error);
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
+            },
+            onCancel() {
+                setLoading(false);
+            },
+        });
     };
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {

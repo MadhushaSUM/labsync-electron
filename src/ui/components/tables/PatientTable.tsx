@@ -5,6 +5,7 @@ import type { TableColumnsType, TableProps } from 'antd';
 import Search from 'antd/es/input/Search';
 import moment from 'moment';
 import { formatISO } from 'date-fns';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
 
@@ -12,6 +13,8 @@ type PatientTableItems = Omit<Patient, "date_of_birth"> & {
     key: number;
     date_of_birth: string;
 }
+
+const { confirm } = Modal;
 
 const PatientsTable = () => {
     const navigate = useNavigate();
@@ -155,8 +158,8 @@ const PatientsTable = () => {
         fetchPatients(currentPage, pageSize, searchTerm);
     }, [currentPage, pageSize, searchTerm]);
 
-
     const deleteSelectedPatients = async () => {
+        setLoading(true);
         const isAdmin = await window.electron.authenticate.isAdmin();
         if (!isAdmin) {
             messageApi.open({
@@ -164,15 +167,32 @@ const PatientsTable = () => {
                 type: "warning",
                 content: "Admin user privileges required!"
             });
+            setLoading(false);
             return;
         }
-        setLoading(true);
-
-        // ajax request after empty completing
-        setTimeout(() => {
-            setSelectedRowKeys([]);
-            setLoading(false);
-        }, 1000);
+        confirm({
+            title: 'Do you want to delete these records?',
+            icon: <ExclamationCircleFilled />,
+            content: 'This action is irreversible. Do you want to proceed?',
+            onOk() {
+                const selectedId = Number(selectedRowKeys[0]);
+                return window.electron.patients
+                    .delete(selectedId)
+                    .then(() => {
+                        setSelectedRowKeys([]);
+                        fetchPatients(currentPage, pageSize, searchTerm);
+                    })
+                    .catch((error) => {
+                        console.error('Error deleting records:', error);
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
+            },
+            onCancel() {
+                setLoading(false);
+            },
+        });
     };
     const loadAddPatientPage = () => {
         navigate('/add-patient');
