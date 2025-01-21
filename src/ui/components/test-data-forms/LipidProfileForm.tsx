@@ -54,23 +54,31 @@ const LipidProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, clearSc
         const hdlCholesterol = Number(form.getFieldValue('hdlCholesterolValue'));
 
         if (totalCholesterol && triglycerids && hdlCholesterol) {
+            const nonHdl = Math.round((totalCholesterol - hdlCholesterol) * 100) / 100;
             const ldl = Math.round((totalCholesterol - (hdlCholesterol + triglycerids / 5)) * 100) / 100;
             const vldl = Math.round((triglycerids / 5) * 100) / 100;
             const last = Math.round((totalCholesterol / hdlCholesterol) * 100) / 100;
+            const ldlHdlRatio = Math.round((ldl / hdlCholesterol) * 100) / 100;
 
+            form.setFieldValue('nonHdlCholesterolValue', nonHdl);
             form.setFieldValue('ldlCholesterolValue', ldl);
             form.setFieldValue('vldlCholesterolValue', vldl);
+            form.setFieldValue('ldlHdlRValue', ldlHdlRatio);
             form.setFieldValue('tchoHdlRValue', last);
 
+            setFlag('nonHdlCholesterolValue', nonHdl.toString());
             setFlag('ldlCholesterolValue', ldl.toString());
             setFlag('vldlCholesterolValue', vldl.toString());
+            setFlag('ldlHdlRValue', ldlHdlRatio.toString());
             setFlag('tchoHdlRValue', last.toString());
         } else {
+            form.setFieldValue('nonHdlCholesterolValue', undefined);
             form.setFieldValue('ldlCholesterolValue', undefined);
             form.setFieldValue('vldlCholesterolValue', undefined);
             form.setFieldValue('tchoHdlRValue', undefined);
             form.setFieldValue('ldlCholesterolValueFlag', undefined);
             form.setFieldValue('vldlCholesterolValueFlag', undefined);
+            form.setFieldValue('ldlHdlRValue', undefined);
             form.setFieldValue('tchoHdlRValueFlag', undefined);
         }
     }
@@ -153,10 +161,14 @@ const LipidProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, clearSc
                 triglyceridsValueFlag: values.triglyceridsValueFlag,
                 hdlCholesterolValue: Number(values.hdlCholesterolValue),
                 hdlCholesterolValueFlag: values.hdlCholesterolValueFlag,
+                nonHdlCholesterolValue: Number(values.nonHdlCholesterolValue),
+                nonHdlCholesterolValueFlag: values.nonHdlCholesterolValueFlag,
                 ldlCholesterolValue: Number(values.ldlCholesterolValue),
                 ldlCholesterolValueFlag: values.ldlCholesterolValueFlag,
                 vldlCholesterolValue: Number(values.vldlCholesterolValue),
                 vldlCholesterolValueFlag: values.vldlCholesterolValueFlag,
+                ldlHdlRValue: Number(values.ldlHdlRValue),
+                ldlHdlRValueFlag: values.ldlHdlRValueFlag,
                 tchoHdlRValue: Number(values.tchoHdlRValue),
                 tchoHdlRValueFlag: values.tchoHdlRValueFlag,
                 comment: values.comment
@@ -206,10 +218,14 @@ const LipidProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, clearSc
                         "triglyceridsValueFlag": data.data?.triglyceridsValueFlag,
                         "hdlCholesterolValue": data.data?.hdlCholesterolValue,
                         "hdlCholesterolValueFlag": data.data?.hdlCholesterolValueFlag,
+                        "nonHdlCholesterolValue": data.data?.nonHdlCholesterolValue,
+                        "nonHdlCholesterolValueFlag": data.data?.nonHdlCholesterolValueFlag,
                         "ldlCholesterolValue": data.data?.ldlCholesterolValue,
                         "ldlCholesterolValueFlag": data.data?.ldlCholesterolValueFlag,
                         "vldlCholesterolValue": data.data?.vldlCholesterolValue,
                         "vldlCholesterolValueFlag": data.data?.vldlCholesterolValueFlag,
+                        "ldlHdlRValue": data.data?.ldlHdlRValue,
+                        "ldlHdlRValueFlag": data.data?.ldlHdlRValueFlag,
                         "tchoHdlRValue": data.data?.tchoHdlRValue,
                         "tchoHdlRValueFlag": data.data?.tchoHdlRValueFlag,
                         "comment": data.data?.comment,
@@ -336,6 +352,29 @@ const LipidProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, clearSc
                         <Button color="default" variant="filled" onClick={calculateFields}>Calculate</Button>
                     </div>
                 </Form.Item>
+                <Form.Item label="NON HDL Cholesterol" style={{ marginBottom: 0 }}>
+                    <Form.Item
+                        name="nonHdlCholesterolValue"
+                        rules={[{ required: true }]}
+                        style={{ display: 'inline-block', width: '200px' }}
+                    >
+                        <Input addonAfter="mg/dl" placeholder="value" onChange={(e) => setFlag('nonHdlCholesterolValue', e.target.value)} />
+                    </Form.Item>
+                    <div className="flex-row items-center inline-flex">
+                        <Form.Item
+                            name="nonHdlCholesterolValueFlag"
+                            style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
+                        >
+                            <Select placeholder="flag" mode="tags" maxCount={1}>
+                                <Option value="Low">Low</Option>
+                                <Option value="High">High</Option>
+                            </Select>
+                        </Form.Item>
+                        <span>
+                            {displayNormalRange('nonHdlCholesterolValue')}
+                        </span>
+                    </div>
+                </Form.Item>
                 <Form.Item label="LDL Cholesterol" style={{ marginBottom: 0 }}>
                     <Form.Item
                         name="ldlCholesterolValue"
@@ -379,6 +418,29 @@ const LipidProfileForm = ({ data, clearScreen }: { data: DataEmptyTests, clearSc
                         </Form.Item>
                         <span>
                             {displayNormalRange('vldlCholesterolValue')}
+                        </span>
+                    </div>
+                </Form.Item>
+                <Form.Item label="LDL / HDL" style={{ marginBottom: 0 }}>
+                    <Form.Item
+                        name="ldlHdlRValue"
+                        rules={[{ required: true }]}
+                        style={{ display: 'inline-block', width: '200px' }}
+                    >
+                        <Input placeholder="value" onChange={(e) => setFlag('ldlHdlRValue', e.target.value)} />
+                    </Form.Item>
+                    <div className="flex-row items-center inline-flex">
+                        <Form.Item
+                            name="ldlHdlRValueFlag"
+                            style={{ display: 'inline-block', width: '150px', margin: '0 20px' }}
+                        >
+                            <Select placeholder="flag" mode="tags" maxCount={1}>
+                                <Option value="Low">Low</Option>
+                                <Option value="High">High</Option>
+                            </Select>
+                        </Form.Item>
+                        <span>
+                            {displayNormalRange('ldlHdlRValue')}
                         </span>
                     </div>
                 </Form.Item>

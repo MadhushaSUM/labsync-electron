@@ -13,12 +13,14 @@ export function addLipidProfileData(
     let config = generateTestPDFConfig();
 
     const tests: TestEntry[] = [
-        { name: "Total Cholesterol", testFieldId: 16, value: data.totalCholesterolValue, unit: "mg/dl", flag: data.totalCholesterolValueFlag },
-        { name: "Triglycerids", testFieldId: 17, value: data.triglyceridsValue, unit: "mg/dl", flag: data.triglyceridsValueFlag },
-        { name: "HDL Cholesterol", testFieldId: 18, value: data.hdlCholesterolValue, unit: "mg/dl", flag: data.hdlCholesterolValueFlag },
-        { name: "LDL Cholesterol", testFieldId: 19, value: data.ldlCholesterolValue, unit: "mg/dl", flag: data.ldlCholesterolValueFlag },
-        { name: "VLDL Cholesterol", testFieldId: 20, value: data.vldlCholesterolValue, unit: "mg/dl", flag: data.vldlCholesterolValueFlag },
-        { name: "Total Chol. / HDL", testFieldId: 21, value: data.tchoHdlRValue, unit: "", flag: data.tchoHdlRValueFlag },
+        { name: "TOTAL CHOLESTEROL", testFieldId: 16, value: data.totalCholesterolValue, unit: "mg/dl", flag: data.totalCholesterolValueFlag },
+        { name: "TRIGLYCERIDS", testFieldId: 17, value: data.triglyceridsValue, unit: "mg/dl", flag: data.triglyceridsValueFlag },
+        { name: "HDL CHOLESTEROL", testFieldId: 18, value: data.hdlCholesterolValue, unit: "mg/dl", flag: data.hdlCholesterolValueFlag },
+        { name: "NON - HDL CHOLESTEROL", testFieldId: 73, value: data.nonHdlCholesterolValue, unit: "mg/dl", flag: data.nonHdlCholesterolValueFlag },
+        { name: "LDL CHOLESTEROL", testFieldId: 19, value: data.ldlCholesterolValue, unit: "mg/dl", flag: data.ldlCholesterolValueFlag },
+        { name: "VLDL CHOLESTEROL", testFieldId: 20, value: data.vldlCholesterolValue, unit: "mg/dl", flag: data.vldlCholesterolValueFlag },
+        { name: "LDL / HDL RATIO", testFieldId: 74, value: data.ldlHdlRValue, unit: "", flag: data.ldlHdlRValueFlag },
+        { name: "TOTAL CHOL. / HDL RATIO", testFieldId: 21, value: data.tchoHdlRValue, unit: "", flag: data.tchoHdlRValueFlag },
     ];
 
     let yPosition = topMargin;
