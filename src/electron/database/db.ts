@@ -952,7 +952,6 @@ export async function getTestRegistrationsForDateRange(
 
     return { totalCount, registrations };
 }
-
 export async function getPeriodsWithTestRegisterIds(granularity: string, startDate?: Date, endDate?: Date) {
     const query = `
         WITH time_series AS (
@@ -1027,7 +1026,6 @@ export async function getConfigs(id: number) {
     const result = await pool.query('SELECT description, configuration FROM configs WHERE id=$1', [id]);
     return result.rows[0];
 }
-
 export async function updateConfigs(id: number, configuration: object) {
     await pool.query('UPDATE configs SET configuration=$1 WHERE id=$2', [configuration, id]);
 }

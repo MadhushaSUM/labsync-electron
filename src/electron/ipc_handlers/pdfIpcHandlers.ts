@@ -1,4 +1,4 @@
-import { getConfigs, getNormalRangesForTest, updateConfigs } from "../database/db.js";
+import { getConfigs, getNormalRangesForTest, markTestAsPrinted, updateConfigs } from "../database/db.js";
 import { printReceipt } from "../pdf/receipts/receipt.js";
 import { generateReportBase, previewPDF } from "../pdf/reports/reportbase.js";
 import { testMapper } from "../pdf/testMapper.js";
@@ -82,6 +82,8 @@ ipcMainOn('report:print', async (
                 );
                 out2.document.end();
                 print(out1.filePath, { printer: REPORT_PRINTING_PRINTER });
+
+                await markTestAsPrinted(report.testRegisterId, report.testId, true);
             }
         }
     } catch (error) {

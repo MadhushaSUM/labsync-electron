@@ -129,6 +129,7 @@ const PrintReportTable = () => {
             content: "Printing..."
         });
         window.electron.report.print(selectedData);
+        fetchData();
     };
 
     const handlePrintPreview = (key: string) => {

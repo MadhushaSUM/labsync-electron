@@ -42,26 +42,30 @@ export async function printReceipt(registration: Registration) {
             bold: path.join(app.getPath("userData"), 'fonts/receipt-Bold.ttf')
         },
         linePositions: [
-            { x1: 5, y1: 136 + topMargin, x2: 221, y2: 136 + topMargin },
-            { x1: 5, y1: 156 + topMargin, x2: 221, y2: 156 + topMargin },
+            { x1: 5, y1: 176 + topMargin, x2: 221, y2: 176 + topMargin },
+            { x1: 5, y1: 196 + topMargin, x2: 221, y2: 196 + topMargin },
         ],
         textEntries: [
             // { label: "<Laboratory Name>", x: 10, y: topMargin, fontSize: 15, weight: "bold", align: "center", width: undefined },
             // { label: "<address line>", x: 10, y: 40 + topMargin, fontSize: 8, weight: "normal", align: "center", width: undefined },
             // { label: "<tele line>", x: 10, y: 50 + topMargin, fontSize: 8, weight: "normal", align: "center", width: undefined },
             { label: "Patient name  :", x: 10, y: 80 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
-            { label: "Date                    :", x: 10, y: 100 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
-            { label: "Reference no. :", x: 10, y: 120 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
-            { label: "Test", x: 10, y: 140 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
-            { label: "Price (Rs.)", x: 140, y: 140 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
+            { label: "Sex                      :", x: 10, y: 100 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
+            { label: "Referred by     :", x: 10, y: 120 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
+            { label: "Date                    :", x: 10, y: 140 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
+            { label: "Reference no. :", x: 10, y: 160 + topMargin, fontSize: 11, weight: "normal", align: undefined, width: undefined },
+            { label: "Test", x: 10, y: 180 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
+            { label: "Price (Rs.)", x: 140, y: 180 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
 
             { label: registration.patient.name, x: 80, y: 80 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
-            { label: formatISO(registration.date, { representation: 'date' }), x: 80, y: 100 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
-            { label: registration.ref_number ? registration.ref_number.toString() : "", x: 80, y: 120 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
+            { label: registration.patient.gender, x: 80, y: 100 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
+            { label: registration.registeredTests[0].doctor ? registration.registeredTests[0].doctor.name : "", x: 80, y: 120 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
+            { label: formatISO(registration.date, { representation: 'date' }), x: 80, y: 140 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
+            { label: registration.ref_number ? registration.ref_number.toString() : "", x: 80, y: 160 + topMargin, fontSize: 11, weight: "bold", align: undefined, width: undefined },
         ],
     };
 
-    let yPostition = 135;
+    let yPostition = 185;
 
     const tests: { name: string, price: string, weight: "normal" | "bold", x: number }[] = [];
     for (const test of registration.registeredTests) {
@@ -134,7 +138,7 @@ export async function printReceipt(registration: Registration) {
         doc
             .font(entry.weight == "bold" ? config.fonts.bold : config.fonts.normal)
             .fontSize(entry.fontSize)
-            .text(entry.label, entry.x, entry.y, { align: entry.align as any, width: entry.width });
+            .text(entry.label, entry.x, entry.y, { align: entry.align as any, width: entry.width, height: 20 });
     });
 
     doc.font(config.fonts.normal).fontSize(8).text("Generated on " + new Date().toLocaleString(), 0, yPostition, { align: "center" });

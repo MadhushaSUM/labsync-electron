@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Col, DatePicker, Flex, Form, Input, InputNumber, message, Row, Select, Spin } from "antd";
+import { Button, Card, Checkbox, Col, DatePicker, Form, Input, InputNumber, message, Row, Select, Spin } from "antd";
 import dayjs from "dayjs";
 import { debounce } from "lodash";
 import { useEffect, useState } from "react";
@@ -209,24 +209,7 @@ const EditTestRegistration = ({ testRegistrationId }: { testRegistrationId: numb
             {contextHolder}
             <Card
                 title="Edit Test Registration"
-                actions={[
-                    <Flex justify="end" gap={5}>
-                        <Button
-                            variant="solid"
-                            color="primary"
-                        >
-                            Update
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            color="default"
-                            onClick={() => navigate("/test-registration")}
-                        >
-                            Cancel
-                        </Button>
-                    </Flex>
-                ]}
-            >                
+            >
                 <div>
                     <Form
                         labelCol={{ span: 6 }}
@@ -338,12 +321,19 @@ const EditTestRegistration = ({ testRegistrationId }: { testRegistrationId: numb
                         </Form.Item>
 
                         <Form.Item wrapperCol={{ offset: 6, span: 16 }} style={{ display: "flex", justifyContent: "end" }}>
-                            <div className="flex flex-row gap-5">
+                            <div className="flex flex-row gap-2">
                                 <Button type="primary" htmlType="submit">
                                     Save & Print receipt
                                 </Button>
-                                <Button type="default" htmlType="submit">
+                                <Button type="primary" variant="outlined" htmlType="submit">
                                     Save
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    color="default"
+                                    onClick={() => navigate("/test-registration")}
+                                >
+                                    Cancel
                                 </Button>
                             </div>
                         </Form.Item>

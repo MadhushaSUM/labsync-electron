@@ -29,7 +29,7 @@ export async function generateReportBase(
         ],
         textEntries: [
             { label: "PT'S NAME", value: report.patientName, x1: 40, x2: 110, x3: 115, y: 115 },
-            { label: "GENDER", value: report.patientGender, x1: 40, x2: 110, x3: 115, y: 140 },
+            { label: "SEX", value: report.patientGender, x1: 40, x2: 110, x3: 115, y: 140 },
             { label: "TEST(S)", value: testNames.join(', '), x1: 40, x2: 110, x3: 115, y: 165 },
             { label: "REFERRED BY", value: report.doctorName, x1: 40, x2: 110, x3: 115, y: 190 },
             { label: "REF. NO.", value: report.ref_number, x1: 400, x2: 450, x3: 455, y: 115 },
