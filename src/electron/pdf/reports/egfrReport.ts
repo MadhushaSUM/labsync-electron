@@ -41,19 +41,21 @@ export function addEGFRData(
     yPosition += 25;
 
     const aditionalNotes = [
-        { labelCol1: "Stage 01: > 90 ml/min/1.73m²", labelCol2: "Healthy kidneys or kidney damage with normal or high GFR", x1: 60, x2: 230, weight: "normal" },
-        { labelCol1: "Stage 02: 60 - 89 ml/min/1.73m²", labelCol2: "Kidney damage with mid decrease in GFR", x1: 60, x2: 230, weight: "normal" },
-        { labelCol1: "Stage 03: 30 - 59 ml/min/1.73m²", labelCol2: "Moderate decrease in GFR", x1: 60, x2: 230, weight: "normal" },
-        { labelCol1: "Stage 04: 15 - 29 ml/min/1.73m²", labelCol2: "Severe decrease in GFR", x1: 60, x2: 230, weight: "normal" },
-        { labelCol1: "Stage 04: < 15 ml/min/1.73m²", labelCol2: "Kidney failure or dialysis", x1: 60, x2: 230, weight: "normal" },
+        { labelCol1: "Stage 01: > 90 ml/min/1.73m²", labelCol2: "Healthy kidneys or kidney damage with normal or high GFR", x1: 60, x2: 270, weight: "normal" },
+        { labelCol1: "Stage 02: 60 - 89 ml/min/1.73m²", labelCol2: "Kidney damage with mid decrease in GFR", x1: 60, x2: 270, weight: "normal" },
+        { labelCol1: "Stage 03: 30 - 59 ml/min/1.73m²", labelCol2: "Moderate decrease in GFR", x1: 60, x2: 270, weight: "normal" },
+        { labelCol1: "Stage 04: 15 - 29 ml/min/1.73m²", labelCol2: "Severe decrease in GFR", x1: 60, x2: 270, weight: "normal" },
+        { labelCol1: "Stage 04: < 15 ml/min/1.73m²", labelCol2: "Kidney failure or dialysis", x1: 60, x2: 270, weight: "normal" },
     ];
 
+    let isFirst = true;
     aditionalNotes.forEach(test => {
         config.textEntries.push(
             { label: test.labelCol1, x: test.x1, y: yPosition, fontSize: 11, weight: test.weight as any, options: undefined },
             { label: test.labelCol2, x: test.x2, y: yPosition, fontSize: 11, weight: test.weight as any, options: undefined },
         );
-        yPosition += 20;
+        yPosition += isFirst ? 30 : 20;
+        isFirst = false;
     });
 
     yPosition += 20;

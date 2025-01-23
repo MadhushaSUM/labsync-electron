@@ -13,7 +13,7 @@ export function addFBCData(
     const config = generateTestPDFConfig();
 
     const tests1: TestEntry[] = [
-        { name: "TOTAL WBC COUNT", testFieldId: 3, value: data.wbcValue, unit: "x10⁹/L", flag: data.wbcValueFlag },
+        { name: "TOTAL WBC COUNT", testFieldId: 3, value: data.wbcValue, unit: "x10^9/L", flag: data.wbcValueFlag },
     ];
 
     const tests2: TestEntry[] = [
@@ -26,7 +26,7 @@ export function addFBCData(
 
     const tests3: TestEntry[] = [
         { name: "HAEMOGLOBIN", testFieldId: 9, value: data.heamoglobinValue, unit: "g/dL", flag: data.heamoglobinValueFlag },
-        { name: "RBC", testFieldId: 10, value: data.rbcValue, unit: "x10¹²/L", flag: data.rbcValueFlag },
+        { name: "RBC", testFieldId: 10, value: data.rbcValue, unit: "x10^12/L", flag: data.rbcValueFlag },
         { name: "HCT/PVC", testFieldId: 11, value: data.htcpvcValue, unit: "%", flag: data.htcpvcValueFlag },
         { name: "MCV", testFieldId: 12, value: data.mcvValue, unit: "fL", flag: data.mcvValueFlag },
         { name: "MCH", testFieldId: 13, value: data.mchValue, unit: "pg", flag: data.mchValueFlag },
@@ -34,7 +34,7 @@ export function addFBCData(
     ];
 
     const tests4: TestEntry[] = [
-        { name: "PLATELET COUNT", testFieldId: 15, value: data.plateletValue, unit: "x10⁹/L", flag: data.plateletValueFlag },
+        { name: "PLATELET COUNT", testFieldId: 15, value: data.plateletValue, unit: "x10^9/L", flag: data.plateletValueFlag },
     ];
 
     let yPosition = topMargin;

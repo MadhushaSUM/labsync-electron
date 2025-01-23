@@ -14,13 +14,20 @@ export function addBilirubinData(
 
     const tests: TestEntry[] = [
         { name: "TOTAL BILIRUBIN", testFieldId: 58, value: data.totalBilirubinValue, unit: "mg/dl", flag: data.totalBilirubinValueFlag },
-        { name: "DIRECT BILIRUBIN (Conjugated)", testFieldId: 59, value: data.directBilirubinValue, unit: "mg/dl", flag: data.directBilirubinValueFlag },
-        { name: "INDIRECT BILIRUBIN (Unconjugated)", testFieldId: 60, value: data.indirectBilirubinValue, unit: "mg/dl", flag: data.indirectBilirubinValueFlag },
+        { name: "DIRECT BILIRUBIN", testFieldId: 59, value: data.directBilirubinValue, unit: "mg/dl", flag: data.directBilirubinValueFlag },
+        { name: "INDIRECT BILIRUBIN", testFieldId: 60, value: data.indirectBilirubinValue, unit: "mg/dl", flag: data.indirectBilirubinValueFlag },
     ];
 
-    let yPosition =  topMargin;
+    let yPosition = topMargin;
 
     yPosition = addTextEntries(tests, config, yPosition, normalRanges, patientDateOfBirth, patientGender, doc);
+
+    config.textEntries.push(
+        { label: "(Conjugated)", x: 155, y: topMargin + 22, fontSize: 8, weight: "normal", options: undefined },
+    );
+    config.textEntries.push(
+        { label: "(Unconjugated)", x: 168, y: topMargin + 42, fontSize: 8, weight: "normal", options: undefined },
+    );
 
     if (!isMerging) {
         yPosition += 15;

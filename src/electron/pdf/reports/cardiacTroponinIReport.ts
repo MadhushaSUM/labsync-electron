@@ -39,7 +39,7 @@ export function addCardiacTroponinIData(
             { label: "Troponin I is part of a protein complex which regulates the contraction of striated muscle. In acute coronary syndromes(ACS), it can be detected in blood at 4 - 8 hours following the onset of chest pain, reaches a peak concentration at 12 - 16 hours, and remains elevated for 5 - 9 days.", x: 40, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
         );
 
-        yPosition += 50;
+        yPosition += 60;
 
         if (data.comment) {
             config.textEntries.push({

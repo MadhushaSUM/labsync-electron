@@ -40,7 +40,7 @@ export function addCardiacTroponinTData(
             { label: "The cardiac subtype of troponin T is especially useful in the laboratory diagnosis of heart attack because it is released into the blood stream when damage to heart muscle occurs. The elevation is detectable from 3 - 4 hours after a heart attack, and the levels remain elevated for up to two weeks.", x: 40, y: yPosition, fontSize: 11, weight: "normal", options: undefined },
         );
 
-        yPosition += 50;
+        yPosition += 60;
 
         if (data.comment) {
             config.textEntries.push({

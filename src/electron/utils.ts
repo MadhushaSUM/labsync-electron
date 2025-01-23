@@ -136,11 +136,11 @@ export function findTheCorrectNormalRangeRule(
     for (const rule of normalRangeRules) {
         if (isWithinNormalRange(patientDateOfBirth, patientGender, rule)) {
             if (rule.type == "range") {
-                return `${rule.valueLower} - ${rule.valueUpper} ${unit}`;
+                return `${rule.valueLower} - ${rule.valueUpper}`;
             } else if (rule.type == "≥") {
-                return `≥ ${rule.valueLower} ${unit}`;
+                return `≥ ${rule.valueLower}`;
             } else {
-                return `≤ ${rule.valueUpper} ${unit}`;
+                return `≤ ${rule.valueUpper}`;
             }
         }
     }

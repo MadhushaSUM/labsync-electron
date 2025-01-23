@@ -152,6 +152,21 @@ const SProteinsForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScree
         }
     };
 
+    const calculateFields = () => {
+        const albumin = Number(form.getFieldValue('albuminValue'));
+        const globulin = Number(form.getFieldValue('globulinValue'));
+
+        if (albumin && globulin) {
+            const agRatio = Math.round((albumin / globulin) * 100) / 100;
+
+            form.setFieldValue('agRatioValue', agRatio);
+
+            setFlag('agRatioValue', agRatio.toString());
+        } else {
+            form.setFieldValue('agRatioValue', undefined);
+        }
+    }
+
     return (
         <div className="w-full">
             {contextHolder}
@@ -296,6 +311,7 @@ const SProteinsForm = ({ data, clearScreen }: { data: DataEmptyTests, clearScree
                         <span>
                             {displayNormalRange('globulinValue')}
                         </span>
+                        <Button color="default" variant="filled" onClick={calculateFields}>Calculate</Button>
                     </div>
                 </Form.Item>
                 <Form.Item

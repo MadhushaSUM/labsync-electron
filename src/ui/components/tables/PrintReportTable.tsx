@@ -153,6 +153,7 @@ const PrintReportTable = () => {
             content: "Merging..."
         });
         window.electron.report.mergeReports(selectedReports);
+        fetchData();
     }
 
     const handleExportReports = (key: string | undefined) => {

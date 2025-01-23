@@ -22,10 +22,10 @@ export function addSCholesterolData(
 
     if (!isMerging) {
         const aditionalNotes = [
-            { labelCol0: "REFERENCES (Adults)", labelCol1: "", labelCol2: "", x0: 60, x1: 250, weight: "bold" },
-            { labelCol0: "< 200 mg/dl (5.2 mmol/L)", labelCol1: "Normal", labelCol2: "", x0: 60, x1: 250, weight: "normal" },
-            { labelCol0: "200 - 239 mg/dl (5.2 - 6.2 mmol/L)", labelCol1: "Boarderline high", labelCol2: "", x0: 60, x1: 250, weight: "normal" },
-            { labelCol0: "> 240 mg/dl (6.2 mmol/L)", labelCol1: "High", labelCol2: "", x0: 60, x1: 250, weight: "normal" },
+            { labelCol0: "REFERENCES (Adults)", labelCol1: "", labelCol2: "", x0: 60, x1: 300, weight: "bold" },
+            { labelCol0: "< 200 mg/dl (5.2 mmol/L)", labelCol1: "Normal", labelCol2: "", x0: 60, x1: 300, weight: "normal" },
+            { labelCol0: "200 - 239 mg/dl (5.2 - 6.2 mmol/L)", labelCol1: "Boarderline high", labelCol2: "", x0: 60, x1: 300, weight: "normal" },
+            { labelCol0: "> 240 mg/dl (6.2 mmol/L)", labelCol1: "High", labelCol2: "", x0: 60, x1: 300, weight: "normal" },
         ];
 
         yPosition += 20;
@@ -39,10 +39,10 @@ export function addSCholesterolData(
         });
 
         const aditionalNotes2 = [
-            { labelCol0: "REFERENCES (Children)", labelCol1: "", labelCol2: "", x0: 60, x1: 250, weight: "bold" },
-            { labelCol0: "< 170 mg/dl", labelCol1: "Normal", labelCol2: "", x0: 60, x1: 250, weight: "normal" },
-            { labelCol0: "170 - 199 mg/dl", labelCol1: "Boarderline high", labelCol2: "", x0: 60, x1: 250, weight: "normal" },
-            { labelCol0: "> 199 mg/dl", labelCol1: "High", labelCol2: "", x0: 60, x1: 250, weight: "normal" },
+            { labelCol0: "REFERENCES (Children)", labelCol1: "", labelCol2: "", x0: 60, x1: 300, weight: "bold" },
+            { labelCol0: "< 170 mg/dl", labelCol1: "Normal", labelCol2: "", x0: 60, x1: 300, weight: "normal" },
+            { labelCol0: "170 - 199 mg/dl", labelCol1: "Boarderline high", labelCol2: "", x0: 60, x1: 300, weight: "normal" },
+            { labelCol0: "> 199 mg/dl", labelCol1: "High", labelCol2: "", x0: 60, x1: 300, weight: "normal" },
         ];
 
         yPosition += 20;

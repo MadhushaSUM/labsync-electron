@@ -82,9 +82,8 @@ ipcMainOn('report:print', async (
                 );
                 out2.document.end();
                 print(out1.filePath, { printer: REPORT_PRINTING_PRINTER });
-
-                await markTestAsPrinted(report.testRegisterId, report.testId, true);
             }
+            await markTestAsPrinted(report.testRegisterId, report.testId, true);
         }
     } catch (error) {
         console.error(error);
@@ -123,6 +122,7 @@ ipcMainOn('report:export', async (
                 );
                 out2.document.end();
             }
+            await markTestAsPrinted(report.testRegisterId, report.testId, true);
         }
     } catch (error) {
         console.error(error);
@@ -165,7 +165,7 @@ ipcMainOn('report:mergeReports', async (
 
                 currentTopMargin = temp.topMargin;
             }
-
+            await markTestAsPrinted(report.testRegisterId, report.testId, true);
         }
         base.document.end();
         previewPDF(base.filePath);

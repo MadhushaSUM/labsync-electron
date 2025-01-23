@@ -26,11 +26,11 @@ export function addESRData(
         yPosition += 15;
         
         const aditionalNotes = [
-            { labelCol0: "REFERENCE VALUES", labelCol1: "", labelCol2: "", x0: 60, x1: 250, weight: "bold" },
-            { labelCol0: "Under 50 years old", labelCol1: "Male: 0 - 15 mm/hr,   Female: 0 - 20 mmm/hr", labelCol2: "", x0: 60, x1: 250, weight: "normal" },
-            { labelCol0: "Over 50 years old", labelCol1: "Male: 0 - 20 mm/hr,   Female: 0 - 30 mmm/hr", labelCol2: "", x0: 60, x1: 250, weight: "normal" },
-            { labelCol0: "Newborn", labelCol1: "0 - 02 mm/hr", labelCol2: "", x0: 60, x1: 250, weight: "normal" },
-            { labelCol0: "Newborn to puberty", labelCol1: "3 - 13 mm/hr", labelCol2: "", x0: 60, x1: 250, weight: "normal" },
+            { labelCol0: "REFERENCE VALUES", labelCol1: "", labelCol2: "", x0: 60, x1: 220, weight: "bold" },
+            { labelCol0: "Under 50 years old", labelCol1: "Male: 0 - 15 mm/hr, Female: 0 - 20 mmm/hr", labelCol2: "", x0: 60, x1: 220, weight: "normal" },
+            { labelCol0: "Over 50 years old", labelCol1: "Male: 0 - 20 mm/hr, Female: 0 - 30 mmm/hr", labelCol2: "", x0: 60, x1: 220, weight: "normal" },
+            { labelCol0: "Newborn", labelCol1: "0 - 02 mm/hr", labelCol2: "", x0: 60, x1: 220, weight: "normal" },
+            { labelCol0: "Newborn to puberty", labelCol1: "3 - 13 mm/hr", labelCol2: "", x0: 60, x1: 220, weight: "normal" },
         ];
 
         yPosition += 20;
