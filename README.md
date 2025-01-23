@@ -13,8 +13,8 @@ Using this application operators can replace heavy applications like Microsoft W
 
 ## Setting up ##
 1. First run `npm ci` command to install dependancies
-2. Then install postgreSQL and create a database named ***labsync_desktop***
-3. Import the database dump files in ***database-dump*** folder
+2. Then install postgreSQL 16
+3. Setup database by running `db_restore.bat` file
 4. Create a ***.env*** file in root directory including following information
 ```
 DB_USER=
